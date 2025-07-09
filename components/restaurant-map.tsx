@@ -105,6 +105,7 @@ export default function RestaurantMap() {
   const [searchQuery, setSearchQuery] = useState("")
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationTitle, setLocationTitle] = useState("Paris")
+  const [isMapInitialized, setIsMapInitialized] = useState(false)
 
   useEffect(() => {
     // Demander la géolocalisation
@@ -117,11 +118,30 @@ export default function RestaurantMap() {
           }
           setUserLocation(location)
           setLocationTitle("Autour de moi")
+          
+          // Si la carte est déjà initialisée, recentrer sur l'utilisateur
+          if (map) {
+            map.setCenter(location)
+            
+            // Ajouter un marqueur bleu pour la position de l'utilisateur
+            const { AdvancedMarkerElement, PinElement } = window.google.maps.marker
+            const userPin = new PinElement({
+              background: "#3b82f6",
+              borderColor: "#1d4ed8",
+              glyphColor: "white",
+            })
+
+            new AdvancedMarkerElement({
+              map: map,
+              position: location,
+              title: "Votre position",
+              content: userPin.element,
+            })
+          }
         },
         (error) => {
           console.log("Géolocalisation refusée ou erreur:", error)
-          // Fallback sur Paris
-          setUserLocation({ lat: 48.8566, lng: 2.3522 })
+          // Rester sur Paris (déjà défini par défaut)
           setLocationTitle("Paris")
         },
         {
@@ -131,11 +151,10 @@ export default function RestaurantMap() {
         }
       )
     } else {
-      // Navigateur ne supporte pas la géolocalisation
-      setUserLocation({ lat: 48.8566, lng: 2.3522 })
+      // Navigateur ne supporte pas la géolocalisation - rester sur Paris
       setLocationTitle("Paris")
     }
-  }, [])
+  }, [map])
 
   useEffect(() => {
     const initMap = async () => {
@@ -149,11 +168,9 @@ export default function RestaurantMap() {
       const { Map } = await window.google.maps.importLibrary("maps")
       const { AdvancedMarkerElement, PinElement } = await window.google.maps.importLibrary("marker")
 
-      // Utiliser la position de l'utilisateur ou Paris par défaut
-      const mapCenter = userLocation || { lat: 48.8566, lng: 2.3522 }
-
+      // Toujours commencer par Paris
       const mapInstance = new Map(mapRef.current as HTMLDivElement, {
-        center: mapCenter,
+        center: { lat: 48.8566, lng: 2.3522 },
         zoom: 13,
         mapTypeControl: false,
         streetViewControl: false,
@@ -162,22 +179,7 @@ export default function RestaurantMap() {
         mapId: "DEMO_MAP_ID", // Requis pour AdvancedMarkerElement
       })
       setMap(mapInstance)
-
-      // Ajouter un marqueur bleu pour la position de l'utilisateur (si disponible)
-      if (userLocation && locationTitle === "Autour de moi") {
-        const userPin = new PinElement({
-          background: "#3b82f6",
-          borderColor: "#1d4ed8",
-          glyphColor: "white",
-        })
-
-        new AdvancedMarkerElement({
-          map: mapInstance,
-          position: userLocation,
-          title: "Votre position",
-          content: userPin.element,
-        })
-      }
+      setIsMapInitialized(true)
 
       const placesService = new window.google.maps.places.PlacesService(mapInstance)
       const geocoder = new window.google.maps.Geocoder()
@@ -256,10 +258,10 @@ export default function RestaurantMap() {
       setRestaurantsWithPhotos(restaurantsWithMarkersAndPhotos)
     }
 
-    if (mapRef.current && userLocation) {
+    if (mapRef.current && !isMapInitialized) {
       initMap()
     }
-  }, [userLocation])
+  }, [])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
     return `
