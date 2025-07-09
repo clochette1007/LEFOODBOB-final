@@ -97,15 +97,45 @@ const mapStyles = [
   { featureType: "transit", stylers: [{ visibility: "off" }] },
 ]
 
-type ViewType = "list" | "mix" | "map"
-
 export default function RestaurantMap() {
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
   const [restaurantsWithPhotos, setRestaurantsWithPhotos] = useState<RestaurantWithPhoto[]>([])
   const [infoWindow, setInfoWindow] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+  const [locationTitle, setLocationTitle] = useState("Paris")
+
+  useEffect(() => {
+    // Demander la géolocalisation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          setUserLocation(location)
+          setLocationTitle("Autour de moi")
+        },
+        (error) => {
+          console.log("Géolocalisation refusée ou erreur:", error)
+          // Fallback sur Paris
+          setUserLocation({ lat: 48.8566, lng: 2.3522 })
+          setLocationTitle("Paris")
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // Cache 5 minutes
+        }
+      )
+    } else {
+      // Navigateur ne supporte pas la géolocalisation
+      setUserLocation({ lat: 48.8566, lng: 2.3522 })
+      setLocationTitle("Paris")
+    }
+  }, [])
 
   useEffect(() => {
     const initMap = async () => {
@@ -119,16 +149,35 @@ export default function RestaurantMap() {
       const { Map } = await window.google.maps.importLibrary("maps")
       const { AdvancedMarkerElement, PinElement } = await window.google.maps.importLibrary("marker")
 
+      // Utiliser la position de l'utilisateur ou Paris par défaut
+      const mapCenter = userLocation || { lat: 48.8566, lng: 2.3522 }
+
       const mapInstance = new Map(mapRef.current as HTMLDivElement, {
-        center: { lat: 48.8566, lng: 2.3522 },
+        center: mapCenter,
         zoom: 13,
         mapTypeControl: false,
         streetViewControl: false,
-        fullscreenControl: true,
+        fullscreenControl: false,
         styles: mapStyles,
         mapId: "DEMO_MAP_ID", // Requis pour AdvancedMarkerElement
       })
       setMap(mapInstance)
+
+      // Ajouter un marqueur bleu pour la position de l'utilisateur (si disponible)
+      if (userLocation && locationTitle === "Autour de moi") {
+        const userPin = new PinElement({
+          background: "#3b82f6",
+          borderColor: "#1d4ed8",
+          glyphColor: "white",
+        })
+
+        new AdvancedMarkerElement({
+          map: mapInstance,
+          position: userLocation,
+          title: "Votre position",
+          content: userPin.element,
+        })
+      }
 
       const placesService = new window.google.maps.places.PlacesService(mapInstance)
       const geocoder = new window.google.maps.Geocoder()
@@ -207,10 +256,10 @@ export default function RestaurantMap() {
       setRestaurantsWithPhotos(restaurantsWithMarkersAndPhotos)
     }
 
-    if (mapRef.current) {
+    if (mapRef.current && userLocation) {
       initMap()
     }
-  }, [])
+  }, [userLocation])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
     return `
@@ -239,81 +288,35 @@ export default function RestaurantMap() {
     }
   }
 
-  const toggleFullscreen = () => {
-    const newFullscreenState = !isFullscreen
-    setIsFullscreen(newFullscreenState)
-
-    // Délai pour permettre au CSS de s'appliquer puis redimensionner la carte
-    setTimeout(() => {
-      if (map && window.google) {
-        // Forcer le redimensionnement de la carte
-        window.google.maps.event.trigger(map, "resize")
-
-        // Recentrer sur Paris
-        const parisCenter = { lat: 48.8566, lng: 2.3522 }
-        map.setCenter(parisCenter)
-        map.setZoom(newFullscreenState ? 12 : 13)
-      }
-    }, 100)
-  }
-
   return (
     <div className="bg-white min-h-screen">
-      {/* Barre de recherche - cachée en mode plein écran */}
-      {!isFullscreen && (
-        <div className="p-6 border-b border-gray-200">
-          <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Rechercher sur Lefoodbob"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
+      {/* Barre de recherche */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Rechercher sur Lefoodbob"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Contenu principal */}
-      <div className={isFullscreen ? "hidden" : "max-w-4xl mx-auto p-6"}>
+      <div className="max-w-4xl mx-auto p-6">
         {/* Section Autour de moi */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Autour de moi</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{locationTitle}</h2>
             <button className="text-blue-600 font-medium hover:text-blue-700">Tout Voir</button>
           </div>
 
-          {/* Carte unique - positionnée conditionnellement */}
-          <div 
-            className={`${
-              isFullscreen 
-                ? "fixed inset-0 z-50 bg-white" 
-                : "relative w-full h-96 rounded-lg overflow-hidden border border-gray-200 mb-6"
-            }`}
-          >
+          {/* Carte simple */}
+          <div className="relative w-full h-96 rounded-lg overflow-hidden border border-gray-200 mb-6">
             <div ref={mapRef} className="w-full h-full" />
-            
-            <button
-              onClick={toggleFullscreen}
-              className={`${
-                isFullscreen
-                  ? "fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white hover:bg-gray-50 border border-gray-300 rounded-full px-6 py-3 flex items-center gap-2 shadow-lg transition-colors z-10"
-                  : "absolute top-4 right-4 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors"
-              }`}
-              title={isFullscreen ? "Revenir à la liste" : "Agrandir le plan"}
-            >
-              {isFullscreen ? (
-                <>
-                  <ArrowLeft className="w-4 h-4" />
-                  <span className="text-sm font-medium">Revenir à la liste</span>
-                </>
-              ) : (
-                "Agrandir le plan"
-              )}
-            </button>
           </div>
         </div>
 
