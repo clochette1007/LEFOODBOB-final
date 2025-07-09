@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
-import { Search, ArrowLeft } from "lucide-react"
+import { Search } from "lucide-react"
 
 declare global {
   interface Window {
@@ -16,7 +16,6 @@ interface Restaurant {
   city: string
   priceRange: string
   query: string
-  isNew?: boolean
 }
 
 interface RestaurantWithPhoto extends Restaurant {
@@ -26,48 +25,11 @@ interface RestaurantWithPhoto extends Restaurant {
 
 const restaurants: Restaurant[] = [
   {
-    address: "1 Rue de Rivoli, 75001 Paris",
-    name: "Le Grand Véfour",
-    city: "1er arrondissement",
+    address: "5 Rue du Pont Louis-Philippe, 75004 Paris",
+    name: "Aldéhyde",
+    city: "4e arrondissement",
     priceRange: "€€€€",
-    query: "Le Grand Véfour restaurant Paris",
-    isNew: true,
-  },
-  {
-    address: "12 Rue de l'Hôtel Colbert, 75005 Paris",
-    name: "La Tour d'Argent",
-    city: "5e arrondissement", 
-    priceRange: "€€€€",
-    query: "La Tour d'Argent restaurant Paris",
-  },
-  {
-    address: "9 Place Dauphine, 75001 Paris",
-    name: "Le Procope",
-    city: "1er arrondissement",
-    priceRange: "€€€",
-    query: "Le Procope restaurant Paris",
-  },
-  {
-    address: "25 Rue du Pont Neuf, 75001 Paris", 
-    name: "L'Ami Jean",
-    city: "7e arrondissement",
-    priceRange: "€€€",
-    query: "L'Ami Jean restaurant Paris",
-    isNew: true,
-  },
-  {
-    address: "54 Rue de Verneuil, 75007 Paris",
-    name: "Le Comptoir du Relais", 
-    city: "6e arrondissement",
-    priceRange: "€€",
-    query: "Le Comptoir du Relais restaurant Paris",
-  },
-  {
-    address: "3 Rue Clauzel, 75009 Paris",
-    name: "Frenchie",
-    city: "2e arrondissement", 
-    priceRange: "€€€",
-    query: "Frenchie restaurant Paris",
+    query: "Restaurant Aldéhyde Paris",
   },
 ]
 
@@ -267,10 +229,9 @@ export default function RestaurantMap() {
     return `
     <div style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px;">
       <div style="flex: 1;">
-        ${restaurant.isNew ? '<span style="background-color: #ef4444; color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: inline-block;">NOUVEAU</span>' : ""}
         <h3 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0 0 4px 0;">${restaurant.name}</h3>
         <p style="font-size: 14px; color: #6b7280; margin: 0 0 4px 0;">${restaurant.city}</p>
-        <p style="font-size: 14px; color: #6b7280; margin: 0;">${restaurant.priceRange} • Cuisine moderne</p>
+        <p style="font-size: 14px; color: #6b7280; margin: 0;">${restaurant.priceRange} • Cuisine gastronomique ⭐</p>
       </div>
       <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
         <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/333333?text=Image';">
@@ -313,7 +274,6 @@ export default function RestaurantMap() {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">{locationTitle}</h2>
-            <button className="text-blue-600 font-medium hover:text-blue-700">Tout Voir</button>
           </div>
 
           {/* Carte simple */}
@@ -322,15 +282,14 @@ export default function RestaurantMap() {
           </div>
         </div>
 
-        {/* Section Mes favoris */}
+        {/* Section Restaurant étoilé */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Mes favoris</h2>
-            <button className="text-blue-600 font-medium hover:text-blue-700">Tout Voir</button>
+            <h2 className="text-2xl font-bold text-gray-900">Restaurant étoilé</h2>
           </div>
 
           <div className="grid gap-4">
-            {restaurantsWithPhotos.slice(0, 3).map((restaurant, index) => (
+            {restaurantsWithPhotos.map((restaurant, index) => (
               <div
                 key={index}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
@@ -338,14 +297,9 @@ export default function RestaurantMap() {
               >
                 <div className="flex gap-4">
                   <div className="flex-1">
-                    {restaurant.isNew && (
-                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block font-semibold">
-                        NOUVEAU
-                      </span>
-                    )}
                     <h3 className="font-bold text-lg text-gray-900 mb-1">{restaurant.name}</h3>
                     <p className="text-gray-600 text-sm mb-1">{restaurant.city}</p>
-                    <p className="text-gray-600 text-sm">{restaurant.priceRange} • Cuisine moderne</p>
+                    <p className="text-gray-600 text-sm">{restaurant.priceRange} • Cuisine gastronomique ⭐</p>
                   </div>
 
                   <div className="w-24 h-24 flex-shrink-0">
