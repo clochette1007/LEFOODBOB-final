@@ -19,49 +19,55 @@ interface Restaurant {
   isNew?: boolean
 }
 
+interface RestaurantWithPhoto extends Restaurant {
+  photoUrl: string
+  marker?: any
+}
+
 const restaurants: Restaurant[] = [
   {
-    address: "Le Pantruche, 3 Rue Victor Masse, 75009 Paris",
-    name: "Le Pantruche",
-    city: "Paris, France",
-    priceRange: "€€€",
-    query: "Le Pantruche Paris",
-  },
-  {
-    address: "Argile, 12 Rue de la Grande Chaumière, 75006 Paris",
-    name: "Argile",
-    city: "Paris, France",
-    priceRange: "€€",
+    address: "1 Rue de Rivoli, 75001 Paris",
+    name: "Le Grand Véfour",
+    city: "1er arrondissement",
+    priceRange: "€€€€",
+    query: "Le Grand Véfour restaurant Paris",
     isNew: true,
-    query: "Argile Paris",
   },
   {
-    address: "Clover Saint-Germain, 5 Rue Perronet, 75007 Paris",
-    name: "Clover Saint-Germain",
-    city: "Paris, France",
+    address: "12 Rue de l'Hôtel Colbert, 75005 Paris",
+    name: "La Tour d'Argent",
+    city: "5e arrondissement", 
+    priceRange: "€€€€",
+    query: "La Tour d'Argent restaurant Paris",
+  },
+  {
+    address: "9 Place Dauphine, 75001 Paris",
+    name: "Le Procope",
+    city: "1er arrondissement",
     priceRange: "€€€",
-    query: "Clover Saint-Germain Paris",
+    query: "Le Procope restaurant Paris",
   },
   {
-    address: "Sushi B, 20 Rue Notre Dame de Lorette, 75009 Paris",
-    name: "Sushi B",
-    city: "Paris, France",
-    priceRange: "€€€€",
-    query: "Sushi B Paris",
+    address: "25 Rue du Pont Neuf, 75001 Paris", 
+    name: "L'Ami Jean",
+    city: "7e arrondissement",
+    priceRange: "€€€",
+    query: "L'Ami Jean restaurant Paris",
+    isNew: true,
   },
   {
-    address: "Septime, 80 Rue de Charonne, 75011 Paris",
-    name: "Septime",
-    city: "Paris, France",
-    priceRange: "€€€€",
-    query: "Septime Paris",
+    address: "54 Rue de Verneuil, 75007 Paris",
+    name: "Le Comptoir du Relais", 
+    city: "6e arrondissement",
+    priceRange: "€€",
+    query: "Le Comptoir du Relais restaurant Paris",
   },
   {
-    address: "Frenchie, 5 Rue du Nil, 75002 Paris",
+    address: "3 Rue Clauzel, 75009 Paris",
     name: "Frenchie",
-    city: "Paris, France",
+    city: "2e arrondissement", 
     priceRange: "€€€",
-    query: "Frenchie Paris",
+    query: "Frenchie restaurant Paris",
   },
 ]
 
@@ -92,11 +98,6 @@ const mapStyles = [
 ]
 
 type ViewType = "list" | "mix" | "map"
-
-interface RestaurantWithPhoto extends Restaurant {
-  photoUrl?: string
-  marker?: any
-}
 
 export default function RestaurantMap() {
   const mapRef = useRef<HTMLDivElement>(null)
@@ -242,130 +243,123 @@ export default function RestaurantMap() {
     const newFullscreenState = !isFullscreen
     setIsFullscreen(newFullscreenState)
 
-    // Utiliser requestAnimationFrame pour s'assurer que le DOM est mis à jour
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        if (map && window.google) {
-          // Forcer le redimensionnement de la carte
-          window.google.maps.event.trigger(map, "resize")
+    // Délai pour permettre au CSS de s'appliquer puis redimensionner la carte
+    setTimeout(() => {
+      if (map && window.google) {
+        // Forcer le redimensionnement de la carte
+        window.google.maps.event.trigger(map, "resize")
 
-          // Recentrer sur Paris avec un léger délai
-          setTimeout(() => {
-            const parisCenter = { lat: 48.8566, lng: 2.3522 }
-            map.setCenter(parisCenter)
-            map.setZoom(newFullscreenState ? 12 : 13)
-          }, 100)
-        }
-      }, 50)
-    })
+        // Recentrer sur Paris
+        const parisCenter = { lat: 48.8566, lng: 2.3522 }
+        map.setCenter(parisCenter)
+        map.setZoom(newFullscreenState ? 12 : 13)
+      }
+    }, 100)
   }
 
   return (
     <div className="bg-white min-h-screen">
-      {!isFullscreen ? (
-        <>
-          {/* Barre de recherche */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="max-w-4xl mx-auto">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Rechercher sur Lefoodbob"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+      {/* Barre de recherche - cachée en mode plein écran */}
+      {!isFullscreen && (
+        <div className="p-6 border-b border-gray-200">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Rechercher sur Lefoodbob"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
           </div>
-
-          <div className="max-w-4xl mx-auto p-6">
-            {/* Section Autour de moi */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Autour de moi</h2>
-                <button className="text-blue-600 font-medium hover:text-blue-700">Tout Voir</button>
-              </div>
-
-              {/* Carte avec bouton agrandir */}
-              <div className="relative w-full h-96 rounded-lg overflow-hidden border border-gray-200">
-                <div ref={mapRef} className="w-full h-full" />
-                <button
-                  onClick={toggleFullscreen}
-                  className="absolute top-4 right-4 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors"
-                >
-                  Agrandir le plan
-                </button>
-              </div>
-            </div>
-
-            {/* Section Mes favoris */}
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Mes favoris</h2>
-                <button className="text-blue-600 font-medium hover:text-blue-700">Découvrir la liste</button>
-              </div>
-
-              {/* Liste horizontale des restaurants */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {restaurantsWithPhotos.slice(0, 3).map((restaurant, index) => (
-                  <div key={index} className="cursor-pointer group" onClick={() => handleRestaurantClick(restaurant)}>
-                    <div className="flex bg-white rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200">
-                      <div className="flex-1 p-4">
-                        {restaurant.isNew && (
-                          <div className="inline-block bg-red-500 text-white text-xs font-bold px-2 py-1 rounded mb-2 uppercase">
-                            NOUVEAU
-                          </div>
-                        )}
-                        <h3 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                          {restaurant.name}
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-1">{restaurant.city}</p>
-                        <p className="text-gray-500 text-sm">{restaurant.priceRange}</p>
-                      </div>
-                      <div className="w-24 h-24 flex-shrink-0">
-                        <img
-                          src={restaurant.photoUrl || "/placeholder.svg"}
-                          alt={restaurant.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            target.src = "https://placehold.co/96x96/cccccc/333333?text=Image"
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
-      ) : (
-        /* Mode plein écran */
-        <div className="fixed inset-0 z-50 bg-white">
-          <div
-            ref={mapRef}
-            className="w-full h-full"
-            style={{
-              width: "100vw",
-              height: "100vh",
-              position: "relative",
-            }}
-          />
-
-          {/* Bouton pour revenir avec texte */}
-          <button
-            onClick={toggleFullscreen}
-            className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white hover:bg-gray-50 border border-gray-300 rounded-full px-6 py-3 flex items-center gap-2 shadow-lg transition-colors z-10"
-            title="Revenir à la liste"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">Revenir à la liste</span>
-          </button>
         </div>
       )}
+
+      {/* Contenu principal */}
+      <div className={isFullscreen ? "hidden" : "max-w-4xl mx-auto p-6"}>
+        {/* Section Autour de moi */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Autour de moi</h2>
+            <button className="text-blue-600 font-medium hover:text-blue-700">Tout Voir</button>
+          </div>
+
+          {/* Carte unique - positionnée conditionnellement */}
+          <div 
+            className={`${
+              isFullscreen 
+                ? "fixed inset-0 z-50 bg-white" 
+                : "relative w-full h-96 rounded-lg overflow-hidden border border-gray-200 mb-6"
+            }`}
+          >
+            <div ref={mapRef} className="w-full h-full" />
+            
+            <button
+              onClick={toggleFullscreen}
+              className={`${
+                isFullscreen
+                  ? "fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white hover:bg-gray-50 border border-gray-300 rounded-full px-6 py-3 flex items-center gap-2 shadow-lg transition-colors z-10"
+                  : "absolute top-4 right-4 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors"
+              }`}
+              title={isFullscreen ? "Revenir à la liste" : "Agrandir le plan"}
+            >
+              {isFullscreen ? (
+                <>
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="text-sm font-medium">Revenir à la liste</span>
+                </>
+              ) : (
+                "Agrandir le plan"
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Section Mes favoris */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Mes favoris</h2>
+            <button className="text-blue-600 font-medium hover:text-blue-700">Tout Voir</button>
+          </div>
+
+          <div className="grid gap-4">
+            {restaurantsWithPhotos.slice(0, 3).map((restaurant, index) => (
+              <div
+                key={index}
+                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => handleRestaurantClick(restaurant)}
+              >
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    {restaurant.isNew && (
+                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded mb-2 inline-block font-semibold">
+                        NOUVEAU
+                      </span>
+                    )}
+                    <h3 className="font-bold text-lg text-gray-900 mb-1">{restaurant.name}</h3>
+                    <p className="text-gray-600 text-sm mb-1">{restaurant.city}</p>
+                    <p className="text-gray-600 text-sm">{restaurant.priceRange} • Cuisine moderne</p>
+                  </div>
+
+                  <div className="w-24 h-24 flex-shrink-0">
+                    <img
+                      src={restaurant.photoUrl || "/placeholder.svg"}
+                      alt={restaurant.name}
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = "https://placehold.co/96x96/cccccc/333333?text=Image"
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
