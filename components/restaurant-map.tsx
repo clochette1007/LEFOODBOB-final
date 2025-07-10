@@ -121,11 +121,11 @@ export default function RestaurantMap() {
     
     switch(distinction) {
       case "michelin-1":
-        return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/>`
+        return "⭐"
       case "michelin-2":
-        return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/>`
+        return "⭐⭐"
       case "michelin-3":
-        return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/>`
+        return "⭐⭐⭐"
       case "michelin-bib":
         return `<img src="${michelinLogo}" alt="Bib Gourmand" style="width: 14px; height: 14px; display: inline-block;"/>`
       case "michelin-assiette":
@@ -141,25 +141,13 @@ export default function RestaurantMap() {
 
   // Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)
   const renderDistinctionIconJSX = (distinction: string) => {
-    const michelinCount = distinction === "michelin-1" ? 1 : distinction === "michelin-2" ? 2 : distinction === "michelin-3" ? 3 : 0
-    
-    if (michelinCount > 0) {
-      return (
-        <>
-          {Array.from({ length: michelinCount }, (_, i) => (
-            <img 
-              key={i}
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-              alt="Michelin" 
-              className="w-3.5 h-3.5 inline-block"
-              style={{ marginLeft: i > 0 ? '2px' : '0' }}
-            />
-          ))}
-        </>
-      )
-    }
-    
     switch(distinction) {
+      case "michelin-1":
+        return <span>⭐</span>
+      case "michelin-2":
+        return <span>⭐⭐</span>
+      case "michelin-3":
+        return <span>⭐⭐⭐</span>
       case "michelin-bib":
         return (
           <img 
@@ -218,7 +206,8 @@ export default function RestaurantMap() {
     const handleClickOutside = (event: MouseEvent) => {
       if (showMichelinDropdown) {
         const target = event.target as HTMLElement
-        if (!target.closest('.relative')) {
+        const dropdownContainer = target.closest('[data-dropdown="michelin"]')
+        if (!dropdownContainer) {
           setShowMichelinDropdown(false)
         }
       }
@@ -518,7 +507,7 @@ export default function RestaurantMap() {
                 <span className="text-sm font-medium text-gray-700 mr-2">Filtrer par distinction :</span>
                 
                 {/* Menu déroulant Michelin */}
-                <div className="relative">
+                <div className="relative" data-dropdown="michelin">
                   <button
                     onClick={() => setShowMichelinDropdown(!showMichelinDropdown)}
                     className={`px-3 py-1 rounded-full text-xs border transition-colors flex items-center gap-1 ${
@@ -537,13 +526,13 @@ export default function RestaurantMap() {
                   </button>
                   
                   {showMichelinDropdown && (
-                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 min-w-[180px]">
+                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 min-w-[180px]">
                       {[
-                        { key: "michelin-1", icon: 1, label: "1 étoile" },
-                        { key: "michelin-2", icon: 2, label: "2 étoiles" },
-                        { key: "michelin-3", icon: 3, label: "3 étoiles" },
-                        { key: "michelin-bib", icon: "bib", label: "Bib Gourmand" },
-                        { key: "michelin-assiette", icon: "assiette", label: "Assiette" },
+                        { key: "michelin-1", label: "⭐" },
+                        { key: "michelin-2", label: "⭐⭐" },
+                        { key: "michelin-3", label: "⭐⭐⭐" },
+                        { key: "michelin-bib", label: "Bib Gourmand" },
+                        { key: "michelin-assiette", label: "Assiette" },
                       ].map((option) => (
                         <label key={option.key} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer">
                           <input
@@ -559,23 +548,18 @@ export default function RestaurantMap() {
                             className="w-3 h-3"
                           />
                           <div className="flex items-center gap-1">
-                            {typeof option.icon === 'number' ? (
-                              Array.from({ length: option.icon }, (_, i) => (
+                            {option.key.includes('bib') || option.key.includes('assiette') ? (
+                              <>
                                 <img 
-                                  key={i}
                                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
                                   alt="Michelin" 
                                   className="w-3 h-3"
                                 />
-                              ))
+                                <span className="text-xs">{option.label}</span>
+                              </>
                             ) : (
-                              <img 
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                                alt="Michelin" 
-                                className="w-3 h-3"
-                              />
+                              <span className="text-sm">{option.label}</span>
                             )}
-                            <span className="text-xs">{option.label}</span>
                           </div>
                         </label>
                       ))}
