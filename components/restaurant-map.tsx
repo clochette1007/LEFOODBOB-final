@@ -99,14 +99,52 @@ export default function RestaurantMap() {
 
   // Fonction pour obtenir les icônes des distinctions
   const getDistinctionIcon = (distinction: string) => {
-    const icons = {
-      "michelin-1": "⭐",
-      "michelin-2": "⭐⭐", 
-      "michelin-3": "⭐⭐⭐",
-      "50best": "🏆",
-      "liste": "📋"
+    const michelinLogo = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png"
+    
+    switch(distinction) {
+      case "michelin-1":
+        return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/>`
+      case "michelin-2":
+        return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/>`
+      case "michelin-3":
+        return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/>`
+      case "50best":
+        return "🏆"
+      case "liste":
+        return "📋"
+      default:
+        return ""
     }
-    return icons[distinction as keyof typeof icons] || ""
+  }
+
+  // Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)
+  const renderDistinctionIconJSX = (distinction: string) => {
+    const michelinCount = distinction === "michelin-1" ? 1 : distinction === "michelin-2" ? 2 : distinction === "michelin-3" ? 3 : 0
+    
+    if (michelinCount > 0) {
+      return (
+        <>
+          {Array.from({ length: michelinCount }, (_, i) => (
+            <img 
+              key={i}
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+              alt="Michelin" 
+              className="w-3.5 h-3.5 inline-block"
+              style={{ marginLeft: i > 0 ? '2px' : '0' }}
+            />
+          ))}
+        </>
+      )
+    }
+    
+    switch(distinction) {
+      case "50best":
+        return <span>🏆</span>
+      case "liste":
+        return <span>📋</span>
+      default:
+        return null
+    }
   }
 
   // Fonction pour obtenir le texte des distinctions
@@ -125,7 +163,7 @@ export default function RestaurantMap() {
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
       <span key={index} className="inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full mr-1">
-        {getDistinctionIcon(distinction)} {getDistinctionText(distinction)}
+        {renderDistinctionIconJSX(distinction)} {getDistinctionText(distinction)}
       </span>
     ))
   }
@@ -417,9 +455,60 @@ export default function RestaurantMap() {
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm font-medium text-gray-700 mr-2">Filtrer par distinction :</span>
                 {[
-                  { key: "michelin-1", label: "⭐ 1 étoile" },
-                  { key: "michelin-2", label: "⭐⭐ 2 étoiles" },
-                  { key: "michelin-3", label: "⭐⭐⭐ 3 étoiles" },
+                  { 
+                    key: "michelin-1", 
+                    label: (
+                      <span className="flex items-center gap-1">
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                          alt="Michelin" 
+                          className="w-3 h-3"
+                        />
+                        1 étoile
+                      </span>
+                    )
+                  },
+                  { 
+                    key: "michelin-2", 
+                    label: (
+                      <span className="flex items-center gap-1">
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                          alt="Michelin" 
+                          className="w-3 h-3"
+                        />
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                          alt="Michelin" 
+                          className="w-3 h-3"
+                        />
+                        2 étoiles
+                      </span>
+                    )
+                  },
+                  { 
+                    key: "michelin-3", 
+                    label: (
+                      <span className="flex items-center gap-1">
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                          alt="Michelin" 
+                          className="w-3 h-3"
+                        />
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                          alt="Michelin" 
+                          className="w-3 h-3"
+                        />
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                          alt="Michelin" 
+                          className="w-3 h-3"
+                        />
+                        3 étoiles
+                      </span>
+                    )
+                  },
                   { key: "50best", label: "🏆 50 Best" },
                   { key: "liste", label: "📋 Référencé" },
                 ].map((filter) => (
