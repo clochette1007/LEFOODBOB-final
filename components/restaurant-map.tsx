@@ -16,6 +16,7 @@ interface Restaurant {
   city: string
   priceRange: string
   query: string
+  distinctions: string[] // ["michelin-1", "michelin-2", "michelin-3", "50best", "liste", etc.]
 }
 
 interface RestaurantWithPhoto extends Restaurant {
@@ -30,6 +31,31 @@ const restaurants: Restaurant[] = [
     city: "4e arrondissement",
     priceRange: "€€€€",
     query: "Restaurant Aldéhyde Paris",
+    distinctions: ["michelin-1"],
+  },
+  {
+    address: "84 Rue de Varenne, 75007 Paris",
+    name: "L'Arpège",
+    city: "7e arrondissement",
+    priceRange: "€€€€",
+    query: "L'Arpège Alain Passard Paris",
+    distinctions: ["michelin-3", "50best"],
+  },
+  {
+    address: "8 Avenue Dutuit, 75008 Paris",
+    name: "Alléno Paris",
+    city: "8e arrondissement",
+    priceRange: "€€€€", 
+    query: "Alléno Paris Pavillon Ledoyen",
+    distinctions: ["michelin-3"],
+  },
+  {
+    address: "41 Rue Saint-André-des-Arts, 75006 Paris",
+    name: "Allard",
+    city: "6e arrondissement",
+    priceRange: "€€€",
+    query: "Restaurant Allard Paris Ducasse",
+    distinctions: ["liste"],
   },
 ]
 
@@ -68,6 +94,41 @@ export default function RestaurantMap() {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationTitle, setLocationTitle] = useState("Paris")
   const [isMapInitialized, setIsMapInitialized] = useState(false)
+  const [showFullList, setShowFullList] = useState(false)
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+
+  // Fonction pour obtenir les icônes des distinctions
+  const getDistinctionIcon = (distinction: string) => {
+    const icons = {
+      "michelin-1": "⭐",
+      "michelin-2": "⭐⭐", 
+      "michelin-3": "⭐⭐⭐",
+      "50best": "🏆",
+      "liste": "📋"
+    }
+    return icons[distinction as keyof typeof icons] || ""
+  }
+
+  // Fonction pour obtenir le texte des distinctions
+  const getDistinctionText = (distinction: string) => {
+    const texts = {
+      "michelin-1": "1 étoile Michelin",
+      "michelin-2": "2 étoiles Michelin",
+      "michelin-3": "3 étoiles Michelin", 
+      "50best": "50 Best",
+      "liste": "Référencé"
+    }
+    return texts[distinction as keyof typeof texts] || ""
+  }
+
+  // Fonction pour afficher les distinctions d'un restaurant
+  const renderDistinctions = (distinctions: string[]) => {
+    return distinctions.map((distinction, index) => (
+      <span key={index} className="inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full mr-1">
+        {getDistinctionIcon(distinction)} {getDistinctionText(distinction)}
+      </span>
+    ))
+  }
 
   useEffect(() => {
     // Demander la géolocalisation
@@ -226,12 +287,19 @@ export default function RestaurantMap() {
   }, [])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
+    const distinctionsHtml = restaurant.distinctions.map(distinction => 
+      `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 12px; margin-right: 4px;">
+        ${getDistinctionIcon(distinction)} ${getDistinctionText(distinction)}
+      </span>`
+    ).join('')
+
     return `
     <div style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px;">
       <div style="flex: 1;">
         <h3 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0 0 4px 0;">${restaurant.name}</h3>
         <p style="font-size: 14px; color: #6b7280; margin: 0 0 4px 0;">${restaurant.city}</p>
-        <p style="font-size: 14px; color: #6b7280; margin: 0;">${restaurant.priceRange} • Cuisine gastronomique ⭐</p>
+        <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">${restaurant.priceRange} • Cuisine gastronomique</p>
+        <div style="margin-top: 8px;">${distinctionsHtml}</div>
       </div>
       <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
         <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/333333?text=Image';">
@@ -282,14 +350,20 @@ export default function RestaurantMap() {
           </div>
         </div>
 
-        {/* Section Restaurant étoilé */}
+        {/* Section Liste */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Restaurant étoilé</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Liste</h2>
+            <button 
+              onClick={() => setShowFullList(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Tout voir
+            </button>
           </div>
 
           <div className="grid gap-4">
-            {restaurantsWithPhotos.map((restaurant, index) => (
+            {restaurantsWithPhotos.slice(0, 2).map((restaurant, index) => (
               <div
                 key={index}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
@@ -299,7 +373,10 @@ export default function RestaurantMap() {
                   <div className="flex-1">
                     <h3 className="font-bold text-lg text-gray-900 mb-1">{restaurant.name}</h3>
                     <p className="text-gray-600 text-sm mb-1">{restaurant.city}</p>
-                    <p className="text-gray-600 text-sm">{restaurant.priceRange} • Cuisine gastronomique ⭐</p>
+                    <p className="text-gray-600 text-sm mb-2">{restaurant.priceRange} • Cuisine gastronomique</p>
+                    <div className="flex flex-wrap gap-1">
+                      {renderDistinctions(restaurant.distinctions)}
+                    </div>
                   </div>
 
                   <div className="w-24 h-24 flex-shrink-0">
@@ -319,6 +396,108 @@ export default function RestaurantMap() {
           </div>
         </div>
       </div>
+
+      {/* Modal Liste complète */}
+      {showFullList && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">Restaurants LEFOODBOB</h2>
+                <button 
+                  onClick={() => setShowFullList(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Filtres */}
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm font-medium text-gray-700 mr-2">Filtrer par distinction :</span>
+                {[
+                  { key: "michelin-1", label: "⭐ 1 étoile" },
+                  { key: "michelin-2", label: "⭐⭐ 2 étoiles" },
+                  { key: "michelin-3", label: "⭐⭐⭐ 3 étoiles" },
+                  { key: "50best", label: "🏆 50 Best" },
+                  { key: "liste", label: "📋 Référencé" },
+                ].map((filter) => (
+                  <button
+                    key={filter.key}
+                    onClick={() => {
+                      setSelectedFilters(prev => 
+                        prev.includes(filter.key) 
+                          ? prev.filter(f => f !== filter.key)
+                          : [...prev, filter.key]
+                      )
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                      selectedFilters.includes(filter.key)
+                        ? "bg-blue-100 border-blue-300 text-blue-800"
+                        : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+                {selectedFilters.length > 0 && (
+                  <button
+                    onClick={() => setSelectedFilters([])}
+                    className="px-3 py-1 rounded-full text-xs bg-red-100 border border-red-300 text-red-800 hover:bg-red-200"
+                  >
+                    Effacer filtres
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Liste des restaurants */}
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="grid gap-4">
+                {restaurantsWithPhotos
+                  .filter(restaurant => 
+                    selectedFilters.length === 0 || 
+                    restaurant.distinctions.some(d => selectedFilters.includes(d))
+                  )
+                  .map((restaurant, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                      onClick={() => {
+                        handleRestaurantClick(restaurant)
+                        setShowFullList(false)
+                      }}
+                    >
+                      <div className="flex gap-4">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg text-gray-900 mb-1">{restaurant.name}</h3>
+                          <p className="text-gray-600 text-sm mb-1">{restaurant.city}</p>
+                          <p className="text-gray-600 text-sm mb-2">{restaurant.priceRange} • Cuisine gastronomique</p>
+                          <div className="flex flex-wrap gap-1">
+                            {renderDistinctions(restaurant.distinctions)}
+                          </div>
+                        </div>
+
+                        <div className="w-24 h-24 flex-shrink-0">
+                          <img
+                            src={restaurant.photoUrl || "/placeholder.svg"}
+                            alt={restaurant.name}
+                            className="w-full h-full object-cover rounded-lg"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.src = "https://placehold.co/96x96/cccccc/333333?text=Image"
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
