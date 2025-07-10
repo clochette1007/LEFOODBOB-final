@@ -57,6 +57,22 @@ const restaurants: Restaurant[] = [
     query: "Restaurant Allard Paris Ducasse",
     distinctions: ["liste"],
   },
+  {
+    address: "109 Rue du Bac, 75007 Paris",
+    name: "L'Ami Jean",
+    city: "7e arrondissement",
+    priceRange: "€€",
+    query: "L'Ami Jean Paris",
+    distinctions: ["michelin-bib"],
+  },
+  {
+    address: "15 Place Dauphine, 75001 Paris",
+    name: "Au Bourguignon du Marais",
+    city: "1er arrondissement",
+    priceRange: "€€",
+    query: "Au Bourguignon du Marais Paris",
+    distinctions: ["michelin-assiette"],
+  },
 ]
 
 const mapStyles = [
@@ -96,10 +112,12 @@ export default function RestaurantMap() {
   const [isMapInitialized, setIsMapInitialized] = useState(false)
   const [showFullList, setShowFullList] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [showMichelinDropdown, setShowMichelinDropdown] = useState(false)
 
   // Fonction pour obtenir les icônes des distinctions
   const getDistinctionIcon = (distinction: string) => {
     const michelinLogo = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png"
+    const fiftyBestLogo = "https://cdn.worldsbestrestaurants.com/assets/images/50-best-logo.svg"
     
     switch(distinction) {
       case "michelin-1":
@@ -108,8 +126,12 @@ export default function RestaurantMap() {
         return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/>`
       case "michelin-3":
         return `<img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/><img src="${michelinLogo}" alt="Michelin" style="width: 14px; height: 14px; display: inline-block; margin-left: 2px;"/>`
+      case "michelin-bib":
+        return `<img src="${michelinLogo}" alt="Bib Gourmand" style="width: 14px; height: 14px; display: inline-block;"/>`
+      case "michelin-assiette":
+        return `<img src="${michelinLogo}" alt="Assiette Michelin" style="width: 14px; height: 14px; display: inline-block;"/>`
       case "50best":
-        return "🏆"
+        return `<img src="${fiftyBestLogo}" alt="50 Best" style="width: 14px; height: 14px; display: inline-block;"/>`
       case "liste":
         return "📋"
       default:
@@ -138,8 +160,30 @@ export default function RestaurantMap() {
     }
     
     switch(distinction) {
+      case "michelin-bib":
+        return (
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+            alt="Bib Gourmand" 
+            className="w-3.5 h-3.5 inline-block"
+          />
+        )
+      case "michelin-assiette":
+        return (
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+            alt="Assiette Michelin" 
+            className="w-3.5 h-3.5 inline-block"
+          />
+        )
       case "50best":
-        return <span>🏆</span>
+        return (
+          <img 
+            src="https://cdn.worldsbestrestaurants.com/assets/images/50-best-logo.svg" 
+            alt="50 Best" 
+            className="w-3.5 h-3.5 inline-block"
+          />
+        )
       case "liste":
         return <span>📋</span>
       default:
@@ -152,7 +196,9 @@ export default function RestaurantMap() {
     const texts = {
       "michelin-1": "1 étoile Michelin",
       "michelin-2": "2 étoiles Michelin",
-      "michelin-3": "3 étoiles Michelin", 
+      "michelin-3": "3 étoiles Michelin",
+      "michelin-bib": "Bib Gourmand",
+      "michelin-assiette": "Assiette Michelin", 
       "50best": "50 Best",
       "liste": "Référencé"
     }
@@ -167,6 +213,22 @@ export default function RestaurantMap() {
       </span>
     ))
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showMichelinDropdown) {
+        const target = event.target as HTMLElement
+        if (!target.closest('.relative')) {
+          setShowMichelinDropdown(false)
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showMichelinDropdown])
 
   useEffect(() => {
     // Demander la géolocalisation
@@ -454,82 +516,113 @@ export default function RestaurantMap() {
               {/* Filtres */}
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm font-medium text-gray-700 mr-2">Filtrer par distinction :</span>
-                {[
-                  { 
-                    key: "michelin-1", 
-                    label: (
-                      <span className="flex items-center gap-1">
-                        <img 
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                          alt="Michelin" 
-                          className="w-3 h-3"
-                        />
-                        1 étoile
-                      </span>
-                    )
-                  },
-                  { 
-                    key: "michelin-2", 
-                    label: (
-                      <span className="flex items-center gap-1">
-                        <img 
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                          alt="Michelin" 
-                          className="w-3 h-3"
-                        />
-                        <img 
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                          alt="Michelin" 
-                          className="w-3 h-3"
-                        />
-                        2 étoiles
-                      </span>
-                    )
-                  },
-                  { 
-                    key: "michelin-3", 
-                    label: (
-                      <span className="flex items-center gap-1">
-                        <img 
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                          alt="Michelin" 
-                          className="w-3 h-3"
-                        />
-                        <img 
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                          alt="Michelin" 
-                          className="w-3 h-3"
-                        />
-                        <img 
-                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                          alt="Michelin" 
-                          className="w-3 h-3"
-                        />
-                        3 étoiles
-                      </span>
-                    )
-                  },
-                  { key: "50best", label: "🏆 50 Best" },
-                  { key: "liste", label: "📋 Référencé" },
-                ].map((filter) => (
+                
+                {/* Menu déroulant Michelin */}
+                <div className="relative">
                   <button
-                    key={filter.key}
-                    onClick={() => {
-                      setSelectedFilters(prev => 
-                        prev.includes(filter.key) 
-                          ? prev.filter(f => f !== filter.key)
-                          : [...prev, filter.key]
-                      )
-                    }}
-                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                      selectedFilters.includes(filter.key)
+                    onClick={() => setShowMichelinDropdown(!showMichelinDropdown)}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors flex items-center gap-1 ${
+                      selectedFilters.some(f => f.startsWith('michelin-'))
                         ? "bg-blue-100 border-blue-300 text-blue-800"
                         : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
-                    {filter.label}
+                    <img 
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                      alt="Michelin" 
+                      className="w-3 h-3"
+                    />
+                    Michelin
+                    <span className="ml-1">▼</span>
                   </button>
-                ))}
+                  
+                  {showMichelinDropdown && (
+                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 min-w-[180px]">
+                      {[
+                        { key: "michelin-1", icon: 1, label: "1 étoile" },
+                        { key: "michelin-2", icon: 2, label: "2 étoiles" },
+                        { key: "michelin-3", icon: 3, label: "3 étoiles" },
+                        { key: "michelin-bib", icon: "bib", label: "Bib Gourmand" },
+                        { key: "michelin-assiette", icon: "assiette", label: "Assiette" },
+                      ].map((option) => (
+                        <label key={option.key} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedFilters.includes(option.key)}
+                            onChange={() => {
+                              setSelectedFilters(prev => 
+                                prev.includes(option.key) 
+                                  ? prev.filter(f => f !== option.key)
+                                  : [...prev, option.key]
+                              )
+                            }}
+                            className="w-3 h-3"
+                          />
+                          <div className="flex items-center gap-1">
+                            {typeof option.icon === 'number' ? (
+                              Array.from({ length: option.icon }, (_, i) => (
+                                <img 
+                                  key={i}
+                                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                                  alt="Michelin" 
+                                  className="w-3 h-3"
+                                />
+                              ))
+                            ) : (
+                              <img 
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
+                                alt="Michelin" 
+                                className="w-3 h-3"
+                              />
+                            )}
+                            <span className="text-xs">{option.label}</span>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Autres filtres */}
+                <button
+                  onClick={() => {
+                    setSelectedFilters(prev => 
+                      prev.includes("50best") 
+                        ? prev.filter(f => f !== "50best")
+                        : [...prev, "50best"]
+                    )
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs border transition-colors flex items-center gap-1 ${
+                    selectedFilters.includes("50best")
+                      ? "bg-blue-100 border-blue-300 text-blue-800"
+                      : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  <img 
+                    src="https://cdn.worldsbestrestaurants.com/assets/images/50-best-logo.svg" 
+                    alt="50 Best" 
+                    className="w-3 h-3"
+                  />
+                  50 Best
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSelectedFilters(prev => 
+                      prev.includes("liste") 
+                        ? prev.filter(f => f !== "liste")
+                        : [...prev, "liste"]
+                    )
+                  }}
+                  className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                    selectedFilters.includes("liste")
+                      ? "bg-blue-100 border-blue-300 text-blue-800"
+                      : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  📋 Référencé
+                </button>
+
                 {selectedFilters.length > 0 && (
                   <button
                     onClick={() => setSelectedFilters([])}
