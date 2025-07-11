@@ -192,25 +192,39 @@ export default function RestaurantMap() {
   // Fonction pour obtenir le texte des distinctions
   const getDistinctionText = (distinction: string) => {
     const texts = {
-      "michelin-1": "1 étoile Michelin",
-      "michelin-2": "2 étoiles Michelin",
-      "michelin-3": "3 étoiles Michelin",
+      "michelin-1": "Michelin",
+      "michelin-2": "Michelin",
+      "michelin-3": "Michelin",
       "michelin-bib": "Bib Gourmand",
       "michelin-assiette": "Assiette Michelin", 
       "50best": "50 Best",
-      "gaultmillau-1": "1 toque Gault et Millau",
-      "gaultmillau-2": "2 toques Gault et Millau",
-      "gaultmillau-3": "3 toques Gault et Millau",
-      "gaultmillau-4": "4 toques Gault et Millau",
-      "gaultmillau-5": "5 toques Gault et Millau",
+      "gaultmillau-1": "1 toque",
+      "gaultmillau-2": "2 toques",
+      "gaultmillau-3": "3 toques",
+      "gaultmillau-4": "4 toques",
+      "gaultmillau-5": "5 toques",
     }
     return texts[distinction as keyof typeof texts] || ""
+  }
+
+  // Fonction pour obtenir la couleur de badge selon la distinction
+  const getBadgeColor = (distinction: string) => {
+    if (distinction.startsWith('michelin-')) {
+      return "bg-red-100 text-red-800" // Rouge pastel
+    }
+    if (distinction.startsWith('gaultmillau-')) {
+      return "bg-yellow-100 text-yellow-800" // Jaune
+    }
+    if (distinction === '50best') {
+      return "bg-purple-100 text-purple-800" // Violet
+    }
+    return "bg-gray-100 text-gray-800" // Défaut
   }
 
   // Fonction pour afficher les distinctions d'un restaurant
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
-      <span key={index} className="inline-flex items-center gap-1 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full mr-1">
+      <span key={index} className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full mr-1 ${getBadgeColor(distinction)}`}>
         {renderDistinctionIconJSX(distinction)} {getDistinctionText(distinction)}
       </span>
     ))
@@ -397,11 +411,25 @@ export default function RestaurantMap() {
   }, [])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
-    const distinctionsHtml = restaurant.distinctions.map(distinction => 
-      `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 12px; margin-right: 4px;">
+    const distinctionsHtml = restaurant.distinctions.map(distinction => {
+      let bgColor = "#f3f4f6" // gris par défaut
+      let textColor = "#374151"
+      
+      if (distinction.startsWith('michelin-')) {
+        bgColor = "#fecaca" // rouge pastel
+        textColor = "#991b1b"
+      } else if (distinction.startsWith('gaultmillau-')) {
+        bgColor = "#fef3c7" // jaune
+        textColor = "#92400e"
+      } else if (distinction === '50best') {
+        bgColor = "#e9d5ff" // violet
+        textColor = "#581c87"
+      }
+      
+      return `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; background-color: ${bgColor}; color: ${textColor}; padding: 2px 6px; border-radius: 12px; margin-right: 4px;">
         ${getDistinctionIcon(distinction)} ${getDistinctionText(distinction)}
       </span>`
-    ).join('')
+    }).join('')
 
     return `
     <div style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px;">
