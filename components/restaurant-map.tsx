@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { Search } from "lucide-react"
+import { useRouter } from 'next/navigation'
 
 declare global {
   interface Window {
@@ -102,6 +103,7 @@ const mapStyles = [
 ]
 
 export default function RestaurantMap() {
+  const router = useRouter()
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
   const [restaurantsWithPhotos, setRestaurantsWithPhotos] = useState<RestaurantWithPhoto[]>([])
@@ -114,6 +116,27 @@ export default function RestaurantMap() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showMichelinDropdown, setShowMichelinDropdown] = useState(false)
   const [showGaultMillauDropdown, setShowGaultMillauDropdown] = useState(false)
+
+  // Fonction pour convertir le nom en slug
+  function createSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .replace(/[àâä]/g, 'a')
+      .replace(/[éèêë]/g, 'e')
+      .replace(/[îï]/g, 'i')
+      .replace(/[ôö]/g, 'o')
+      .replace(/[ùûü]/g, 'u')
+      .replace(/[ç]/g, 'c')
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+  }
+
+  // Fonction pour naviguer vers la page du restaurant
+  const navigateToRestaurant = (restaurant: Restaurant) => {
+    const slug = createSlug(restaurant.name)
+    router.push(`/restaurant/${slug}`)
+  }
 
   // Fonction pour obtenir les icônes des distinctions
   const getDistinctionIcon = (distinction: string) => {
@@ -491,7 +514,7 @@ export default function RestaurantMap() {
               <div
                 key={index}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => handleRestaurantClick(restaurant)}
+                onClick={() => navigateToRestaurant(restaurant)}
               >
                 <div className="flex gap-4">
                   <div className="flex-1">
@@ -675,10 +698,7 @@ export default function RestaurantMap() {
                     <div
                       key={index}
                       className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                      onClick={() => {
-                        handleRestaurantClick(restaurant)
-                        setShowFullList(false)
-                      }}
+                      onClick={() => navigateToRestaurant(restaurant)}
                     >
                       <div className="flex gap-4">
                         <div className="flex-1">
