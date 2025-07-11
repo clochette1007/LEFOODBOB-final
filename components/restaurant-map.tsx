@@ -117,8 +117,6 @@ export default function RestaurantMap() {
 
   // Fonction pour obtenir les icônes des distinctions
   const getDistinctionIcon = (distinction: string) => {
-    const michelinLogo = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png"
-    
     switch(distinction) {
       case "michelin-1":
         return "⭐"
@@ -127,9 +125,9 @@ export default function RestaurantMap() {
       case "michelin-3":
         return "⭐⭐⭐"
       case "michelin-bib":
-        return `<img src="${michelinLogo}" alt="Bib Gourmand" style="width: 14px; height: 14px; display: inline-block;"/>`
+        return "😋"
       case "michelin-assiette":
-        return `<img src="${michelinLogo}" alt="Assiette Michelin" style="width: 14px; height: 14px; display: inline-block;"/>`
+        return "🍽️"
       case "50best":
         return "⚫"
       case "gaultmillau-1":
@@ -157,21 +155,9 @@ export default function RestaurantMap() {
       case "michelin-3":
         return <span>⭐⭐⭐</span>
       case "michelin-bib":
-        return (
-          <img 
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-            alt="Bib Gourmand" 
-            className="w-3.5 h-3.5 inline-block"
-          />
-        )
+        return <span>😋</span>
       case "michelin-assiette":
-        return (
-          <img 
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-            alt="Assiette Michelin" 
-            className="w-3.5 h-3.5 inline-block"
-          />
-        )
+        return <span>🍽️</span>
       case "50best":
         return <span>⚫</span>
       case "gaultmillau-1":
@@ -576,8 +562,8 @@ export default function RestaurantMap() {
                         { key: "michelin-1", label: "⭐" },
                         { key: "michelin-2", label: "⭐⭐" },
                         { key: "michelin-3", label: "⭐⭐⭐" },
-                        { key: "michelin-bib", label: "Bib Gourmand" },
-                        { key: "michelin-assiette", label: "Assiette" },
+                        { key: "michelin-bib", label: "😋 Bib Gourmand" },
+                        { key: "michelin-assiette", label: "🍽️ Assiette" },
                       ].map((option) => (
                         <label key={option.key} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer">
                           <input
@@ -593,18 +579,7 @@ export default function RestaurantMap() {
                             className="w-3 h-3"
                           />
                           <div className="flex items-center gap-1">
-                            {option.key.includes('bib') || option.key.includes('assiette') ? (
-                              <>
-                                <img 
-                                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                                  alt="Michelin" 
-                                  className="w-3 h-3"
-                                />
-                                <span className="text-xs">{option.label}</span>
-                              </>
-                            ) : (
-                              <span className="text-sm">{option.label}</span>
-                            )}
+                            <span className="text-sm">{option.label}</span>
                           </div>
                         </label>
                       ))}
