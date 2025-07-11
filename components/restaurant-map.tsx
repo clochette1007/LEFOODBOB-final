@@ -1,9 +1,17 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState, useRef, useEffect } from 'react'
 import { Loader } from "@googlemaps/js-api-loader"
 import { Search } from "lucide-react"
 import { useRouter } from 'next/navigation'
+import { 
+  restaurants, 
+  createSlug, 
+  getDistinctionIcon, 
+  getDistinctionText, 
+  getBadgeColor, 
+  type Restaurant 
+} from '@/lib/restaurants'
 
 declare global {
   interface Window {
@@ -11,70 +19,10 @@ declare global {
   }
 }
 
-interface Restaurant {
-  address: string
-  name: string
-  city: string
-  priceRange: string
-  query: string
-  distinctions: string[] // ["michelin-1", "michelin-2", "michelin-3", "michelin-bib", "michelin-assiette", "50best", "gaultmillau-1", "gaultmillau-2", "gaultmillau-3", "gaultmillau-4", "gaultmillau-5"]
-}
-
 interface RestaurantWithPhoto extends Restaurant {
   photoUrl: string
   marker?: any
 }
-
-const restaurants: Restaurant[] = [
-  {
-    address: "5 Rue du Pont Louis-Philippe, 75004 Paris",
-    name: "Aldéhyde",
-    city: "4e arrondissement",
-    priceRange: "€€€€",
-    query: "Restaurant Aldéhyde Paris",
-    distinctions: ["michelin-1"],
-  },
-  {
-    address: "84 Rue de Varenne, 75007 Paris",
-    name: "L'Arpège",
-    city: "7e arrondissement",
-    priceRange: "€€€€",
-    query: "L'Arpège Alain Passard Paris",
-    distinctions: ["michelin-3", "50best"],
-  },
-  {
-    address: "8 Avenue Dutuit, 75008 Paris",
-    name: "Alléno Paris",
-    city: "8e arrondissement",
-    priceRange: "€€€€", 
-    query: "Alléno Paris Pavillon Ledoyen",
-    distinctions: ["michelin-3", "gaultmillau-5"],
-  },
-  {
-    address: "41 Rue Saint-André-des-Arts, 75006 Paris",
-    name: "Allard",
-    city: "6e arrondissement",
-    priceRange: "€€€",
-    query: "Restaurant Allard Paris Ducasse",
-    distinctions: ["gaultmillau-3"],
-  },
-  {
-    address: "109 Rue du Bac, 75007 Paris",
-    name: "L'Ami Jean",
-    city: "7e arrondissement",
-    priceRange: "€€",
-    query: "L'Ami Jean Paris",
-    distinctions: ["michelin-bib", "gaultmillau-2"],
-  },
-  {
-    address: "15 Place Dauphine, 75001 Paris",
-    name: "Au Bourguignon du Marais",
-    city: "1er arrondissement",
-    priceRange: "€€",
-    query: "Au Bourguignon du Marais Paris",
-    distinctions: ["michelin-assiette", "gaultmillau-1"],
-  },
-]
 
 const mapStyles = [
   // Tout en gris sauf l'eau
@@ -117,55 +65,10 @@ export default function RestaurantMap() {
   const [showMichelinDropdown, setShowMichelinDropdown] = useState(false)
   const [showGaultMillauDropdown, setShowGaultMillauDropdown] = useState(false)
 
-  // Fonction pour convertir le nom en slug
-  function createSlug(name: string): string {
-    return name
-      .toLowerCase()
-      .replace(/[àâä]/g, 'a')
-      .replace(/[éèêë]/g, 'e')
-      .replace(/[îï]/g, 'i')
-      .replace(/[ôö]/g, 'o')
-      .replace(/[ùûü]/g, 'u')
-      .replace(/[ç]/g, 'c')
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
-  }
-
   // Fonction pour naviguer vers la page du restaurant
   const navigateToRestaurant = (restaurant: Restaurant) => {
     const slug = createSlug(restaurant.name)
     router.push(`/restaurant/${slug}`)
-  }
-
-  // Fonction pour obtenir les icônes des distinctions
-  const getDistinctionIcon = (distinction: string) => {
-    switch(distinction) {
-      case "michelin-1":
-        return "⭐"
-      case "michelin-2":
-        return "⭐⭐"
-      case "michelin-3":
-        return "⭐⭐⭐"
-      case "michelin-bib":
-        return "😋"
-      case "michelin-assiette":
-        return "🍽️"
-      case "50best":
-        return "⚫"
-      case "gaultmillau-1":
-        return "★"
-      case "gaultmillau-2":
-        return "★★"
-      case "gaultmillau-3":
-        return "★★★"
-      case "gaultmillau-4":
-        return "★★★★"
-      case "gaultmillau-5":
-        return "★★★★★"
-      default:
-        return ""
-    }
   }
 
   // Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)
@@ -196,38 +99,6 @@ export default function RestaurantMap() {
       default:
         return null
     }
-  }
-
-  // Fonction pour obtenir le texte des distinctions
-  const getDistinctionText = (distinction: string) => {
-    const texts = {
-      "michelin-1": "Michelin",
-      "michelin-2": "Michelin",
-      "michelin-3": "Michelin",
-      "michelin-bib": "Bib Gourmand",
-      "michelin-assiette": "Assiette Michelin", 
-      "50best": "50 Best",
-      "gaultmillau-1": "1 toque",
-      "gaultmillau-2": "2 toques",
-      "gaultmillau-3": "3 toques",
-      "gaultmillau-4": "4 toques",
-      "gaultmillau-5": "5 toques",
-    }
-    return texts[distinction as keyof typeof texts] || ""
-  }
-
-  // Fonction pour obtenir la couleur de badge selon la distinction
-  const getBadgeColor = (distinction: string) => {
-    if (distinction.startsWith('michelin-')) {
-      return "bg-red-100 text-red-800" // Rouge pastel
-    }
-    if (distinction.startsWith('gaultmillau-')) {
-      return "bg-yellow-100 text-yellow-800" // Jaune
-    }
-    if (distinction === '50best') {
-      return "bg-purple-100 text-purple-800" // Violet
-    }
-    return "bg-gray-100 text-gray-800" // Défaut
   }
 
   // Fonction pour afficher les distinctions d'un restaurant
