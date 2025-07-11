@@ -537,11 +537,7 @@ export default function RestaurantMap() {
                         : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
-                    <img 
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Michelin_logo.svg/2560px-Michelin_logo.svg.png" 
-                      alt="Michelin" 
-                      className="w-3 h-3"
-                    />
+                    🔴
                     Michelin
                     <span className="ml-1">▼</span>
                   </button>
