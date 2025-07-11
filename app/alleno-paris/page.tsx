@@ -168,6 +168,24 @@ export default function AllenoParisPage() {
             </div>
           </div>
 
+          {/* Titre - Typographie corrigée */}
+          <h1 className="text-xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
+          
+          {/* Adresse - Typographie corrigée */}
+          <div className="flex items-start gap-2 mb-4">
+            <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
+            <div>
+              <p className="text-base text-gray-700">{restaurant.address}</p>
+              <p className="text-gray-600">{restaurant.city}</p>
+            </div>
+          </div>
+
+          {/* Tarifs */}
+          <div className="mb-8">
+            <p className="text-xl font-semibold text-gray-900 mb-1">Tarifs</p>
+            <p className="text-2xl font-bold text-green-600">{restaurant.priceSymbol}</p>
+          </div>
+
           {/* Google Maps */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Localisation</h2>
@@ -176,36 +194,29 @@ export default function AllenoParisPage() {
             </div>
           </div>
 
-          {/* Bouton Site Internet */}
+          {/* Site Internet simplifié */}
           {restaurant.website && (
             <div className="mb-6">
               <a
                 href={restaurant.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
+                className="text-lg text-black underline hover:text-blue-600 transition-colors"
               >
-                <ExternalLink className="w-5 h-5" />
                 Site Internet
               </a>
             </div>
           )}
 
-          {/* Téléphone */}
+          {/* Téléphone simplifié */}
           {restaurant.phone && (
-            <div className="border-t border-gray-200 pt-6">
-              <div className="flex items-center gap-3">
-                <Phone className="w-6 h-6 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Téléphone</p>
-                  <a 
-                    href={`tel:${restaurant.phone}`}
-                    className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-                  >
-                    {restaurant.phone}
-                  </a>
-                </div>
-              </div>
+            <div>
+              <a 
+                href={`tel:${restaurant.phone}`}
+                className="text-lg text-black underline hover:text-blue-600 transition-colors"
+              >
+                {restaurant.phone}
+              </a>
             </div>
           )}
         </div>
