@@ -313,26 +313,42 @@ export default function RestaurantMap() {
         textColor = "#581c87"
       }
       
-      return `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; background-color: ${bgColor}; color: ${textColor}; padding: 2px 6px; border-radius: 12px; margin-right: 4px;">
+      return `<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 10px; background-color: ${bgColor}; color: ${textColor}; padding: 2px 5px; border-radius: 8px; margin-right: 3px; margin-bottom: 2px;">
         ${getDistinctionIcon(distinction)} ${getDistinctionText(distinction)}
       </span>`
     }).join('')
 
     const restaurantId = restaurant.name.replace(/[^a-zA-Z0-9]/g, '')
 
+    // Responsive width based on screen size
+    const isMobile = window.innerWidth <= 768
+    const containerWidth = isMobile ? Math.min(280, window.innerWidth - 40) : 300
+    const imageSize = isMobile ? 60 : 70
+    
     return `
-    <div id="restaurant-info-${restaurantId}" style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s ease;" 
+    <div id="restaurant-info-${restaurantId}" style="
+      width: ${containerWidth}px; 
+      max-width: 95vw;
+      padding: 12px; 
+      background-color: white; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      cursor: pointer; 
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    " 
          onmouseover="this.style.backgroundColor='#f9fafb'; this.style.transform='scale(1.02)'" 
          onmouseout="this.style.backgroundColor='white'; this.style.transform='scale(1)'">
-      <div style="flex: 1;">
-        <h3 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0 0 4px 0;">${restaurant.name}</h3>
-        <p style="font-size: 14px; color: #2563eb; margin: 0 0 4px 0;">📍 ${restaurant.address}</p>
-        <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">${restaurant.priceRange} • Cuisine gastronomique</p>
-        <div style="margin-top: 8px;">${distinctionsHtml}</div>
-        <p style="font-size: 12px; color: #9ca3af; margin-top: 8px; font-style: italic;">Cliquez pour voir la fiche détaillée</p>
+      <div style="flex: 1; min-width: 0;">
+        <h3 style="font-size: ${isMobile ? '16px' : '18px'}; font-weight: bold; color: #1f2937; margin: 0 0 6px 0; line-height: 1.2;">${restaurant.name}</h3>
+        <p style="font-size: ${isMobile ? '12px' : '13px'}; color: #6b7280; margin: 0 0 8px 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 2px;">${distinctionsHtml}</div>
       </div>
-      <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
-        <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/333333?text=Image';">
+      <div style="width: ${imageSize}px; height: ${imageSize}px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+        <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/${imageSize}x${imageSize}/cccccc/333333?text=Image';">
       </div>
     </div>
   `
