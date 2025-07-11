@@ -12,13 +12,13 @@ declare global {
   }
 }
 
-export default function AldehyDePage() {
+export default function AuBourguignonDuMaraisPage() {
   const router = useRouter()
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
 
   // Données du restaurant
-  const restaurant = restaurants.find(r => r.name === "Aldéhyde")!
+  const restaurant = restaurants.find(r => r.name === "Au Bourguignon du Marais")!
 
   // Fonction pour afficher les distinctions
   const renderDistinctionIconJSX = (distinction: string) => {
@@ -143,7 +143,7 @@ export default function AldehyDePage() {
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement
-              target.src = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+              target.src = "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             }}
           />
         </div>
