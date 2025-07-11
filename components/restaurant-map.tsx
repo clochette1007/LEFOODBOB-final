@@ -64,11 +64,17 @@ export default function RestaurantMap() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showMichelinDropdown, setShowMichelinDropdown] = useState(false)
   const [showGaultMillauDropdown, setShowGaultMillauDropdown] = useState(false)
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null)
 
   // Fonction pour naviguer vers la page du restaurant
   const navigateToRestaurant = (restaurant: Restaurant) => {
     const slug = createSlug(restaurant.name)
     router.push(`/restaurant/${slug}`)
+  }
+
+  // Fonction pour ouvrir la modal restaurant
+  const openRestaurantModal = (restaurant: Restaurant) => {
+    setSelectedRestaurant(restaurant)
   }
 
   // Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)
@@ -272,6 +278,18 @@ export default function RestaurantMap() {
               const content = createInfoWindowContent({ ...restaurant, photoUrl })
               infoWindowInstance.setContent(content)
               infoWindowInstance.open(mapInstance, marker)
+              
+              // Ajouter l'écouteur sur le bouton adresse après un petit délai
+              setTimeout(() => {
+                const restaurantId = `restaurant-${createSlug(restaurant.name)}`
+                const addressButton = document.getElementById(restaurantId)
+                if (addressButton) {
+                  addressButton.addEventListener('click', () => {
+                    openRestaurantModal(restaurant)
+                    infoWindowInstance.close()
+                  })
+                }
+              }, 100)
             })
 
             return { ...restaurant, photoUrl, marker }
@@ -311,13 +329,13 @@ export default function RestaurantMap() {
       </span>`
     }).join('')
 
-    const slug = createSlug(restaurant.name)
+    const restaurantId = `restaurant-${createSlug(restaurant.name)}`
 
     return `
     <div style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px;">
       <div style="flex: 1;">
         <h3 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0 0 4px 0;">${restaurant.name}</h3>
-        <a href="/restaurant/${slug}" style="font-size: 14px; color: #2563eb; margin: 0 0 4px 0; text-decoration: underline; cursor: pointer;">${restaurant.address}</a>
+        <button id="${restaurantId}" style="font-size: 14px; color: #2563eb; margin: 0 0 4px 0; text-decoration: underline; cursor: pointer; border: none; background: none; padding: 0;">${restaurant.address}</button>
         <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">${restaurant.priceRange} • Cuisine gastronomique</p>
         <div style="margin-top: 8px;">${distinctionsHtml}</div>
       </div>
@@ -329,7 +347,7 @@ export default function RestaurantMap() {
   }
 
   const handleRestaurantClick = (restaurant: RestaurantWithPhoto) => {
-    navigateToRestaurant(restaurant)
+    openRestaurantModal(restaurant)
   }
 
   return (
@@ -380,7 +398,7 @@ export default function RestaurantMap() {
               <div
                 key={index}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => navigateToRestaurant(restaurant)}
+                onClick={() => openRestaurantModal(restaurant)}
               >
                 <div className="flex gap-4">
                   <div className="flex-1">
@@ -564,7 +582,7 @@ export default function RestaurantMap() {
                     <div
                       key={index}
                       className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                      onClick={() => navigateToRestaurant(restaurant)}
+                      onClick={() => openRestaurantModal(restaurant)}
                     >
                       <div className="flex gap-4">
                         <div className="flex-1">
@@ -590,6 +608,85 @@ export default function RestaurantMap() {
                       </div>
                     </div>
                   ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Restaurant */}
+      {selectedRestaurant && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex justify-between items-center p-4 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">{selectedRestaurant.name}</h2>
+              <button 
+                onClick={() => setSelectedRestaurant(null)}
+                className="text-gray-500 hover:text-gray-700 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Contenu */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              {/* Photo de couverture */}
+              <div className="w-full h-64 rounded-lg overflow-hidden mb-6">
+                <img
+                  src={selectedRestaurant.photoUrl || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
+                  alt={selectedRestaurant.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.src = "https://placehold.co/800x256/cccccc/333333?text=Restaurant"
+                  }}
+                />
+              </div>
+
+              {/* Adresse */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-gray-900 mb-2">Adresse</h3>
+                <p className="text-gray-700">{selectedRestaurant.address}</p>
+              </div>
+
+              {/* Distinctions */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-gray-900 mb-3">Distinctions</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedRestaurant.distinctions.map((distinction, index) => (
+                    <span 
+                      key={index} 
+                      className={`inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full ${getBadgeColor(distinction)}`}
+                    >
+                      <span>{renderDistinctionIconJSX(distinction)}</span>
+                      {getDistinctionText(distinction)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Contact */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">Contact</h3>
+                
+                {selectedRestaurant.website && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-gray-500">🌐</span>
+                    <a href={selectedRestaurant.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      Visiter le site Internet
+                    </a>
+                  </div>
+                )}
+                
+                {selectedRestaurant.phone && (
+                  <div className="flex items-center gap-3">
+                    <span className="text-gray-500">📞</span>
+                    <a href={`tel:${selectedRestaurant.phone}`} className="text-blue-600 hover:underline">
+                      {selectedRestaurant.phone}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
