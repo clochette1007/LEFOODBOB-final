@@ -55,27 +55,38 @@ export default function RestaurantsPage() {
   const renderDistinctionIconJSX = (distinction: string) => {
     switch(distinction) {
       case "michelin-1":
-        return <span>⭐</span>
+        return <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
       case "michelin-2":
-        return <span>⭐⭐</span>
+        return (
+          <div className="flex gap-0.5">
+            <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+          </div>
+        )
       case "michelin-3":
-        return <span>⭐⭐⭐</span>
+        return (
+          <div className="flex gap-0.5">
+            <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 3 étoile" className="w-5 h-5 object-contain" />
+          </div>
+        )
       case "michelin-bib":
-        return <span>😋</span>
+        return <img src="/bibgourmand.jpg" alt="Bib Gourmand" className="w-5 h-5 object-contain" />
       case "michelin-assiette":
-        return <span>🍽️</span>
+        return <img src="/assiettemichelin.jpg" alt="Assiette Michelin" className="w-5 h-5 object-contain" />
       case "50best":
-        return <span>⚫</span>
+        return <img src="/50bestrestaurants.webp" alt="50 Best Restaurants" className="w-5 h-5 object-contain" />
       case "gaultmillau-1":
-        return <span>★</span>
+        return <img src="/1toque.png" alt="1 toque Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-2":
-        return <span>★★</span>
+        return <img src="/2toques.jpg" alt="2 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-3":
-        return <span>★★★</span>
+        return <img src="/3toques.jpg" alt="3 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-4":
-        return <span>★★★★</span>
+        return <img src="/4toques.png" alt="4 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-5":
-        return <span>★★★★★</span>
+        return <img src="/5toques.png" alt="5 toques Gault&Millau" className="w-5 h-5 object-contain" />
       default:
         return null
     }
@@ -165,11 +176,11 @@ export default function RestaurantsPage() {
               {showMichelinDropdown && (
                 <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 min-w-[180px]">
                   {[
-                    { key: "michelin-1", label: "⭐" },
-                    { key: "michelin-2", label: "⭐⭐" },
-                    { key: "michelin-3", label: "⭐⭐⭐" },
-                    { key: "michelin-bib", label: "😋 Bib Gourmand" },
-                    { key: "michelin-assiette", label: "🍽️ Assiette" },
+                    { key: "michelin-1", jsx: <img src="/etoile-michelin.webp" alt="1 étoile" className="w-4 h-4 object-contain" /> },
+                    { key: "michelin-2", jsx: <div className="flex gap-0.5"><img src="/etoile-michelin.webp" alt="1 étoile" className="w-4 h-4 object-contain" /><img src="/etoile-michelin.webp" alt="2 étoile" className="w-4 h-4 object-contain" /></div> },
+                    { key: "michelin-3", jsx: <div className="flex gap-0.5"><img src="/etoile-michelin.webp" alt="1 étoile" className="w-4 h-4 object-contain" /><img src="/etoile-michelin.webp" alt="2 étoile" className="w-4 h-4 object-contain" /><img src="/etoile-michelin.webp" alt="3 étoile" className="w-4 h-4 object-contain" /></div> },
+                    { key: "michelin-bib", jsx: <img src="/bibgourmand.jpg" alt="Bib Gourmand" className="w-4 h-4 object-contain" /> },
+                    { key: "michelin-assiette", jsx: <img src="/assiettemichelin.jpg" alt="Assiette" className="w-4 h-4 object-contain" /> },
                   ].map((option) => (
                     <label key={option.key} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer">
                       <input
@@ -184,8 +195,9 @@ export default function RestaurantsPage() {
                         }}
                         className="w-3 h-3"
                       />
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm">{option.label}</span>
+                      <div className="flex items-center gap-2">
+                        {option.jsx}
+                        <span className="text-sm">{getDistinctionText(option.key)}</span>
                       </div>
                     </label>
                   ))}
@@ -211,11 +223,11 @@ export default function RestaurantsPage() {
               {showGaultMillauDropdown && (
                 <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 min-w-[180px]">
                   {[
-                    { key: "gaultmillau-1", label: "★ 1 toque" },
-                    { key: "gaultmillau-2", label: "★★ 2 toques" },
-                    { key: "gaultmillau-3", label: "★★★ 3 toques" },
-                    { key: "gaultmillau-4", label: "★★★★ 4 toques" },
-                    { key: "gaultmillau-5", label: "★★★★★ 5 toques" },
+                    { key: "gaultmillau-1", jsx: <img src="/1toque.png" alt="1 toque" className="w-4 h-4 object-contain" /> },
+                    { key: "gaultmillau-2", jsx: <img src="/2toques.jpg" alt="2 toques" className="w-4 h-4 object-contain" /> },
+                    { key: "gaultmillau-3", jsx: <img src="/3toques.jpg" alt="3 toques" className="w-4 h-4 object-contain" /> },
+                    { key: "gaultmillau-4", jsx: <img src="/4toques.png" alt="4 toques" className="w-4 h-4 object-contain" /> },
+                    { key: "gaultmillau-5", jsx: <img src="/5toques.png" alt="5 toques" className="w-4 h-4 object-contain" /> },
                   ].map((option) => (
                     <label key={option.key} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer">
                       <input
@@ -230,8 +242,9 @@ export default function RestaurantsPage() {
                         }}
                         className="w-3 h-3"
                       />
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm">{option.label}</span>
+                      <div className="flex items-center gap-2">
+                        {option.jsx}
+                        <span className="text-sm">{getDistinctionText(option.key)}</span>
                       </div>
                     </label>
                   ))}

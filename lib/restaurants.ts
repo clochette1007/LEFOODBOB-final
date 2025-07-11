@@ -125,20 +125,74 @@ export function createSlug(name: string): string {
     .replace(/^-|-$/g, '')
 }
 
-// Fonction pour obtenir les icônes des distinctions
-export const getDistinctionIcon = (distinction: string) => {
+// Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)
+const renderDistinctionIconJSX = (distinction: string) => {
   switch(distinction) {
-    case "michelin-1": return "⭐"
-    case "michelin-2": return "⭐⭐"
-    case "michelin-3": return "⭐⭐⭐"
-    case "michelin-bib": return "😋"
-    case "michelin-assiette": return "🍽️"
-    case "50best": return "⚫"
-    case "gaultmillau-1": return "★"
-    case "gaultmillau-2": return "★★"
-    case "gaultmillau-3": return "★★★"
-    case "gaultmillau-4": return "★★★★"
-    case "gaultmillau-5": return "★★★★★"
+    case "michelin-1":
+      return <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+    case "michelin-2":
+      return (
+        <div className="flex gap-0.5">
+          <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+          <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+        </div>
+      )
+    case "michelin-3":
+      return (
+        <div className="flex gap-0.5">
+          <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+          <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+          <img src="/etoile-michelin.webp" alt="Michelin 3 étoile" className="w-5 h-5 object-contain" />
+        </div>
+      )
+    case "michelin-bib":
+      return <img src="/bibgourmand.jpg" alt="Bib Gourmand" className="w-5 h-5 object-contain" />
+    case "michelin-assiette":
+      return <img src="/assiettemichelin.jpg" alt="Assiette Michelin" className="w-5 h-5 object-contain" />
+    case "50best":
+      return <img src="/50bestrestaurants.webp" alt="50 Best Restaurants" className="w-5 h-5 object-contain" />
+    case "gaultmillau-1":
+      return <img src="/1toque.png" alt="1 toque Gault&Millau" className="w-5 h-5 object-contain" />
+    case "gaultmillau-2":
+      return <img src="/2toques.jpg" alt="2 toques Gault&Millau" className="w-5 h-5 object-contain" />
+    case "gaultmillau-3":
+      return <img src="/3toques.jpg" alt="3 toques Gault&Millau" className="w-5 h-5 object-contain" />
+    case "gaultmillau-4":
+      return <img src="/4toques.png" alt="4 toques Gault&Millau" className="w-5 h-5 object-contain" />
+    case "gaultmillau-5":
+      return <img src="/5toques.png" alt="5 toques Gault&Millau" className="w-5 h-5 object-contain" />
+    default:
+      return null
+  }
+}
+
+// Fonction pour obtenir les icônes des distinctions (pour InfoWindows HTML)
+export const getDistinctionIcon = (distinction: string) => {
+  const logoSize = 'width="20" height="20" style="object-fit: contain; vertical-align: middle;"'
+  
+  switch(distinction) {
+    case "michelin-1": 
+      return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}>`
+    case "michelin-2": 
+      return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 2 étoile" ${logoSize}>`
+    case "michelin-3": 
+      return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 2 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 3 étoile" ${logoSize}>`
+    case "michelin-bib": 
+      return `<img src="/bibgourmand.jpg" alt="Bib Gourmand" ${logoSize}>`
+    case "michelin-assiette": 
+      return `<img src="/assiettemichelin.jpg" alt="Assiette Michelin" ${logoSize}>`
+    case "50best": 
+      return `<img src="/50bestrestaurants.webp" alt="50 Best Restaurants" ${logoSize}>`
+    case "gaultmillau-1": 
+      return `<img src="/1toque.png" alt="1 toque Gault&Millau" ${logoSize}>`
+    case "gaultmillau-2": 
+      return `<img src="/2toques.jpg" alt="2 toques Gault&Millau" ${logoSize}>`
+    case "gaultmillau-3": 
+      return `<img src="/3toques.jpg" alt="3 toques Gault&Millau" ${logoSize}>`
+    case "gaultmillau-4": 
+      return `<img src="/4toques.png" alt="4 toques Gault&Millau" ${logoSize}>`
+    case "gaultmillau-5": 
+      return `<img src="/5toques.png" alt="5 toques Gault&Millau" ${logoSize}>`
     default: return ""
   }
 }

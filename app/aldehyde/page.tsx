@@ -24,27 +24,38 @@ export default function AldehyDePage() {
   const renderDistinctionIconJSX = (distinction: string) => {
     switch(distinction) {
       case "michelin-1":
-        return <span>⭐</span>
+        return <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
       case "michelin-2":
-        return <span>⭐⭐</span>
+        return (
+          <div className="flex gap-0.5">
+            <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+          </div>
+        )
       case "michelin-3":
-        return <span>⭐⭐⭐</span>
+        return (
+          <div className="flex gap-0.5">
+            <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 3 étoile" className="w-5 h-5 object-contain" />
+          </div>
+        )
       case "michelin-bib":
-        return <span>😋</span>
+        return <img src="/bibgourmand.jpg" alt="Bib Gourmand" className="w-5 h-5 object-contain" />
       case "michelin-assiette":
-        return <span>🍽️</span>
+        return <img src="/assiettemichelin.jpg" alt="Assiette Michelin" className="w-5 h-5 object-contain" />
       case "50best":
-        return <span>⚫</span>
+        return <img src="/50bestrestaurants.webp" alt="50 Best Restaurants" className="w-5 h-5 object-contain" />
       case "gaultmillau-1":
-        return <span>★</span>
+        return <img src="/1toque.png" alt="1 toque Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-2":
-        return <span>★★</span>
+        return <img src="/2toques.jpg" alt="2 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-3":
-        return <span>★★★</span>
+        return <img src="/3toques.jpg" alt="3 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-4":
-        return <span>★★★★</span>
+        return <img src="/4toques.png" alt="4 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-5":
-        return <span>★★★★★</span>
+        return <img src="/5toques.png" alt="5 toques Gault&Millau" className="w-5 h-5 object-contain" />
       default:
         return null
     }
@@ -159,13 +170,13 @@ export default function AldehyDePage() {
           </div>
 
           {/* Titre */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
           
           {/* Adresse */}
           <div className="flex items-start gap-2 mb-4">
             <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
             <div>
-              <p className="text-lg text-gray-700">{restaurant.address}</p>
+              <p className="text-base text-gray-700">{restaurant.address}</p>
               <p className="text-gray-600">{restaurant.city}</p>
             </div>
           </div>
@@ -184,36 +195,29 @@ export default function AldehyDePage() {
             </div>
           </div>
 
-          {/* Bouton Site Internet */}
+          {/* Site Internet - Simple link style */}
           {restaurant.website && (
             <div className="mb-6">
               <a
                 href={restaurant.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
+                className="text-lg text-black underline hover:text-blue-600 transition-colors"
               >
-                <ExternalLink className="w-5 h-5" />
                 Site Internet
               </a>
             </div>
           )}
 
-          {/* Téléphone */}
+          {/* Téléphone - Simple link style */}
           {restaurant.phone && (
-            <div className="border-t border-gray-200 pt-6">
-              <div className="flex items-center gap-3">
-                <Phone className="w-6 h-6 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Téléphone</p>
-                  <a 
-                    href={`tel:${restaurant.phone}`}
-                    className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-                  >
-                    {restaurant.phone}
-                  </a>
-                </div>
-              </div>
+            <div>
+              <a 
+                href={`tel:${restaurant.phone}`}
+                className="text-lg text-black underline hover:text-blue-600 transition-colors"
+              >
+                {restaurant.phone}
+              </a>
             </div>
           )}
         </div>

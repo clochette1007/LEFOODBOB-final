@@ -93,27 +93,38 @@ export default function RestaurantMap() {
   const renderDistinctionIconJSX = (distinction: string) => {
     switch(distinction) {
       case "michelin-1":
-        return <span>⭐</span>
+        return <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
       case "michelin-2":
-        return <span>⭐⭐</span>
+        return (
+          <div className="flex gap-0.5">
+            <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+          </div>
+        )
       case "michelin-3":
-        return <span>⭐⭐⭐</span>
+        return (
+          <div className="flex gap-0.5">
+            <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 2 étoile" className="w-5 h-5 object-contain" />
+            <img src="/etoile-michelin.webp" alt="Michelin 3 étoile" className="w-5 h-5 object-contain" />
+          </div>
+        )
       case "michelin-bib":
-        return <span>😋</span>
+        return <img src="/bibgourmand.jpg" alt="Bib Gourmand" className="w-5 h-5 object-contain" />
       case "michelin-assiette":
-        return <span>🍽️</span>
+        return <img src="/assiettemichelin.jpg" alt="Assiette Michelin" className="w-5 h-5 object-contain" />
       case "50best":
-        return <span>⚫</span>
+        return <img src="/50bestrestaurants.webp" alt="50 Best Restaurants" className="w-5 h-5 object-contain" />
       case "gaultmillau-1":
-        return <span>★</span>
+        return <img src="/1toque.png" alt="1 toque Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-2":
-        return <span>★★</span>
+        return <img src="/2toques.jpg" alt="2 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-3":
-        return <span>★★★</span>
+        return <img src="/3toques.jpg" alt="3 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-4":
-        return <span>★★★★</span>
+        return <img src="/4toques.png" alt="4 toques Gault&Millau" className="w-5 h-5 object-contain" />
       case "gaultmillau-5":
-        return <span>★★★★★</span>
+        return <img src="/5toques.png" alt="5 toques Gault&Millau" className="w-5 h-5 object-contain" />
       default:
         return null
     }
