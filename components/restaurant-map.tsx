@@ -268,6 +268,17 @@ export default function RestaurantMap() {
               const content = createInfoWindowContent({ ...restaurant, photoUrl })
               infoWindowInstance.setContent(content)
               infoWindowInstance.open(mapInstance, marker)
+              
+              // Ajouter l'écouteur de clic sur l'InfoWindow après un court délai
+              setTimeout(() => {
+                const infoWindowElement = document.getElementById(`restaurant-info-${restaurant.name.replace(/[^a-zA-Z0-9]/g, '')}`)
+                if (infoWindowElement) {
+                  infoWindowElement.addEventListener('click', () => {
+                    navigateToRestaurant(restaurant.name)
+                  })
+                  infoWindowElement.style.cursor = 'pointer'
+                }
+              }, 100)
             })
 
             return { ...restaurant, photoUrl, marker }
@@ -307,37 +318,18 @@ export default function RestaurantMap() {
       </span>`
     }).join('')
 
-    let restaurantUrl = ""
-    switch(restaurant.name) {
-      case "Aldéhyde":
-        restaurantUrl = "/aldehyde"
-        break
-      case "L'Arpège":
-        restaurantUrl = "/l-arpege"
-        break
-      case "Alléno Paris":
-        restaurantUrl = "/alleno-paris"
-        break
-      case "Allard":
-        restaurantUrl = "/allard"
-        break
-      case "L'Ami Jean":
-        restaurantUrl = "/l-ami-jean"
-        break
-      case "Au Bourguignon du Marais":
-        restaurantUrl = "/au-bourguignon-du-marais"
-        break
-      default:
-        restaurantUrl = "/"
-    }
+    const restaurantId = restaurant.name.replace(/[^a-zA-Z0-9]/g, '')
 
     return `
-    <div style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px;">
+    <div id="restaurant-info-${restaurantId}" style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s ease;" 
+         onmouseover="this.style.backgroundColor='#f9fafb'; this.style.transform='scale(1.02)'" 
+         onmouseout="this.style.backgroundColor='white'; this.style.transform='scale(1)'">
       <div style="flex: 1;">
         <h3 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0 0 4px 0;">${restaurant.name}</h3>
-        <a href="${restaurantUrl}" style="font-size: 14px; color: #2563eb; margin: 0 0 4px 0; text-decoration: underline; cursor: pointer;">${restaurant.address}</a>
+        <p style="font-size: 14px; color: #2563eb; margin: 0 0 4px 0;">📍 ${restaurant.address}</p>
         <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">${restaurant.priceRange} • Cuisine gastronomique</p>
         <div style="margin-top: 8px;">${distinctionsHtml}</div>
+        <p style="font-size: 12px; color: #9ca3af; margin-top: 8px; font-style: italic;">Cliquez pour voir la fiche détaillée</p>
       </div>
       <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
         <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/333333?text=Image';">
