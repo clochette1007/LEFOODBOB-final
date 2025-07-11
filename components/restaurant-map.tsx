@@ -398,9 +398,7 @@ export default function RestaurantMap() {
 
             // Ajouter l'écouteur de clic
             marker.addListener("click", () => {
-              const content = createInfoWindowContent({ ...restaurant, photoUrl })
-              infoWindowInstance.setContent(content)
-              infoWindowInstance.open(mapInstance, marker)
+              navigateToRestaurant(restaurant)
             })
 
             return { ...restaurant, photoUrl, marker }
@@ -456,14 +454,7 @@ export default function RestaurantMap() {
   }
 
   const handleRestaurantClick = (restaurant: RestaurantWithPhoto) => {
-    if (map && restaurant.marker) {
-      map.setCenter(restaurant.marker.position)
-      map.setZoom(16)
-
-      const content = createInfoWindowContent(restaurant)
-      infoWindow?.setContent(content)
-      infoWindow?.open(map, restaurant.marker)
-    }
+    navigateToRestaurant(restaurant)
   }
 
   return (
