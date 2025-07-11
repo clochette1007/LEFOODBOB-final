@@ -398,7 +398,9 @@ export default function RestaurantMap() {
 
             // Ajouter l'écouteur de clic
             marker.addListener("click", () => {
-              navigateToRestaurant(restaurant)
+              const content = createInfoWindowContent({ ...restaurant, photoUrl })
+              infoWindowInstance.setContent(content)
+              infoWindowInstance.open(mapInstance, marker)
             })
 
             return { ...restaurant, photoUrl, marker }
@@ -438,11 +440,13 @@ export default function RestaurantMap() {
       </span>`
     }).join('')
 
+    const slug = createSlug(restaurant.name)
+
     return `
     <div style="width: 320px; padding: 16px; background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 16px;">
       <div style="flex: 1;">
         <h3 style="font-size: 20px; font-weight: bold; color: #1f2937; margin: 0 0 4px 0;">${restaurant.name}</h3>
-        <p style="font-size: 14px; color: #6b7280; margin: 0 0 4px 0;">${restaurant.city}</p>
+        <a href="/restaurant/${slug}" style="font-size: 14px; color: #2563eb; margin: 0 0 4px 0; text-decoration: underline; cursor: pointer;">${restaurant.address}</a>
         <p style="font-size: 14px; color: #6b7280; margin: 0 0 8px 0;">${restaurant.priceRange} • Cuisine gastronomique</p>
         <div style="margin-top: 8px;">${distinctionsHtml}</div>
       </div>

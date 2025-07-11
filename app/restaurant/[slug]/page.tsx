@@ -183,7 +183,7 @@ export default function RestaurantPage({ params }: { params: { slug: string } })
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        {/* Image principale */}
+        {/* Photo de couverture */}
         <div className="w-full h-80 rounded-xl overflow-hidden mb-6">
           <img
             src={restaurant.photoUrl || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
@@ -198,76 +198,34 @@ export default function RestaurantPage({ params }: { params: { slug: string } })
 
         {/* Informations principales */}
         <div className="bg-white rounded-xl p-6 mb-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">{restaurant.name}</h2>
-          <p className="text-gray-600 mb-1">{restaurant.address}</p>
-          <p className="text-gray-600 mb-4">Cuisine créative</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{restaurant.name}</h2>
+          
+          {/* Adresse */}
+          <div className="mb-6">
+            <h3 className="font-semibold text-gray-900 mb-2">Adresse</h3>
+            <p className="text-gray-700">{restaurant.address}</p>
+          </div>
 
           {/* Distinctions */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {restaurant.distinctions.map((distinction, index) => (
-              <span 
-                key={index} 
-                className={`inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full ${getBadgeColor(distinction)}`}
-              >
-                <span>{getDistinctionIcon(distinction)}</span>
-                {getDistinctionText(distinction)}
-              </span>
-            ))}
-          </div>
-
-          {/* Boutons d'action */}
-          <div className="flex gap-4 mb-6">
-            <button className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium">
-              ✓ Déjà visité
-            </button>
-            <button className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium">
-              📱 Enregistrer
-            </button>
-            <button className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg text-sm font-medium">
-              ❤️ Favori
-            </button>
-          </div>
-
-          {/* Description */}
-          {restaurant.description && (
-            <div className="mb-6">
-              <p className="text-gray-700 leading-relaxed">{restaurant.description}</p>
-            </div>
-          )}
-
-          {/* Chef */}
-          {restaurant.chef && (
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-2">Chef</h3>
-              <p className="text-gray-700">{restaurant.chef}</p>
-            </div>
-          )}
-
-          {/* Tarifs */}
           <div className="mb-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Tarifs</h3>
-            <div className="flex gap-1">
-              {restaurant.priceRange.split('').map((symbol, index) => (
-                <span key={index} className="text-gray-600 text-sm border border-gray-300 rounded px-2 py-1">
-                  {symbol}
+            <h3 className="font-semibold text-gray-900 mb-3">Distinctions</h3>
+            <div className="flex flex-wrap gap-2">
+              {restaurant.distinctions.map((distinction, index) => (
+                <span 
+                  key={index} 
+                  className={`inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full ${getBadgeColor(distinction)}`}
+                >
+                  <span>{getDistinctionIcon(distinction)}</span>
+                  {getDistinctionText(distinction)}
                 </span>
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Section Adresse et Horaires */}
-        <div className="bg-white rounded-xl p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Adresse et Horaires</h3>
-          <p className="text-gray-700 mb-4">{restaurant.address}</p>
-          
-          {/* Map placeholder */}
-          <div className="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
-            <span className="text-gray-500">🗺️ Carte (à implémenter)</span>
-          </div>
 
           {/* Contact */}
-          <div className="space-y-3">
+          <div className="space-y-4">
+            <h3 className="font-semibold text-gray-900">Contact</h3>
+            
             {restaurant.website && (
               <div className="flex items-center gap-3">
                 <span className="text-gray-500">🌐</span>
@@ -276,6 +234,7 @@ export default function RestaurantPage({ params }: { params: { slug: string } })
                 </a>
               </div>
             )}
+            
             {restaurant.phone && (
               <div className="flex items-center gap-3">
                 <span className="text-gray-500">📞</span>
@@ -284,19 +243,6 @@ export default function RestaurantPage({ params }: { params: { slug: string } })
                 </a>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Bouton de réservation */}
-        <div className="bg-white rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Réservations par</p>
-              <p className="font-semibold text-green-600">TheFork</p>
-            </div>
-            <button className="bg-black text-white px-8 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors">
-              Réserver
-            </button>
           </div>
         </div>
       </div>
