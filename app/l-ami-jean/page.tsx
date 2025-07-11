@@ -95,19 +95,20 @@ export default function LAmiJeanPage() {
             ]
           })
 
-          // Ajouter le marqueur du restaurant
+          // Ajouter le marqueur du restaurant avec votre image personnalisée
           const { AdvancedMarkerElement, PinElement } = window.google.maps.marker
-          const pin = new PinElement({
-            background: "#dc2626",
-            borderColor: "#b91c1c",
-            glyphColor: "white",
-          })
+          const markerElement = document.createElement('img')
+          markerElement.src = '/bob_repere.png'
+          markerElement.style.width = '40px'
+          markerElement.style.height = '40px'
+          markerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
+          markerElement.alt = restaurant.name
 
           new AdvancedMarkerElement({
             map: mapInstance,
             position: { lat: restaurant.lat, lng: restaurant.lng },
             title: restaurant.name,
-            content: pin.element,
+            content: markerElement,
           })
 
           setMap(mapInstance)

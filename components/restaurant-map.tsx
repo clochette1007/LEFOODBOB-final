@@ -146,19 +146,20 @@ export default function RestaurantMap() {
           if (map) {
             map.setCenter(location)
             
-            // Ajouter un marqueur bleu pour la position de l'utilisateur
-            const { AdvancedMarkerElement, PinElement } = window.google.maps.marker
-            const userPin = new PinElement({
-              background: "#3b82f6",
-              borderColor: "#1d4ed8",
-              glyphColor: "white",
-            })
+            // Ajouter un marqueur personnalisé pour la position de l'utilisateur
+            const { AdvancedMarkerElement } = window.google.maps.marker
+            const userMarkerElement = document.createElement('img')
+            userMarkerElement.src = '/bob_repere.png'
+            userMarkerElement.style.width = '35px'        // Légèrement plus petit pour l'utilisateur
+            userMarkerElement.style.height = '35px'
+            userMarkerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3)) hue-rotate(220deg)'  // Teinté bleu pour différencier
+            userMarkerElement.alt = "Votre position"
 
             new AdvancedMarkerElement({
               map: map,
               position: location,
               title: "Votre position",
-              content: userPin.element,
+              content: userMarkerElement,
             })
           }
         },
@@ -249,18 +250,22 @@ export default function RestaurantMap() {
               })
             }
 
-            // Créer le pin rouge avec AdvancedMarkerElement
-            const pin = new PinElement({
-              background: "#dc2626",
-              borderColor: "#991b1b",
-              glyphColor: "white",
-            })
+            // Créer un marqueur personnalisé avec votre image bob_repere
+            const markerElement = document.createElement('img')
+            markerElement.src = '/bob_repere.png'
+            markerElement.style.width = '40px'        // Taille du marqueur
+            markerElement.style.height = '40px'
+            markerElement.style.cursor = 'pointer'
+            markerElement.style.userSelect = 'none'
+            markerElement.style.pointerEvents = 'none'
+            markerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'  // Ombre portée
+            markerElement.alt = restaurant.name
 
             const marker = new AdvancedMarkerElement({
               map: mapInstance,
               position: geoResult.geometry.location,
               title: restaurant.name,
-              content: pin.element,
+              content: markerElement,
             })
 
             // Ajouter l'écouteur de clic
