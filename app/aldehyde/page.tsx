@@ -64,7 +64,7 @@ export default function AldehyDePage() {
       if (!restaurant.lat || !restaurant.lng) return
 
       const loader = new Loader({
-        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        apiKey: process.env.NEXT_PUBLIC_Maps_API_KEY || "AIzaSyCcfMwhQwKmsAnRYfQCtYKsWpB4EI3NIq4",
         version: "weekly",
         libraries: ["places", "marker"]
       })
@@ -76,6 +76,7 @@ export default function AldehyDePage() {
           const mapInstance = new window.google.maps.Map(mapRef.current, {
             center: { lat: restaurant.lat, lng: restaurant.lng },
             zoom: 16,
+            mapId: "DEMO_MAP_ID",
             styles: [
               { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
               { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
