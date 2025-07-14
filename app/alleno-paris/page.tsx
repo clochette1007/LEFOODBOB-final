@@ -224,13 +224,3 @@ export default function AllenoParisPage() {
     </div>
   )
 } 
-                  </a>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-} 
