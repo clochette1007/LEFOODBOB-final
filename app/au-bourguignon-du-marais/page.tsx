@@ -216,10 +216,8 @@ export default function AuBourguignonDuMaraisPage() {
                 href={`tel:${restaurant.phone}`}
                 className="text-lg text-black underline hover:text-blue-600 transition-colors"
               >
-                    {restaurant.phone}
-                  </a>
-                </div>
-              </div>
+                {restaurant.phone}
+              </a>
             </div>
           )}
         </div>
