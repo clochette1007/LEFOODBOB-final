@@ -28,7 +28,7 @@ export const restaurants: Restaurant[] = [
     website: "https://aldehyde.paris",
     chef: "Youssef Marzouk",
     description: "Restaurant gastronomique en plein cœur de Paris. Cuisine élégante et affirmée qui porte haut les saveurs franco-tunisiennes.",
-    photoUrl: "https://media-cdn.tripadvisor.com/media/photo-s/1b/4e/8f/4a/aldehyde.jpg",
+    photoUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8541,
     lng: 2.3570
   },
@@ -44,7 +44,7 @@ export const restaurants: Restaurant[] = [
     website: "https://alain-passard.com",
     chef: "Alain Passard",
     description: "Restaurant emblématique d'Alain Passard, référence mondiale de la cuisine végétale de haute gastronomie.",
-    photoUrl: "https://media-cdn.tripadvisor.com/media/photo-s/0d/6a/3d/5a/l-arpege.jpg",
+    photoUrl: "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8568,
     lng: 2.3183
   },
@@ -60,7 +60,7 @@ export const restaurants: Restaurant[] = [
     website: "https://yannick-alleno.com",
     chef: "Yannick Alléno",
     description: "Temple de la haute gastronomie française au sein du Pavillon Ledoyen.",
-    photoUrl: "https://media-cdn.tripadvisor.com/media/photo-s/1a/2e/1d/85/alleno-paris-au-pavillon.jpg",
+    photoUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8656,
     lng: 2.3125
   },
@@ -75,7 +75,7 @@ export const restaurants: Restaurant[] = [
     phone: "+33 1 43 26 48 23",
     chef: "Alain Ducasse",
     description: "Bistrot parisien traditionnel revisité par Alain Ducasse.",
-    photoUrl: "https://media-cdn.tripadvisor.com/media/photo-s/12/8c/1b/85/terrasse-allard.jpg",
+    photoUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8534,
     lng: 2.3408
   },
@@ -90,7 +90,7 @@ export const restaurants: Restaurant[] = [
     phone: "+33 1 47 05 86 89",
     chef: "Stéphane Jégo",
     description: "Bistrot convivial aux saveurs du Sud-Ouest et de Bretagne.",
-    photoUrl: "https://media-cdn.tripadvisor.com/media/photo-s/10/e4/a5/26/l-ami-jean.jpg",
+    photoUrl: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8583,
     lng: 2.3038
   },
@@ -104,7 +104,7 @@ export const restaurants: Restaurant[] = [
     distinctions: ["michelin-assiette", "gaultmillau-1"],
     phone: "+33 1 48 87 15 40",
     description: "Authentique bistrot parisien spécialisé dans la cuisine bourguignonne.",
-    photoUrl: "https://media-cdn.tripadvisor.com/media/photo-s/0f/6b/2f/9a/au-bourguignon-du-marais.jpg",
+    photoUrl: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8566,
     lng: 2.3421
   },
