@@ -360,26 +360,6 @@ export default function RestaurantMap() {
   }, [])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
-    const distinctionsHtml = restaurant.distinctions.map(distinction => {
-      let bgColor = "#f3f4f6" // gris par défaut
-      let textColor = "#374151"
-      
-      if (distinction.startsWith('michelin-')) {
-        bgColor = "#fecaca" // rouge pastel
-        textColor = "#991b1b"
-      } else if (distinction.startsWith('gaultmillau-')) {
-        bgColor = "#fef3c7" // jaune
-        textColor = "#92400e"
-      } else if (distinction === '50best') {
-        bgColor = "#e9d5ff" // violet
-        textColor = "#581c87"
-      }
-      
-      return `<span style="display: inline-flex; align-items: center; gap: 3px; font-size: 10px; background-color: ${bgColor}; color: ${textColor}; padding: 2px 5px; border-radius: 8px; margin-right: 3px; margin-bottom: 2px;">
-        ${getDistinctionIcon(distinction)} ${getDistinctionText(distinction)}
-      </span>`
-    }).join('')
-
     const restaurantId = restaurant.name.replace(/[^a-zA-Z0-9]/g, '')
 
     // Responsive width based on screen size
@@ -406,8 +386,7 @@ export default function RestaurantMap() {
          onmouseout="this.style.backgroundColor='white'; this.style.transform='scale(1)'">
       <div style="flex: 1; min-width: 0;">
         <h3 style="font-size: ${isMobile ? '16px' : '18px'}; font-weight: bold; color: #1f2937; margin: 0 0 6px 0; line-height: 1.2;">${restaurant.name}</h3>
-        <p style="font-size: ${isMobile ? '12px' : '13px'}; color: #6b7280; margin: 0 0 8px 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 2px;">${distinctionsHtml}</div>
+        <p style="font-size: ${isMobile ? '12px' : '13px'}; color: #6b7280; margin: 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
       </div>
       <div style="width: ${imageSize}px; height: ${imageSize}px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
         <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/${imageSize}x${imageSize}/cccccc/333333?text=Image';">
