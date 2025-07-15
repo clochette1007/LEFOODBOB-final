@@ -360,6 +360,12 @@ export default function RestaurantMap() {
   }, [])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
+    const distinctionsHtml = restaurant.distinctions.map(distinction => {
+      return `<span style="display: inline-flex; align-items: center; margin-right: 4px; margin-bottom: 2px;">
+        ${getDistinctionIcon(distinction)}
+      </span>`
+    }).join('')
+
     const restaurantId = restaurant.name.replace(/[^a-zA-Z0-9]/g, '')
 
     // Responsive width based on screen size
@@ -386,7 +392,8 @@ export default function RestaurantMap() {
          onmouseout="this.style.backgroundColor='white'; this.style.transform='scale(1)'">
       <div style="flex: 1; min-width: 0;">
         <h3 style="font-size: ${isMobile ? '16px' : '18px'}; font-weight: bold; color: #1f2937; margin: 0 0 6px 0; line-height: 1.2;">${restaurant.name}</h3>
-        <p style="font-size: ${isMobile ? '12px' : '13px'}; color: #6b7280; margin: 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
+        <p style="font-size: ${isMobile ? '12px' : '13px'}; color: #6b7280; margin: 0 0 8px 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 2px;">${distinctionsHtml}</div>
       </div>
       <div style="width: ${imageSize}px; height: ${imageSize}px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
         <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/${imageSize}x${imageSize}/cccccc/333333?text=Image';">
