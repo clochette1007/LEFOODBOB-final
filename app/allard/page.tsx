@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ExternalLink, Phone, MapPin } from "lucide-react"
 import { Loader } from "@googlemaps/js-api-loader"
-import { restaurants, getDistinctionIcon, getDistinctionText, getDistinctionFullText, getBadgeColor } from '@/lib/restaurants'
+import { restaurants, getDistinctionIcon, getDistinctionText, getBadgeColor } from '@/lib/restaurants'
 
 declare global {
   interface Window {
@@ -75,7 +75,7 @@ export default function AllardPage() {
         </button>
         {tooltipVisible === `${distinction}-${index}` && (
           <div className="absolute top-full left-0 mt-1 z-50 bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap">
-            {getDistinctionFullText(distinction)}
+            {getDistinctionText(distinction)}
             <div className="absolute -top-1 left-2 w-2 h-2 bg-black rotate-45"></div>
           </div>
         )}
@@ -209,7 +209,7 @@ export default function AllardPage() {
             <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
             <div>
               <p className="text-base text-gray-700">{restaurant.address}</p>
-              <p className="text-sm text-gray-600">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
+              <p className="text-sm text-gray-600">{restaurant.city}</p>
             </div>
           </div>
 

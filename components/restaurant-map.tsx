@@ -133,7 +133,7 @@ export default function RestaurantMap() {
     }
   }
 
-  // Fonction pour afficher les distinctions d'un restaurant (icônes seulement)
+  // Fonction pour afficher les distinctions d'un restaurant (sans couleur ni texte)
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
       <span key={index} className="inline-flex items-center mr-1">
@@ -458,7 +458,7 @@ export default function RestaurantMap() {
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <h3 className="font-bold text-lg text-gray-900 mb-1">{restaurant.name}</h3>
-                    <p className="text-gray-600 text-sm mb-1">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
+                        <p className="text-gray-600 text-sm mb-1">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
                     <p className="text-gray-600 text-sm mb-2">{restaurant.priceRange} • Cuisine gastronomique</p>
                     <div className="flex flex-wrap gap-1">
                       {renderDistinctions(restaurant.distinctions)}

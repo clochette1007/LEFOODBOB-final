@@ -104,7 +104,7 @@ export default function RestaurantsPage() {
     }
   }
 
-  // Fonction pour afficher les distinctions d'un restaurant (icônes seulement)
+  // Fonction pour afficher les distinctions d'un restaurant (sans couleur ni texte)
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
       <span key={index} className="inline-flex items-center mr-1">

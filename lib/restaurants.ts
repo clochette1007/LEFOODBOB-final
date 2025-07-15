@@ -158,24 +158,6 @@ export const getDistinctionIcon = (distinction: string) => {
   }
 }
 
-// Fonction pour obtenir le nom des distinctions
-export const getDistinctionName = (distinction: string) => {
-  const names = {
-    "michelin-1": "1 étoile Michelin",
-    "michelin-2": "2 étoiles Michelin",
-    "michelin-3": "3 étoiles Michelin",
-    "michelin-bib": "Bib Gourmand",
-    "michelin-assiette": "Assiette Michelin",
-    "50best": "50 Best Restaurants",
-    "gaultmillau-1": "1 toque Gault&Millau",
-    "gaultmillau-2": "2 toques Gault&Millau",
-    "gaultmillau-3": "3 toques Gault&Millau",
-    "gaultmillau-4": "4 toques Gault&Millau",
-    "gaultmillau-5": "5 toques Gault&Millau",
-  }
-  return names[distinction as keyof typeof names] || ""
-}
-
 // Fonction pour obtenir le texte des distinctions
 export const getDistinctionText = (distinction: string) => {
   const texts = {
@@ -192,13 +174,6 @@ export const getDistinctionText = (distinction: string) => {
     "gaultmillau-5": "Une cuisine parfaite",
   }
   return texts[distinction as keyof typeof texts] || ""
-}
-
-// Fonction pour obtenir le nom + définition des distinctions (pour les tooltips)
-export const getDistinctionFullText = (distinction: string) => {
-  const name = getDistinctionName(distinction)
-  const definition = getDistinctionText(distinction)
-  return name && definition ? `${name} : ${definition}` : ""
 }
 
 // Fonction pour obtenir la couleur de badge
