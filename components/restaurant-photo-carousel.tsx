@@ -7,11 +7,13 @@ import { useGooglePlacesPhotos } from '@/hooks/use-google-places-photos'
 interface RestaurantPhotoCarouselProps {
   restaurantQuery: string
   restaurantName: string
+  fallbackPhoto?: string
 }
 
 export default function RestaurantPhotoCarousel({
   restaurantQuery,
-  restaurantName
+  restaurantName,
+  fallbackPhoto
 }: RestaurantPhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const { photos, isLoading, error } = useGooglePlacesPhotos({
@@ -39,17 +41,17 @@ export default function RestaurantPhotoCarousel({
     )
   }
 
-  // Si pas de photos ou erreur, utiliser une image de fallback
+  // Si pas de photos ou erreur, utiliser la photo de fallback du restaurant
   if (error || photos.length === 0) {
     return (
       <div className="relative w-full h-80 bg-gray-200 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          src={fallbackPhoto || "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"}
           alt={`${restaurantName} - Restaurant photo`}
           className="w-full h-full object-cover"
         />
         <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
-          Photo générique
+          Photo du restaurant
         </div>
       </div>
     )
