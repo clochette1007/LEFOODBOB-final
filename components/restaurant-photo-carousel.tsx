@@ -39,12 +39,17 @@ export default function RestaurantPhotoCarousel({
     )
   }
 
+  // Si pas de photos ou erreur, utiliser une image de fallback
   if (error || photos.length === 0) {
     return (
-      <div className="relative w-full h-80 bg-gray-200 flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <div className="text-lg font-medium">Photos non disponibles</div>
-          <div className="text-sm">Impossible de charger les photos du restaurant</div>
+      <div className="relative w-full h-80 bg-gray-200 overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt={`${restaurantName} - Restaurant photo`}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+          Photo générique
         </div>
       </div>
     )

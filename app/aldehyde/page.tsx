@@ -89,7 +89,7 @@ export default function AldehyDePage() {
       if (!restaurant.lat || !restaurant.lng) return
 
       const loader = new Loader({
-        apiKey: process.env.NEXT_PUBLIC_Maps_API_KEY || "AIzaSyCcfMwhQwKmsAnRYfQCtYKsWpB4EI3NIq4",
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyCcfMwhQwKmsAnRYfQCtYKsWpB4EI3NIq4",
         version: "weekly",
         libraries: ["places", "marker"]
       })

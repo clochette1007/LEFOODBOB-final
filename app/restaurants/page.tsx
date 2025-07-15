@@ -108,17 +108,17 @@ export default function RestaurantsPage() {
   // Fonction pour obtenir le nom court d'une distinction
   const getDistinctionShortName = (distinction: string) => {
     const shortNames = {
-      "michelin-1": "1 étoile Michelin",
-      "michelin-2": "2 étoiles Michelin",
-      "michelin-3": "3 étoiles Michelin",
+      "michelin-1": "1 étoile",
+      "michelin-2": "2 étoiles",
+      "michelin-3": "3 étoiles",
       "michelin-bib": "Bib Gourmand",
-      "michelin-assiette": "Assiette Michelin",
+      "michelin-assiette": "Assiette",
       "50best": "50 Best Restaurants",
-      "gaultmillau-1": "1 toque Gault & Millau",
-      "gaultmillau-2": "2 toques Gault & Millau",
-      "gaultmillau-3": "3 toques Gault & Millau",
-      "gaultmillau-4": "4 toques Gault & Millau",
-      "gaultmillau-5": "5 toques Gault & Millau",
+      "gaultmillau-1": "1 toque",
+      "gaultmillau-2": "2 toques",
+      "gaultmillau-3": "3 toques",
+      "gaultmillau-4": "4 toques",
+      "gaultmillau-5": "5 toques",
     }
     return shortNames[distinction as keyof typeof shortNames] || ""
   }
