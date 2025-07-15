@@ -56,15 +56,29 @@ export default function SearchAutocomplete({
 
     // Recherche par ville/arrondissement
     const uniqueCities = [...new Set(restaurants.map(r => r.city))]
-    uniqueCities.forEach(city => {
-      if (city.toLowerCase().includes(searchQuery)) {
+    
+    // Si on tape "Paris", montrer tous les arrondissements disponibles
+    if (searchQuery === 'paris' || searchQuery === 'par') {
+      uniqueCities.forEach(city => {
         newSuggestions.push({
           type: 'city',
-          label: city,
+          label: `Paris - ${city.replace('arrondissement', 'arr.')}`,
           value: city
         })
-      }
-    })
+      })
+    } else {
+      // Recherche normale dans les noms de villes
+      uniqueCities.forEach(city => {
+        if (city.toLowerCase().includes(searchQuery) || 
+            `paris - ${city.replace('arrondissement', 'arr.')}`.toLowerCase().includes(searchQuery)) {
+          newSuggestions.push({
+            type: 'city',
+            label: `Paris - ${city.replace('arrondissement', 'arr.')}`,
+            value: city
+          })
+        }
+      })
+    }
 
     // Limiter à 8 suggestions maximum
     setSuggestions(newSuggestions.slice(0, 8))
