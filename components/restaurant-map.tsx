@@ -12,6 +12,7 @@ import {
   getBadgeColor, 
   type Restaurant 
 } from '@/lib/restaurants'
+import SearchAutocomplete from './search-autocomplete'
 
 declare global {
   interface Window {
@@ -57,6 +58,8 @@ export default function RestaurantMap() {
   const [restaurantsWithPhotos, setRestaurantsWithPhotos] = useState<RestaurantWithPhoto[]>([])
   const [infoWindow, setInfoWindow] = useState<any>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [filteredRestaurants, setFilteredRestaurants] = useState<RestaurantWithPhoto[]>([])
+  const [hasSearched, setHasSearched] = useState(false)
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationTitle, setLocationTitle] = useState("Paris")
   const [isMapInitialized, setIsMapInitialized] = useState(false)
@@ -370,6 +373,29 @@ export default function RestaurantMap() {
   `
   }
 
+  // Gérer les changements de recherche
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+    setHasSearched(query.length > 0)
+    
+    if (query.length === 0) {
+      setFilteredRestaurants([])
+      return
+    }
+    
+    const searchQuery = query.toLowerCase()
+    const filtered = restaurantsWithPhotos.filter(restaurant => 
+      restaurant.name.toLowerCase().includes(searchQuery) || 
+      restaurant.city.toLowerCase().includes(searchQuery)
+    )
+    setFilteredRestaurants(filtered)
+  }
+
+  // Gérer la sélection d'un restaurant depuis l'autocomplete
+  const handleRestaurantSelect = (restaurant: Restaurant) => {
+    navigateToRestaurant(restaurant.name)
+  }
+
   const handleRestaurantClick = (restaurant: RestaurantWithPhoto) => {
     navigateToRestaurant(restaurant.name)
   }
@@ -379,16 +405,11 @@ export default function RestaurantMap() {
       {/* Barre de recherche */}
       <div className="p-6 border-b border-gray-200">
         <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Rechercher sur Lefoodbob"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+          <SearchAutocomplete 
+            placeholder="Rechercher un restaurant ou une ville sur Lefoodbob"
+            onSearchChange={handleSearchChange}
+            onRestaurantSelect={handleRestaurantSelect}
+          />
         </div>
       </div>
 
@@ -408,17 +429,27 @@ export default function RestaurantMap() {
         {/* Section Liste */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Liste</h2>
-            <button 
-              onClick={() => router.push('/restaurants')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Tout voir
-            </button>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {hasSearched ? `Résultats de recherche (${filteredRestaurants.length})` : 'Liste'}
+            </h2>
+            {!hasSearched && (
+              <button 
+                onClick={() => router.push('/restaurants')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Tout voir
+              </button>
+            )}
           </div>
 
+          {hasSearched && filteredRestaurants.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-lg">Aucun restaurant trouvé pour "{searchQuery}"</p>
+            </div>
+          )}
+
           <div className="grid gap-4">
-            {restaurantsWithPhotos.slice(0, 2).map((restaurant, index) => (
+            {(hasSearched ? filteredRestaurants : restaurantsWithPhotos.slice(0, 2)).map((restaurant, index) => (
               <div
                 key={index}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"

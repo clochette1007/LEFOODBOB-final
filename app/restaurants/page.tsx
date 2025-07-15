@@ -11,6 +11,7 @@ import {
   getBadgeColor, 
   type Restaurant 
 } from '@/lib/restaurants'
+import SearchAutocomplete from '@/components/search-autocomplete'
 
 interface RestaurantWithPhoto extends Restaurant {
   photoUrl: string
@@ -22,6 +23,17 @@ export default function RestaurantsPage() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showMichelinDropdown, setShowMichelinDropdown] = useState(false)
   const [showGaultMillauDropdown, setShowGaultMillauDropdown] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Gérer les changements de recherche
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+  }
+
+  // Gérer la sélection d'un restaurant depuis l'autocomplete
+  const handleRestaurantSelect = (restaurant: Restaurant) => {
+    navigateToRestaurant(restaurant.name)
+  }
 
   // Fonction pour naviguer vers la page du restaurant  
   const navigateToRestaurant = (restaurantName: string) => {
@@ -153,6 +165,15 @@ export default function RestaurantsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Restaurants LEFOODBOB</h1>
         </div>
 
+        {/* Barre de recherche */}
+        <div className="mb-6">
+          <SearchAutocomplete 
+            placeholder="Rechercher un restaurant ou une ville..."
+            onSearchChange={handleSearchChange}
+            onRestaurantSelect={handleRestaurantSelect}
+          />
+        </div>
+
         {/* Filtres */}
         <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
           <div className="flex flex-wrap gap-2">
@@ -282,10 +303,18 @@ export default function RestaurantsPage() {
         {/* Liste des restaurants */}
         <div className="grid gap-6">
           {restaurantsWithPhotos
-            .filter(restaurant => 
-              selectedFilters.length === 0 || 
-              restaurant.distinctions.some(d => selectedFilters.includes(d))
-            )
+            .filter(restaurant => {
+              // Filtrer par distinctions
+              const matchesFilters = selectedFilters.length === 0 || 
+                restaurant.distinctions.some(d => selectedFilters.includes(d))
+              
+              // Filtrer par recherche
+              const matchesSearch = searchQuery === "" || 
+                restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                restaurant.city.toLowerCase().includes(searchQuery.toLowerCase())
+              
+              return matchesFilters && matchesSearch
+            })
             .map((restaurant, index) => (
               <div
                 key={index}
@@ -319,12 +348,22 @@ export default function RestaurantsPage() {
         </div>
 
         {/* Message si aucun restaurant trouvé */}
-        {restaurantsWithPhotos.filter(restaurant => 
-          selectedFilters.length === 0 || 
-          restaurant.distinctions.some(d => selectedFilters.includes(d))
-        ).length === 0 && (
+        {restaurantsWithPhotos.filter(restaurant => {
+          // Filtrer par distinctions
+          const matchesFilters = selectedFilters.length === 0 || 
+            restaurant.distinctions.some(d => selectedFilters.includes(d))
+          
+          // Filtrer par recherche
+          const matchesSearch = searchQuery === "" || 
+            restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            restaurant.city.toLowerCase().includes(searchQuery.toLowerCase())
+          
+          return matchesFilters && matchesSearch
+        }).length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Aucun restaurant trouvé avec ces critères.</p>
+            <p className="text-gray-500 text-lg">
+              Aucun restaurant trouvé{searchQuery && ` pour "${searchQuery}"`}{selectedFilters.length > 0 && ' avec ces critères'}.
+            </p>
           </div>
         )}
       </div>
