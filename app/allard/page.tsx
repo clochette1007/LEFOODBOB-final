@@ -16,6 +16,7 @@ export default function AllardPage() {
   const router = useRouter()
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
+  const [tooltipVisible, setTooltipVisible] = useState<string | null>(null)
 
   const restaurant = restaurants.find(r => r.name === "Allard")
   if (!restaurant) return <div>Restaurant non trouvé</div>
@@ -63,8 +64,20 @@ export default function AllardPage() {
 
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
-      <span key={index} className="inline-flex items-center mr-3 mb-2">
+      <span key={index} className="inline-flex items-center mr-3 mb-2 relative">
         {renderDistinctionIconJSX(distinction)}
+        <button
+          onClick={() => setTooltipVisible(tooltipVisible === `${distinction}-${index}` ? null : `${distinction}-${index}`)}
+          className="ml-1 w-4 h-4 bg-gray-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-600 transition-colors"
+        >
+          i
+        </button>
+        {tooltipVisible === `${distinction}-${index}` && (
+          <div className="absolute top-full left-0 mt-1 z-50 bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+            {getDistinctionText(distinction)}
+            <div className="absolute -top-1 left-2 w-2 h-2 bg-black rotate-45"></div>
+          </div>
+        )}
       </span>
     ))
   }
