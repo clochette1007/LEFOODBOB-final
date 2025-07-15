@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ExternalLink, Phone, MapPin } from "lucide-react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { restaurants, getDistinctionIcon, getDistinctionText, getBadgeColor } from '@/lib/restaurants'
+import RestaurantPhotoCarousel from '@/components/restaurant-photo-carousel'
 
 declare global {
   interface Window {
@@ -17,7 +18,6 @@ export default function AuBourguignonDuMaraisPage() {
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null)
-  const [googlePhoto, setGooglePhoto] = useState<string | null>(null)
 
   const restaurant = restaurants.find(r => r.name === "Au Bourguignon du Marais")
   if (!restaurant) return <div>Restaurant non trouvé</div>
@@ -97,23 +97,7 @@ export default function AuBourguignonDuMaraisPage() {
       try {
         await loader.load()
         
-        // Récupérer l'image Google Places
-        const placesService = new window.google.maps.places.PlacesService(document.createElement('div'))
-        placesService.findPlaceFromQuery(
-          {
-            query: restaurant.query,
-            fields: ["photos"],
-          },
-          (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]?.photos) {
-              const photoUrl = results[0].photos[0].getUrl({
-                maxWidth: 1200,
-                maxHeight: 600,
-              })
-              setGooglePhoto(photoUrl)
-            }
-          }
-        )
+
         
         if (mapRef.current) {
           const mapInstance = new window.google.maps.Map(mapRef.current, {
@@ -180,18 +164,12 @@ export default function AuBourguignonDuMaraisPage() {
           </div>
         </div>
 
-        {/* Photo de couverture */}
-        <div className="relative w-full h-80 bg-gray-200">
-          <img
-            src={googlePhoto || restaurant.photoUrl}
-            alt={restaurant.name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.src = "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-            }}
-          />
-        </div>
+        {/* Carrousel de photos */}
+        <RestaurantPhotoCarousel
+          restaurantQuery={restaurant.query}
+          fallbackPhoto={restaurant.photoUrl || "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"}
+          restaurantName={restaurant.name}
+        />
 
         <div className="bg-white px-6 py-8">
           {/* Distinctions */}
