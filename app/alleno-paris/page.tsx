@@ -18,6 +18,7 @@ export default function AllenoParisPage() {
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null)
+  const [googlePhoto, setGooglePhoto] = useState<string | null>(null)
 
   const restaurant = restaurants.find(r => r.name === "Alléno Paris")
   if (!restaurant) return <div>Restaurant non trouvé</div>
@@ -83,7 +84,7 @@ export default function AllenoParisPage() {
     ))
   }
 
-  // Initialiser Google Maps
+  // Initialiser Google Maps et récupérer l'image Google Places
   useEffect(() => {
     const initMap = async () => {
       if (!restaurant.lat || !restaurant.lng) return
@@ -96,6 +97,24 @@ export default function AllenoParisPage() {
 
       try {
         await loader.load()
+        
+        // Récupérer l'image Google Places
+        const placesService = new window.google.maps.places.PlacesService(document.createElement('div'))
+        placesService.findPlaceFromQuery(
+          {
+            query: restaurant.query,
+            fields: ["photos"],
+          },
+          (results, status) => {
+            if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]?.photos) {
+              const photoUrl = results[0].photos[0].getUrl({
+                maxWidth: 1200,
+                maxHeight: 600,
+              })
+              setGooglePhoto(photoUrl)
+            }
+          }
+        )
         
         if (mapRef.current) {
           const mapInstance = new window.google.maps.Map(mapRef.current, {
@@ -165,7 +184,7 @@ export default function AllenoParisPage() {
         {/* Photo de couverture */}
         <div className="relative w-full h-80 bg-gray-200">
           <img
-            src={restaurant.photoUrl}
+            src={googlePhoto || restaurant.photoUrl}
             alt={restaurant.name}
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -183,15 +202,15 @@ export default function AllenoParisPage() {
             </div>
           </div>
 
-          {/* Titre - Typographie corrigée */}
-          <h1 className="text-xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
+          {/* Titre - Typographie uniformisée */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
           
-          {/* Adresse - Typographie corrigée */}
+          {/* Adresse - Typographie uniformisée */}
           <div className="flex items-start gap-2 mb-4">
             <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
             <div>
               <p className="text-base text-gray-700">{restaurant.address}</p>
-              <p className="text-gray-600">{restaurant.city}</p>
+              <p className="text-sm text-gray-600">{restaurant.city}</p>
             </div>
           </div>
 
@@ -203,7 +222,7 @@ export default function AllenoParisPage() {
 
           {/* Google Maps */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Localisation</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Localisation</h2>
             <div className="w-full h-80 rounded-lg overflow-hidden border border-gray-200">
               <div ref={mapRef} className="w-full h-full" />
             </div>
