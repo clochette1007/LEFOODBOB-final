@@ -186,8 +186,8 @@ export default function SearchAutocomplete({
                 <div>
                   <div className="font-medium text-gray-900">{suggestion.label}</div>
                   <div className="text-sm text-gray-500">
-                    {suggestion.type === 'restaurant' ? 'Restaurant' : 'Ville'}
-                    {suggestion.restaurant && ` • ${suggestion.restaurant.city}`}
+                                       {suggestion.type === 'restaurant' ? 'Restaurant' : 'Ville'}
+                     {suggestion.restaurant && ` • Paris - ${suggestion.restaurant.city.replace('arrondissement', 'arr.')}`}
                   </div>
                 </div>
               </div>

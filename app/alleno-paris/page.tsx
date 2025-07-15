@@ -210,7 +210,7 @@ export default function AllenoParisPage() {
             <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
             <div>
               <p className="text-base text-gray-700">{restaurant.address}</p>
-              <p className="text-sm text-gray-600">{restaurant.city}</p>
+              <p className="text-sm text-gray-600">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
             </div>
           </div>
 
