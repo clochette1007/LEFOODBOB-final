@@ -46,10 +46,12 @@ export default function SearchAutocomplete({
     // Recherche par ville/arrondissement
     const uniqueCities = [...new Set(restaurants.map(r => r.city))]
     uniqueCities.forEach(city => {
-      if (city.toLowerCase().includes(searchQuery)) {
+      // Chercher dans le nom de la ville/arrondissement ou si on tape "paris"
+      if (city.toLowerCase().includes(searchQuery) || 
+          (searchQuery === 'paris' || searchQuery === 'pari' || searchQuery.startsWith('par'))) {
         citySuggestions.push({
           type: 'city',
-          label: city,
+          label: `Paris - ${city.replace('arrondissement', 'arr.')}`,
           value: city
         })
       }
@@ -237,7 +239,7 @@ export default function SearchAutocomplete({
                             <div>
                               <div className="font-medium text-gray-900">{suggestion.label}</div>
                               <div className="text-sm text-gray-500">
-                                {suggestion.restaurant?.city} • {suggestion.restaurant?.priceRange}
+                                Paris - {suggestion.restaurant?.city.replace('arrondissement', 'arr.')} • {suggestion.restaurant?.priceRange}
                               </div>
                             </div>
                           </div>
