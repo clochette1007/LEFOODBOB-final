@@ -160,7 +160,7 @@ export default function RestaurantMap() {
             // Ajouter un marqueur personnalisé pour la position de l'utilisateur
             const { AdvancedMarkerElement } = window.google.maps.marker
             const userMarkerElement = document.createElement('img')
-            userMarkerElement.src = '/bob_repere.png'
+            userMarkerElement.src = '/bobrepere.png'
             userMarkerElement.style.width = '35px'        // Légèrement plus petit pour l'utilisateur
             userMarkerElement.style.height = '35px'
             userMarkerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3)) hue-rotate(220deg)'  // Teinté bleu pour différencier
@@ -263,7 +263,7 @@ export default function RestaurantMap() {
 
             // Créer un marqueur personnalisé avec votre image bob_repere
             const markerElement = document.createElement('img')
-            markerElement.src = '/bob_repere.png'
+            markerElement.src = '/bobrepere.png'
             markerElement.style.width = '40px'        // Taille du marqueur
             markerElement.style.height = '40px'
             markerElement.style.cursor = 'pointer'

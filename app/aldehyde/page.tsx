@@ -109,7 +109,7 @@ export default function AldehyDePage() {
           // Ajouter le marqueur du restaurant avec votre image personnalisée
           const { AdvancedMarkerElement, PinElement } = window.google.maps.marker
           const markerElement = document.createElement('img')
-          markerElement.src = '/bob_repere.png'
+          markerElement.src = '/bobrepere.png'
           markerElement.style.width = '40px'
           markerElement.style.height = '40px'
           markerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'
