@@ -104,6 +104,24 @@ export default function RestaurantsPage() {
     }
   }
 
+  // Fonction pour obtenir le nom court d'une distinction
+  const getDistinctionShortName = (distinction: string) => {
+    const shortNames = {
+      "michelin-1": "1 étoile Michelin",
+      "michelin-2": "2 étoiles Michelin",
+      "michelin-3": "3 étoiles Michelin",
+      "michelin-bib": "Bib Gourmand",
+      "michelin-assiette": "Assiette Michelin",
+      "50best": "50 Best Restaurants",
+      "gaultmillau-1": "1 toque Gault & Millau",
+      "gaultmillau-2": "2 toques Gault & Millau",
+      "gaultmillau-3": "3 toques Gault & Millau",
+      "gaultmillau-4": "4 toques Gault & Millau",
+      "gaultmillau-5": "5 toques Gault & Millau",
+    }
+    return shortNames[distinction as keyof typeof shortNames] || ""
+  }
+
   // Fonction pour afficher les distinctions d'un restaurant (sans couleur ni texte)
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
@@ -217,7 +235,7 @@ export default function RestaurantsPage() {
                       />
                       <div className="flex items-center gap-2">
                         {option.jsx}
-                        <span className="text-sm">{getDistinctionText(option.key)}</span>
+                        <span className="text-sm">{getDistinctionShortName(option.key)}</span>
                       </div>
                     </label>
                   ))}
@@ -263,7 +281,7 @@ export default function RestaurantsPage() {
                       />
                       <div className="flex items-center gap-2">
                         {option.jsx}
-                        <span className="text-sm">{getDistinctionText(option.key)}</span>
+                        <span className="text-sm">{getDistinctionShortName(option.key)}</span>
                       </div>
                     </label>
                   ))}
