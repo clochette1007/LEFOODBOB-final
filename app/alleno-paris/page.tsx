@@ -169,7 +169,6 @@ export default function AllenoParisPage() {
                   <RestaurantPhotoCarousel 
             restaurantQuery={restaurant.query}
             restaurantName={restaurant.name}
-            fallbackPhoto={restaurant.photoUrl}
           />
 
         <div className="bg-white px-6 py-8">
