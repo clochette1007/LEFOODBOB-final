@@ -167,7 +167,6 @@ export default function AuBourguignonDuMaraisPage() {
         {/* Carrousel de photos */}
         <RestaurantPhotoCarousel
           restaurantQuery={restaurant.query}
-          fallbackPhoto={restaurant.photoUrl || "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"}
           restaurantName={restaurant.name}
         />
 

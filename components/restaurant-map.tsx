@@ -13,6 +13,7 @@ import {
   type Restaurant 
 } from '@/lib/restaurants'
 import SearchAutocomplete from './search-autocomplete'
+import RestaurantThumbnail from './restaurant-thumbnail'
 
 declare global {
   interface Window {
@@ -62,6 +63,7 @@ export default function RestaurantMap() {
   const [hasSearched, setHasSearched] = useState(false)
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationTitle, setLocationTitle] = useState("Paris")
+  const [photosLoaded, setPhotosLoaded] = useState(false)
   const [isMapInitialized, setIsMapInitialized] = useState(false)
 
   // Fonction pour naviguer vers la page du restaurant  
@@ -143,6 +145,47 @@ export default function RestaurantMap() {
   }
 
 
+
+  // Charger les images Google Places au démarrage
+  useEffect(() => {
+    const loadGooglePlacesPhotos = async () => {
+      if (!window.google || photosLoaded) return
+
+      const restaurantsWithGooglePhotos = await Promise.all(
+        restaurants.map(async (restaurant) => {
+          return new Promise<RestaurantWithPhoto>((resolve) => {
+            const placesService = new window.google.maps.places.PlacesService(document.createElement('div'))
+            placesService.findPlaceFromQuery(
+              {
+                query: restaurant.query,
+                fields: ["photos"],
+              },
+              (results: any, status: any) => {
+                let photoUrl = restaurant.photoUrl || "https://placehold.co/200x150/cccccc/333333?text=Image"
+                
+                if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]?.photos) {
+                  photoUrl = results[0].photos[0].getUrl({
+                    maxWidth: 400,
+                    maxHeight: 300,
+                  })
+                }
+                
+                resolve({
+                  ...restaurant,
+                  photoUrl
+                })
+              }
+            )
+          })
+        })
+      )
+
+      setRestaurantsWithPhotos(restaurantsWithGooglePhotos)
+      setPhotosLoaded(true)
+    }
+
+    loadGooglePlacesPhotos()
+  }, [photosLoaded])
 
   useEffect(() => {
     // Demander la géolocalisation
@@ -465,17 +508,11 @@ export default function RestaurantMap() {
                     </div>
                       </div>
 
-                      <div className="w-24 h-24 flex-shrink-0">
-                        <img
-                          src={restaurant.photoUrl || "/placeholder.svg"}
-                          alt={restaurant.name}
-                      className="w-full h-full object-cover rounded-lg"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            target.src = "https://placehold.co/96x96/cccccc/333333?text=Image"
-                          }}
-                        />
-                      </div>
+                      <RestaurantThumbnail 
+                        restaurant={restaurant} 
+                        onClick={() => navigateToRestaurant(restaurant.name)}
+                        size="medium"
+                      />
                     </div>
                   </div>
                 ))}

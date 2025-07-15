@@ -167,7 +167,6 @@ export default function LAmiJeanPage() {
         {/* Carrousel de photos */}
         <RestaurantPhotoCarousel
           restaurantQuery={restaurant.query}
-          fallbackPhoto={restaurant.photoUrl || "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"}
           restaurantName={restaurant.name}
         />
 

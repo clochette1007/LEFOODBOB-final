@@ -168,7 +168,6 @@ export default function AllenoParisPage() {
         {/* Carrousel de photos */}
         <RestaurantPhotoCarousel
           restaurantQuery={restaurant.query}
-          fallbackPhoto={restaurant.photoUrl || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"}
           restaurantName={restaurant.name}
         />
 

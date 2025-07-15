@@ -1,62 +1,25 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useGooglePlacesPhotos } from '@/hooks/use-google-places-photos'
 
 interface RestaurantPhotoCarouselProps {
   restaurantQuery: string
-  fallbackPhoto: string
   restaurantName: string
 }
 
 export default function RestaurantPhotoCarousel({
   restaurantQuery,
-  fallbackPhoto,
   restaurantName
 }: RestaurantPhotoCarouselProps) {
-  const [photos, setPhotos] = useState<string[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const loadPhotos = async () => {
-      try {
-        if (!window.google) {
-          setPhotos([fallbackPhoto])
-          setIsLoading(false)
-          return
-        }
-
-        const placesService = new window.google.maps.places.PlacesService(document.createElement('div'))
-        placesService.findPlaceFromQuery(
-          {
-            query: restaurantQuery,
-            fields: ["photos"],
-          },
-          (results: any, status: any) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]?.photos) {
-              const googlePhotos = results[0].photos.slice(0, 4).map((photo: any) => 
-                photo.getUrl({
-                  maxWidth: 1200,
-                  maxHeight: 600,
-                })
-              )
-              setPhotos(googlePhotos.length > 0 ? googlePhotos : [fallbackPhoto])
-            } else {
-              setPhotos([fallbackPhoto])
-            }
-            setIsLoading(false)
-          }
-        )
-      } catch (error) {
-        console.error('Erreur lors du chargement des photos:', error)
-        setPhotos([fallbackPhoto])
-        setIsLoading(false)
-      }
-    }
-
-    loadPhotos()
-  }, [restaurantQuery, fallbackPhoto])
+  const { photos, isLoading, error } = useGooglePlacesPhotos({
+    query: restaurantQuery,
+    maxPhotos: 4,
+    maxWidth: 1200,
+    maxHeight: 600
+  })
 
   const nextPhoto = () => {
     setCurrentIndex((prev) => (prev + 1) % photos.length)
@@ -76,17 +39,24 @@ export default function RestaurantPhotoCarousel({
     )
   }
 
+  if (error || photos.length === 0) {
+    return (
+      <div className="relative w-full h-80 bg-gray-200 flex items-center justify-center">
+        <div className="text-center text-gray-500">
+          <div className="text-lg font-medium">Photos non disponibles</div>
+          <div className="text-sm">Impossible de charger les photos du restaurant</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="relative w-full h-80 bg-gray-200 overflow-hidden">
       {/* Photo principale */}
       <img
-        src={photos[currentIndex]}
+        src={photos[currentIndex].url}
         alt={`${restaurantName} - Photo ${currentIndex + 1}`}
         className="w-full h-full object-cover transition-opacity duration-300"
-        onError={(e) => {
-          const target = e.target as HTMLImageElement
-          target.src = fallbackPhoto
-        }}
       />
 
       {/* Flèches de navigation - seulement si plus d'une photo */}

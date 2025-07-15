@@ -12,6 +12,7 @@ import {
   type Restaurant 
 } from '@/lib/restaurants'
 import SearchAutocomplete from '@/components/search-autocomplete'
+import RestaurantThumbnail from '@/components/restaurant-thumbnail'
 
 interface RestaurantWithPhoto extends Restaurant {
   photoUrl: string
@@ -349,17 +350,11 @@ export default function RestaurantsPage() {
                     </div>
                   </div>
 
-                  <div className="w-32 h-32 flex-shrink-0">
-                    <img
-                      src={restaurant.photoUrl || "/placeholder.svg"}
-                      alt={restaurant.name}
-                      className="w-full h-full object-cover rounded-lg"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.src = "https://placehold.co/128x128/cccccc/333333?text=Image"
-                      }}
-                    />
-                  </div>
+                  <RestaurantThumbnail 
+                    restaurant={restaurant} 
+                    onClick={() => navigateToRestaurant(restaurant.name)}
+                    size="large"
+                  />
                 </div>
               </div>
             ))}
