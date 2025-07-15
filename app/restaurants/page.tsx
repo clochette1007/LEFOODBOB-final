@@ -168,7 +168,6 @@ export default function RestaurantsPage() {
                     : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                🔴
                 Michelin
                 <span className="ml-1">▼</span>
               </button>
@@ -215,7 +214,6 @@ export default function RestaurantsPage() {
                     : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                ⚪
                 Gault et Millau
                 <span className="ml-1">▼</span>
               </button>
@@ -266,8 +264,7 @@ export default function RestaurantsPage() {
                   ? "bg-blue-100 border-blue-300 text-blue-800"
                   : "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
               }`}
-            >
-              ⚫
+                          >
               50 Best
             </button>
 
