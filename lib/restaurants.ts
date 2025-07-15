@@ -161,17 +161,17 @@ export const getDistinctionIcon = (distinction: string) => {
 // Fonction pour obtenir le texte des distinctions
 export const getDistinctionText = (distinction: string) => {
   const texts = {
-    "michelin-1": "Michelin",
-    "michelin-2": "Michelin",
-    "michelin-3": "Michelin",
-    "michelin-bib": "Bib Gourmand",
-    "michelin-assiette": "Assiette Michelin",
-    "50best": "50 Best",
-    "gaultmillau-1": "1 toque",
-    "gaultmillau-2": "2 toques",
-    "gaultmillau-3": "3 toques",
-    "gaultmillau-4": "4 toques",
-    "gaultmillau-5": "5 toques",
+    "michelin-1": "Une cuisine d'une grande finesse - Vaut l'étape",
+    "michelin-2": "Une cuisine d'exception - Vaut le détour",
+    "michelin-3": "Une cuisine unique - Vaut le voyage",
+    "michelin-bib": "Cuisine de qualité à prix raisonnable",
+    "michelin-assiette": "Une cuisine de qualité",
+    "50best": "Reconnaissance d'excellence culinaire mondiale",
+    "gaultmillau-1": "Une cuisine prometteuse",
+    "gaultmillau-2": "Une cuisine remarquable",
+    "gaultmillau-3": "Une cuisine de haute qualité",
+    "gaultmillau-4": "Une cuisine exceptionnelle",
+    "gaultmillau-5": "Une cuisine parfaite",
   }
   return texts[distinction as keyof typeof texts] || ""
 }

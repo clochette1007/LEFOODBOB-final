@@ -70,7 +70,7 @@ export default function AllenoParisPage() {
         {renderDistinctionIconJSX(distinction)}
         <button
           onClick={() => setTooltipVisible(tooltipVisible === `${distinction}-${index}` ? null : `${distinction}-${index}`)}
-          className="ml-1 w-4 h-4 bg-gray-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-600 transition-colors"
+          className="ml-1 w-3 h-3 bg-gray-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-600 transition-colors relative -top-1"
         >
           i
         </button>
