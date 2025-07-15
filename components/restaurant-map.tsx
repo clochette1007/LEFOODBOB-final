@@ -402,33 +402,33 @@ export default function RestaurantMap() {
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Barre de recherche */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="max-w-4xl mx-auto">
+          {/* Barre de recherche */}
+          <div className="p-6 border-b border-gray-200">
+            <div className="max-w-4xl mx-auto">
           <SearchAutocomplete 
             placeholder="Rechercher un restaurant ou une ville sur Lefoodbob"
             onSearchChange={handleSearchChange}
             onRestaurantSelect={handleRestaurantSelect}
           />
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Section Autour de moi */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">{locationTitle}</h2>
+            </div>
           </div>
+
+          <div className="max-w-4xl mx-auto p-6">
+            {/* Section Autour de moi */}
+            <div className="mb-8">
+              <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">{locationTitle}</h2>
+              </div>
 
           {/* Carte simple */}
           <div className="relative w-full h-96 rounded-lg overflow-hidden border border-gray-200 mb-6">
-            <div ref={mapRef} className="w-full h-full" />
-          </div>
-        </div>
+                <div ref={mapRef} className="w-full h-full" />
+              </div>
+            </div>
 
         {/* Section Liste */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
               {hasSearched ? `Résultats de recherche (${filteredRestaurants.length})` : 'Liste'}
             </h2>
@@ -440,13 +440,13 @@ export default function RestaurantMap() {
                 Tout voir
               </button>
             )}
-          </div>
+              </div>
 
           {hasSearched && filteredRestaurants.length === 0 && (
             <div className="text-center py-8">
               <p className="text-gray-500 text-lg">Aucun restaurant trouvé pour "{searchQuery}"</p>
-            </div>
-          )}
+                          </div>
+                        )}
 
           <div className="grid gap-4">
             {(hasSearched ? filteredRestaurants : restaurantsWithPhotos.slice(0, 2)).map((restaurant, index) => (
@@ -463,25 +463,25 @@ export default function RestaurantMap() {
                     <div className="flex flex-wrap gap-1">
                       {renderDistinctions(restaurant.distinctions)}
                     </div>
-                  </div>
+                      </div>
 
-                  <div className="w-24 h-24 flex-shrink-0">
-                    <img
-                      src={restaurant.photoUrl || "/placeholder.svg"}
-                      alt={restaurant.name}
+                      <div className="w-24 h-24 flex-shrink-0">
+                        <img
+                          src={restaurant.photoUrl || "/placeholder.svg"}
+                          alt={restaurant.name}
                       className="w-full h-full object-cover rounded-lg"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.src = "https://placehold.co/96x96/cccccc/333333?text=Image"
-                      }}
-                    />
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.src = "https://placehold.co/96x96/cccccc/333333?text=Image"
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </div>
 
 
     </div>

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ExternalLink, Phone, MapPin } from "lucide-react"
 import { Loader } from "@googlemaps/js-api-loader"
-import { restaurants, getDistinctionIcon, getDistinctionText, getDistinctionName, getBadgeColor } from '@/lib/restaurants'
+import { restaurants, getDistinctionIcon, getDistinctionText, getDistinctionFullText, getBadgeColor } from '@/lib/restaurants'
 
 declare global {
   interface Window {
@@ -17,7 +17,6 @@ export default function LArpegePage() {
   const mapRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<any>(null)
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null)
-  const [bobReviewTooltip, setBobReviewTooltip] = useState<boolean>(false)
   const [googlePhoto, setGooglePhoto] = useState<string | null>(null)
 
   const restaurant = restaurants.find(r => r.name === "L'Arpège")
@@ -76,7 +75,7 @@ export default function LArpegePage() {
         </button>
         {tooltipVisible === `${distinction}-${index}` && (
           <div className="absolute top-full left-0 mt-1 z-50 bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap">
-            {getDistinctionName(distinction)} : {getDistinctionText(distinction)}
+            {getDistinctionFullText(distinction)}
             <div className="absolute -top-1 left-2 w-2 h-2 bg-black rotate-45"></div>
           </div>
         )}
@@ -213,30 +212,6 @@ export default function LArpegePage() {
               <p className="text-sm text-gray-600">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
             </div>
           </div>
-
-          {/* L'avis de Bob */}
-          {restaurant.bobReview && (
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <p className="text-xl font-semibold text-gray-900">L'avis de Bob</p>
-                <div className="relative bob-tooltip-container">
-                  <button
-                    onClick={() => setBobReviewTooltip(!bobReviewTooltip)}
-                    className="w-3 h-3 bg-gray-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-gray-600 transition-colors relative -top-1"
-                  >
-                    i
-                  </button>
-                  {bobReviewTooltip && (
-                    <div className="absolute top-full left-0 mt-1 z-50 bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap">
-                      Visité en {restaurant.lastVisitYear}
-                      <div className="absolute -top-1 left-2 w-2 h-2 bg-black rotate-45"></div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <p className="text-base text-gray-700 italic">"{restaurant.bobReview}"</p>
-            </div>
-          )}
 
           {/* Tarifs */}
           <div className="mb-8">

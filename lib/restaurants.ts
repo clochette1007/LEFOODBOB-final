@@ -13,8 +13,6 @@ export interface Restaurant {
   lat?: number
   lng?: number
   priceSymbol?: string
-  bobReview?: string
-  lastVisitYear?: number
 }
 
 export const restaurants: Restaurant[] = [
@@ -32,9 +30,7 @@ export const restaurants: Restaurant[] = [
     description: "Restaurant gastronomique en plein cœur de Paris. Cuisine élégante et affirmée qui porte haut les saveurs franco-tunisiennes.",
     photoUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8541,
-    lng: 2.3570,
-    bobReview: "Une cuisine créative remarquable qui fusionne parfaitement les influences méditerranéennes et françaises. L'expérience culinaire de Youssef Marzouk m'a vraiment impressionné.",
-    lastVisitYear: 2024
+    lng: 2.3570
   },
   {
     address: "84 Rue de Varenne, 75007 Paris",
@@ -50,9 +46,7 @@ export const restaurants: Restaurant[] = [
     description: "Restaurant emblématique d'Alain Passard, référence mondiale de la cuisine végétale de haute gastronomie.",
     photoUrl: "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8568,
-    lng: 2.3183,
-    bobReview: "Alain Passard a révolutionné ma vision de la cuisine végétale. Chaque plat est une œuvre d'art, un véritable voyage gustatif inoubliable. Un maître incontesté.",
-    lastVisitYear: 2023
+    lng: 2.3183
   },
   {
     address: "8 Avenue Dutuit, 75008 Paris",
@@ -68,9 +62,7 @@ export const restaurants: Restaurant[] = [
     description: "Temple de la haute gastronomie française au sein du Pavillon Ledoyen.",
     photoUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8656,
-    lng: 2.3125,
-    bobReview: "Yannick Alléno pousse les limites de la gastronomie française moderne. Sa technique d'extraction des saveurs est révolutionnaire. Une expérience transcendante.",
-    lastVisitYear: 2024
+    lng: 2.3125
   },
   {
     address: "41 Rue Saint-André-des-Arts, 75006 Paris",
@@ -85,9 +77,7 @@ export const restaurants: Restaurant[] = [
     description: "Bistrot parisien traditionnel revisité par Alain Ducasse.",
     photoUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8534,
-    lng: 2.3408,
-    bobReview: "Ducasse a su préserver l'âme du bistrot parisien tout en y apportant sa signature. Les plats traditionnels revisités avec brio, une adresse chaleureuse.",
-    lastVisitYear: 2023
+    lng: 2.3408
   },
   {
     address: "27 Rue Malar, 75007 Paris",
@@ -102,9 +92,7 @@ export const restaurants: Restaurant[] = [
     description: "Bistrot convivial aux saveurs du Sud-Ouest et de Bretagne.",
     photoUrl: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8583,
-    lng: 2.3038,
-    bobReview: "L'authenticité incarnée ! Stéphane Jégo cuisine avec le cœur, l'ambiance est survoltée et les portions généreuses. Un vrai moment de bonheur partagé.",
-    lastVisitYear: 2024
+    lng: 2.3038
   },
   {
     address: "19 Place Dauphine, 75001 Paris",
@@ -118,9 +106,7 @@ export const restaurants: Restaurant[] = [
     description: "Authentique bistrot parisien spécialisé dans la cuisine bourguignonne.",
     photoUrl: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     lat: 48.8566,
-    lng: 2.3421,
-    bobReview: "Un petit bijou caché place Dauphine ! La cuisine bourguignonne y est authentique et généreuse. L'escargots et le bœuf bourguignon sont mémorables.",
-    lastVisitYear: 2023
+    lng: 2.3421
   },
 ]
 
@@ -172,6 +158,24 @@ export const getDistinctionIcon = (distinction: string) => {
   }
 }
 
+// Fonction pour obtenir le nom des distinctions
+export const getDistinctionName = (distinction: string) => {
+  const names = {
+    "michelin-1": "1 étoile Michelin",
+    "michelin-2": "2 étoiles Michelin",
+    "michelin-3": "3 étoiles Michelin",
+    "michelin-bib": "Bib Gourmand",
+    "michelin-assiette": "Assiette Michelin",
+    "50best": "50 Best Restaurants",
+    "gaultmillau-1": "1 toque Gault&Millau",
+    "gaultmillau-2": "2 toques Gault&Millau",
+    "gaultmillau-3": "3 toques Gault&Millau",
+    "gaultmillau-4": "4 toques Gault&Millau",
+    "gaultmillau-5": "5 toques Gault&Millau",
+  }
+  return names[distinction as keyof typeof names] || ""
+}
+
 // Fonction pour obtenir le texte des distinctions
 export const getDistinctionText = (distinction: string) => {
   const texts = {
@@ -190,22 +194,11 @@ export const getDistinctionText = (distinction: string) => {
   return texts[distinction as keyof typeof texts] || ""
 }
 
-// Fonction pour obtenir le nom des distinctions
-export const getDistinctionName = (distinction: string) => {
-  const names = {
-    "michelin-1": "1 étoile Michelin",
-    "michelin-2": "2 étoiles Michelin",
-    "michelin-3": "3 étoiles Michelin",
-    "michelin-bib": "Bib Gourmand",
-    "michelin-assiette": "Assiette Michelin",
-    "50best": "50 Best Restaurants",
-    "gaultmillau-1": "1 toque Gault&Millau",
-    "gaultmillau-2": "2 toques Gault&Millau",
-    "gaultmillau-3": "3 toques Gault&Millau",
-    "gaultmillau-4": "4 toques Gault&Millau",
-    "gaultmillau-5": "5 toques Gault&Millau",
-  }
-  return names[distinction as keyof typeof names] || ""
+// Fonction pour obtenir le nom + définition des distinctions (pour les tooltips)
+export const getDistinctionFullText = (distinction: string) => {
+  const name = getDistinctionName(distinction)
+  const definition = getDistinctionText(distinction)
+  return name && definition ? `${name} : ${definition}` : ""
 }
 
 // Fonction pour obtenir la couleur de badge
