@@ -104,11 +104,11 @@ export default function RestaurantsPage() {
     }
   }
 
-  // Fonction pour afficher les distinctions d'un restaurant
+  // Fonction pour afficher les distinctions d'un restaurant (icônes seulement)
   const renderDistinctions = (distinctions: string[]) => {
     return distinctions.map((distinction, index) => (
-      <span key={index} className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full mr-1 ${getBadgeColor(distinction)}`}>
-        {renderDistinctionIconJSX(distinction)} {getDistinctionText(distinction)}
+      <span key={index} className="inline-flex items-center mr-1">
+        {renderDistinctionIconJSX(distinction)}
       </span>
     ))
   }
@@ -324,7 +324,7 @@ export default function RestaurantsPage() {
                 <div className="flex gap-6">
                   <div className="flex-1">
                     <h3 className="font-bold text-xl text-gray-900 mb-2">{restaurant.name}</h3>
-                    <p className="text-gray-600 text-base mb-1">{restaurant.city}</p>
+                    <p className="text-gray-600 text-base mb-1">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
                     <p className="text-gray-600 text-base mb-3">{restaurant.priceRange} • Cuisine gastronomique</p>
                     <div className="flex flex-wrap gap-1">
                       {renderDistinctions(restaurant.distinctions)}
