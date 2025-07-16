@@ -166,10 +166,7 @@ export default function AldehyDePage() {
         </div>
 
         {/* Carrousel de photos */}
-                  <RestaurantPhotoCarousel 
-            restaurantQuery={restaurant.query}
-            restaurantName={restaurant.name}
-          />
+                  <RestaurantPhotoCarousel restaurant={restaurant} />
 
         <div className="bg-white px-6 py-8">
           {/* Distinctions */}
