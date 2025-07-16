@@ -271,14 +271,13 @@ export default function RestaurantMap() {
       const restaurantsWithMarkersAndPhotos = await Promise.all(
         restaurants.map(async (restaurant) => {
           try {
-            // Géocodage - suppression erreur TypeScript avec @ts-ignore
-            const geoResult: any = await new Promise((resolve, reject) => {
-              // @ts-ignore
-              geocoder.geocode({ address: restaurant.address }, (results, status) => {
+            // Géocodage
+            const geoResult = await new Promise<any>((resolve, reject) => {
+              geocoder.geocode({ address: restaurant.address }, (results: any, status: any) => {
                 if (status === "OK" && results && results[0]) {
                   resolve(results[0])
                 } else {
-                  reject(new Error(`Géocodage échoué pour ${restaurant.address}`))
+                  reject(new Error(`Geocoding failed: ${status}`))
                 }
               })
             })
