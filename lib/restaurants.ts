@@ -102,6 +102,126 @@ export const restaurants: Restaurant[] = [
     lat: 48.8566,
     lng: 2.3421
   },
+  {
+    address: "87 rue Lamarck, 75018 Paris",
+    name: "Double",
+    city: "18e arrondissement",
+    priceRange: "€€€",
+    priceSymbol: "€€€",
+    query: "Double restaurant 87 rue Lamarck Paris Montmartre",
+    distinctions: [],
+    description: "Restaurant gastronomique situé dans le quartier de Montmartre, offrant une cuisine moderne et créative.",
+    lat: 48.8897,
+    lng: 2.3387
+  },
+  {
+    address: "11 rue Richard Lenoir, 75011 Paris",
+    name: "Automne",
+    city: "11e arrondissement",
+    priceRange: "€€€",
+    priceSymbol: "€€€",
+    query: "Automne restaurant 11 rue Richard Lenoir Paris",
+    distinctions: [],
+    description: "Restaurant de saison proposant une cuisine contemporaine inspirée par les produits de saison.",
+    lat: 48.8607,
+    lng: 2.3677
+  },
+  {
+    address: "19 bis rue Pierre Fontaine, 75009 Paris",
+    name: "Adami",
+    city: "9e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "Adami restaurant 19 bis rue Pierre Fontaine Paris",
+    distinctions: [],
+    description: "Restaurant convivial dans le 9e arrondissement proposant une cuisine méditerranéenne authentique.",
+    lat: 48.8817,
+    lng: 2.3355
+  },
+  {
+    address: "62 rue Jean-Pierre Timbaud, 75011 Paris",
+    name: "La Datcha",
+    city: "11e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "La Datcha restaurant 62 rue Jean-Pierre Timbaud Paris",
+    distinctions: [],
+    description: "Restaurant chaleureux proposant une cuisine de l'Est européenne dans une ambiance décontractée.",
+    lat: 48.8672,
+    lng: 2.3703
+  },
+  {
+    address: "22 rue La Bruyère, 75009 Paris",
+    name: "Via Emilia",
+    city: "9e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "Via Emilia restaurant italien 22 rue La Bruyère Paris",
+    distinctions: [],
+    description: "Authentique restaurant italien spécialisé dans la cuisine de l'Émilie-Romagne.",
+    lat: 48.8779,
+    lng: 2.3337
+  },
+  {
+    address: "54 Bd de la Tour-Maubourg, 75007 Paris",
+    name: "Brasserie Vendémiaire",
+    city: "7e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "Brasserie Vendémiaire 54 Boulevard Tour-Maubourg Paris",
+    distinctions: [],
+    description: "Brasserie traditionnelle parisienne proposant une cuisine française classique dans un cadre élégant.",
+    lat: 48.8572,
+    lng: 2.3067
+  },
+  {
+    address: "22 rue du Champ de Mars, 75007 Paris",
+    name: "Via Del Campo",
+    city: "7e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "Via Del Campo restaurant italien 22 rue Champ de Mars Paris",
+    distinctions: [],
+    description: "Restaurant italien authentique près de la Tour Eiffel, spécialisé dans la cuisine traditionnelle.",
+    lat: 48.8566,
+    lng: 2.3020
+  },
+  {
+    address: "13 rue Rambuteau, 75004 Paris",
+    name: "Janet by Homer Food Group",
+    city: "4e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "Janet by Homer Food Group pastrami sandwich 13 rue Rambuteau Paris",
+    distinctions: [],
+    description: "Deli américain réputé pour ses sandwichs au pastrami et corned beef, par le groupe Homer Food.",
+    lat: 48.8608,
+    lng: 2.3525
+  },
+  {
+    address: "27 rue Pierre Fontaine, 75009 Paris",
+    name: "Dizen",
+    city: "9e arrondissement",
+    priceRange: "€",
+    priceSymbol: "€",
+    query: "Dizen street food sabich pita 27 rue Pierre Fontaine Paris",
+    distinctions: [],
+    description: "Street food israélien spécialisé dans le sabich, sandwich pita traditionnel de Tel Aviv.",
+    lat: 48.8817,
+    lng: 2.3355
+  },
+  {
+    address: "25 rue des Batignolles, 75017 Paris",
+    name: "Melt Slow Smoked Barbecue",
+    city: "17e arrondissement",
+    priceRange: "€€",
+    priceSymbol: "€€",
+    query: "Melt Slow Smoked Barbecue brisket pulled pork Paris Batignolles",
+    distinctions: [],
+    description: "Authentique barbecue texan à Paris. Viandes fumées lentement, brisket fondant et pulled pork savoureux.",
+    lat: 48.8848,
+    lng: 2.3198
+  }
 ]
 
 // Fonction pour convertir le nom en slug
