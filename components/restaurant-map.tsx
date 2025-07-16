@@ -271,7 +271,7 @@ export default function RestaurantMap() {
       const restaurantsWithMarkersAndPhotos = await Promise.all(
         restaurants.map(async (restaurant) => {
           try {
-            // Géocodage
+            // Géocodage avec types explicites
             const geoResult = await new Promise<any>((resolve, reject) => {
               geocoder.geocode({ address: restaurant.address }, (results: any, status: any) => {
                 if (status === "OK" && results && results[0]) {
