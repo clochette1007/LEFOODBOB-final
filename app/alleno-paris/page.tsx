@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ExternalLink, Phone, MapPin } from "lucide-react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { restaurants, getDistinctionIcon, getDistinctionText, getBadgeColor } from '@/lib/restaurants'
-import RestaurantPhotoCarousel from '@/components/restaurant-photo-carousel'
+import { RestaurantPhotoCarousel } from '@/components/restaurant-photo-carousel'
 
 declare global {
   interface Window {
