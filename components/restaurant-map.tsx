@@ -273,7 +273,7 @@ export default function RestaurantMap() {
           try {
             // Géocodage
             const geoResult = await new Promise<any>((resolve, reject) => {
-              geocoder.geocode({ address: restaurant.address }, (results, status) => {
+              geocoder.geocode({ address: restaurant.address }, (results: any, status: any) => {
                 if (status === "OK" && results && results[0]) {
                   resolve(results[0])
                 } else {
@@ -289,7 +289,7 @@ export default function RestaurantMap() {
                   query: restaurant.query,
                   fields: ["photos"],
                 },
-                (results, status) => {
+                (results: any, status: any) => {
                   if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
                     resolve(results[0])
                   } else {
