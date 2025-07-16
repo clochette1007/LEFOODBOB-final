@@ -6,6 +6,7 @@ import { ArrowLeft, ExternalLink, Phone, MapPin } from "lucide-react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { restaurants, getDistinctionIcon, getDistinctionText, getBadgeColor } from '@/lib/restaurants'
 import { RestaurantPhotoCarousel } from '@/components/restaurant-photo-carousel'
+// Force refresh for correct import
 
 declare global {
   interface Window {
