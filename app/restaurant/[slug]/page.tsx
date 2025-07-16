@@ -13,8 +13,9 @@ import {
   type Restaurant 
 } from '@/lib/restaurants'
 
-export default function RestaurantPage({ params }: { params: { slug: string } }) {
+export default function RestaurantPage({ params }: { params: Promise<{ slug: string }> }) {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
+  const [slug, setSlug] = useState<string>('')
   
   // Récupérer la vraie photo depuis Google Places API
   const { primaryPhoto, isLoading: photoLoading, error: photoError } = useGooglePlacesPhotos({
@@ -25,13 +26,34 @@ export default function RestaurantPage({ params }: { params: { slug: string } })
   })
 
   useEffect(() => {
-    // Trouver le restaurant par slug
-    const foundRestaurant = restaurants.find(r => createSlug(r.name) === params.slug)
-    setRestaurant(foundRestaurant || null)
-  }, [params.slug])
+    // Récupérer le slug depuis les paramètres Promise
+    const getSlug = async () => {
+      const resolvedParams = await params
+      setSlug(resolvedParams.slug)
+    }
+    getSlug()
+  }, [params])
+
+  useEffect(() => {
+    if (slug) {
+      // Trouver le restaurant par slug
+      const foundRestaurant = restaurants.find(r => createSlug(r.name) === slug)
+      setRestaurant(foundRestaurant || null)
+    }
+  }, [slug])
+
+  if (slug && !restaurant) {
+    notFound()
+  }
 
   if (!restaurant) {
-    notFound()
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-lg text-gray-600">Chargement...</div>
+        </div>
+      </div>
+    )
   }
 
   return (
