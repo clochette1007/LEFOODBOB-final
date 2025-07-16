@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { useGooglePlacesPhotos } from '@/hooks/use-google-places-photos'
 import { 
   restaurants, 
   createSlug, 
@@ -14,6 +15,14 @@ import {
 
 export default function RestaurantPage({ params }: { params: { slug: string } }) {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
+  
+  // Récupérer la vraie photo depuis Google Places API
+  const { primaryPhoto, isLoading: photoLoading, error: photoError } = useGooglePlacesPhotos({
+    query: restaurant?.query || '',
+    maxPhotos: 1,
+    maxWidth: 800,
+    maxHeight: 400
+  })
 
   useEffect(() => {
     // Trouver le restaurant par slug
@@ -41,17 +50,27 @@ export default function RestaurantPage({ params }: { params: { slug: string } })
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        {/* Photo de couverture */}
-        <div className="w-full h-80 rounded-xl overflow-hidden mb-6">
-          <img
-            src={restaurant.photoUrl || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
-            alt={restaurant.name}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.src = "https://placehold.co/800x320/cccccc/333333?text=Restaurant"
-            }}
-          />
+        {/* Photo de couverture - VRAIE PHOTO GOOGLE */}
+        <div className="w-full h-64 md:h-80 rounded-xl overflow-hidden mb-6 bg-gray-200">
+          {photoLoading ? (
+            <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
+              <div className="text-gray-500">Chargement de la photo du restaurant...</div>
+            </div>
+          ) : primaryPhoto ? (
+            <img
+              src={primaryPhoto.url}
+              alt={`${restaurant.name} - Photo du restaurant`}
+              className="w-full h-full object-cover transition-opacity duration-300"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <div className="text-lg font-semibold">{restaurant.name}</div>
+                <div className="text-sm">Photo non disponible</div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Informations principales */}
