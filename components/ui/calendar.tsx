@@ -53,7 +53,7 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
-
+      // Force cache refresh for react-day-picker v9 compatibility
       {...props}
     />
   )
