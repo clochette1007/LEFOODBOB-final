@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
@@ -53,11 +52,11 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
-      // Force cache refresh for react-day-picker v9 compatibility
       {...props}
     />
   )
 }
+
 Calendar.displayName = "Calendar"
 
 export { Calendar }
