@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { MapPin, Palette, Plus, Trash2 } from "lucide-react"
-import * as google from "google.maps"
 
 interface CustomMarker {
   id: string
@@ -215,7 +214,7 @@ const mapStyles = {
 
 export default function MapsInterface() {
   const mapRef = useRef<HTMLDivElement>(null)
-  const [map, setMap] = useState<google.maps.Map | null>(null)
+  const [map, setMap] = useState<any>(null)
   const [markers, setMarkers] = useState<CustomMarker[]>([])
   const [selectedStyle, setSelectedStyle] = useState<keyof typeof mapStyles>("standard")
   const [newMarker, setNewMarker] = useState({
@@ -224,7 +223,7 @@ export default function MapsInterface() {
     color: "#FF0000",
   })
   const [isAddingMarker, setIsAddingMarker] = useState(false)
-  const [clickListener, setClickListener] = useState<google.maps.MapsEventListener | null>(null)
+  const [clickListener, setClickListener] = useState<any>(null)
 
   useEffect(() => {
     const initMap = async () => {
@@ -235,7 +234,7 @@ export default function MapsInterface() {
 
       const { Map } = await loader.importLibrary("maps")
 
-      const mapOptions: google.maps.MapOptions = {
+      const mapOptions = {
         center: { lat: 48.8566, lng: 2.3522 }, // Paris coordinates
         zoom: 12,
         styles: mapStyles[selectedStyle],
@@ -257,12 +256,12 @@ export default function MapsInterface() {
   const addMarkerToMap = (marker: CustomMarker) => {
     if (!map) return
 
-    const mapMarker = new google.maps.Marker({
+    const mapMarker = new window.google.maps.Marker({
       position: marker.position,
       map: map,
       title: marker.title,
       icon: {
-        path: google.maps.SymbolPath.CIRCLE,
+        path: window.google.maps.SymbolPath.CIRCLE,
         scale: 8,
         fillColor: marker.color,
         fillOpacity: 1,
@@ -271,7 +270,7 @@ export default function MapsInterface() {
       },
     })
 
-    const infoWindow = new google.maps.InfoWindow({
+    const infoWindow = new window.google.maps.InfoWindow({
       content: `
         <div>
           <h3 style="margin: 0 0 8px 0; font-weight: bold;">${marker.title}</h3>
@@ -290,7 +289,7 @@ export default function MapsInterface() {
 
     setIsAddingMarker(true)
 
-    const listener = map.addListener("click", (event: google.maps.MapMouseEvent) => {
+    const listener = map.addListener("click", (event: any) => {
       if (event.latLng) {
         const marker: CustomMarker = {
           id: Date.now().toString(),
@@ -310,7 +309,7 @@ export default function MapsInterface() {
         setIsAddingMarker(false)
 
         if (clickListener) {
-          google.maps.event.removeListener(clickListener)
+          window.google.maps.event.removeListener(clickListener)
         }
       }
     })
@@ -327,7 +326,7 @@ export default function MapsInterface() {
   const cancelAddMarker = () => {
     setIsAddingMarker(false)
     if (clickListener) {
-      google.maps.event.removeListener(clickListener)
+      window.google.maps.event.removeListener(clickListener)
       setClickListener(null)
     }
   }
