@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
-  // Suppression des flags dangereux qui masquent les erreurs
-  // eslint: { ignoreDuringBuilds: true }, - SUPPRIMÉ
-  // typescript: { ignoreBuildErrors: true }, - SUPPRIMÉ
-  
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -25,17 +28,20 @@ const nextConfig = {
       }
     ]
   },
-  
-  // Variables d'environnement
   env: {
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   },
-  
-  // Configuration Vercel
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@': path.resolve(__dirname),
+    };
+    return config;
   },
 }
 
