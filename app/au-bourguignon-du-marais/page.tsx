@@ -150,82 +150,69 @@ export default function AuBourguignonDuMaraisPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto">
-        {/* Header avec bouton retour */}
-        <div className="bg-white shadow-sm">
-          <div className="px-6 py-4">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Retour
-            </button>
-          </div>
-        </div>
-
-        {/* Carrousel de photos */}
-                  <RestaurantPhotoCarousel restaurant={restaurant} />
-
-        <div className="bg-white px-6 py-8">
-          {/* Distinctions */}
-          <div className="mb-6">
-            <div className="flex flex-wrap">
-              {renderDistinctions(restaurant.distinctions)}
-            </div>
-          </div>
-
-          {/* Titre - Typographie uniformisée */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
-          
-          {/* Adresse - Typographie uniformisée */}
-          <div className="flex items-start gap-2 mb-4">
-            <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
-            <div>
-              <p className="text-base text-gray-700">{restaurant.address}</p>
-              <p className="text-sm text-gray-600">{restaurant.city}</p>
-            </div>
-          </div>
-
-          {/* Tarifs */}
-          <div className="mb-8">
-            <p className="text-xl font-semibold text-gray-900 mb-1">Tarifs</p>
-            <p className="text-2xl font-bold text-green-600">{restaurant.priceSymbol}</p>
-          </div>
-
-          {/* Google Maps */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Localisation</h2>
-            <div className="w-full h-80 rounded-lg overflow-hidden border border-gray-200">
-              <div ref={mapRef} className="w-full h-full" />
-            </div>
-          </div>
-
-          {/* Site Internet simplifié */}
-          {restaurant.website && (
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <RestaurantPhotoCarousel restaurant={restaurant} />
+          <div className="p-6">
+            {/* Distinctions */}
             <div className="mb-6">
-              <a
-                href={restaurant.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lg text-black underline hover:text-blue-600 transition-colors"
-              >
-                Site Internet
-              </a>
+              <div className="flex flex-wrap">
+                {renderDistinctions(restaurant.distinctions)}
+              </div>
             </div>
-          )}
 
-          {/* Téléphone simplifié */}
-          {restaurant.phone && (
-            <div>
-              <a 
-                href={`tel:${restaurant.phone}`}
-                className="text-lg text-black underline hover:text-blue-600 transition-colors"
-              >
-                {restaurant.phone}
-              </a>
+            {/* Titre - Typographie uniformisée */}
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{restaurant.name}</h1>
+            
+            {/* Adresse - Typographie uniformisée */}
+            <div className="flex items-start gap-2 mb-4">
+              <MapPin className="w-5 h-5 text-gray-500 mt-1 flex-shrink-0" />
+              <div>
+                <p className="text-base text-gray-700">{restaurant.address}</p>
+                <p className="text-sm text-gray-600">{restaurant.city}</p>
+              </div>
             </div>
-          )}
+
+            {/* Tarifs */}
+            <div className="mb-8">
+              <p className="text-xl font-semibold text-gray-900 mb-1">Tarifs</p>
+              <p className="text-2xl font-bold text-green-600">{restaurant.priceSymbol}</p>
+            </div>
+
+            {/* Google Maps */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Localisation</h2>
+              <div className="w-full h-80 rounded-lg overflow-hidden border border-gray-200">
+                <div ref={mapRef} className="w-full h-full" />
+              </div>
+            </div>
+
+            {/* Site Internet simplifié */}
+            {restaurant.website && (
+              <div className="mb-6">
+                <a
+                  href={restaurant.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg text-black underline hover:text-blue-600 transition-colors"
+                >
+                  Site Internet
+                </a>
+              </div>
+            )}
+
+            {/* Téléphone simplifié */}
+            {restaurant.phone && (
+              <div>
+                <a 
+                  href={`tel:${restaurant.phone}`}
+                  className="text-lg text-black underline hover:text-blue-600 transition-colors"
+                >
+                  {restaurant.phone}
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

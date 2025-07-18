@@ -151,7 +151,6 @@ export default function LArpegePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto">
-        {/* Header avec bouton retour */}
         <div className="bg-white shadow-sm">
           <div className="px-6 py-4">
             <button
@@ -163,10 +162,8 @@ export default function LArpegePage() {
             </button>
           </div>
         </div>
-
-        {/* Carrousel de photos */}
-                  <RestaurantPhotoCarousel restaurant={restaurant} />
-
+        {/* Carrousel stylé */}
+        <RestaurantPhotoCarousel restaurant={restaurant} />
         <div className="bg-white px-6 py-8">
           {/* Distinctions */}
           <div className="mb-6">

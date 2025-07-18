@@ -68,30 +68,8 @@ export default function RestaurantMap() {
 
   // Fonction pour naviguer vers la page du restaurant  
   const navigateToRestaurant = (restaurantName: string) => {
-    let url = ""
-    switch(restaurantName) {
-      case "Aldéhyde":
-        url = "/aldehyde"
-        break
-      case "L'Arpège":
-        url = "/l-arpege"
-        break
-      case "Alléno Paris":
-        url = "/alleno-paris"
-        break
-      case "Allard":
-        url = "/allard"
-        break
-      case "L'Ami Jean":
-        url = "/l-ami-jean"
-        break
-      case "Au Bourguignon du Marais":
-        url = "/au-bourguignon-du-marais"
-        break
-      default:
-        return
-    }
-    window.location.href = url
+    const slug = createSlug(restaurantName)
+    window.location.href = `/${slug}`
   }
 
   // Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)

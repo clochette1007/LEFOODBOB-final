@@ -3,8 +3,7 @@ import { RestaurantPhotoCarousel } from "@/components/restaurant-photo-carousel"
 import { Badge } from "@/components/ui/badge"
 import { Phone, MapPin, Globe, ChefHat } from "lucide-react"
 
-export default async function DizenPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = await params
+export default function DizenPage() {
   const restaurant = restaurants.find(r => r.name === "Dizen")
   
   if (!restaurant) {
