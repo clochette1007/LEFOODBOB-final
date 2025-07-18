@@ -382,4 +382,4 @@ export default function RestaurantsPage() {
       </div>
     </div>
   )
-} 
+}

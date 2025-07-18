@@ -217,4 +217,4 @@ export default function AuBourguignonDuMaraisPage() {
       </div>
     </div>
   )
-} 
+}

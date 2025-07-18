@@ -98,4 +98,4 @@ export default async function MeltSlowSmokedBarbecuePage({ params }: { params: P
       </div>
     </div>
   )
-} 
+}

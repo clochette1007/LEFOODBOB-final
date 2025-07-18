@@ -147,4 +147,4 @@ export default function RestaurantPage({ params }: { params: Promise<{ slug: str
       </div>
     </div>
   )
-} 
+}

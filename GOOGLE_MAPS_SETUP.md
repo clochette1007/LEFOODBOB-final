@@ -17,17 +17,17 @@ Les photos des restaurants ne se chargent pas correctement car l'API Google Maps
 ### 2. Configurer la clé API
 Créez un fichier `.env.local` à la racine du projet :
 
-```env
+\`\`\`env
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=votre_clé_api_ici
-```
+\`\`\`
 
 ### 3. Redémarrer le serveur
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ## Clé API actuelle
 La clé API actuelle (`AIzaSyCcfMwhQwKmsAnRYfQCtYKsWpB4EI3NIq4`) semble ne pas être valide ou ne pas avoir les bonnes permissions.
 
 ## Fallback
-En cas d'erreur, le système affiche maintenant une photo générique au lieu d'un message d'erreur. 
+En cas d'erreur, le système affiche maintenant une photo générique au lieu d'un message d'erreur.

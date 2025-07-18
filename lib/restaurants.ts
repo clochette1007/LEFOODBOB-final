@@ -296,4 +296,4 @@ export const getBadgeColor = (distinction: string) => {
   if (distinction.startsWith('gaultmillau-')) return "bg-yellow-100 text-yellow-800"
   if (distinction === '50best') return "bg-purple-100 text-purple-800"
   return "bg-gray-100 text-gray-800"
-} 
+}

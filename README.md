@@ -23,4 +23,4 @@ Restaurant discovery platform built with Next.js, React, and TypeScript.
 - Google Maps API
 - Vercel deployment
 
-Live at: https://lefoodbob.vercel.app 
+Live at: https://lefoodbob.vercel.app

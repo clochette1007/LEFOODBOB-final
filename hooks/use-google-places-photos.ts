@@ -125,4 +125,4 @@ export function useGooglePlacesPhotos({
     error,
     primaryPhoto: photos.length > 0 ? photos[0] : null
   }
-} 
+}

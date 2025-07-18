@@ -98,4 +98,4 @@ export default async function LaDatchaPage({ params }: { params: Promise<{ slug:
       </div>
     </div>
   )
-} 
+}

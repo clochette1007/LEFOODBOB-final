@@ -6,9 +6,9 @@ Pour que l'application fonctionne correctement, vous devez configurer les variab
 
 ### 1. Google Maps API Key
 
-```env
+\`\`\`env
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=votre_cle_api_google_maps_ici
-```
+\`\`\`
 
 #### Comment obtenir votre clé API Google Maps :
 
@@ -29,9 +29,9 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=votre_cle_api_google_maps_ici
 1. Créez un fichier `.env.local` à la racine du projet
 2. Ajoutez votre clé API :
 
-```env
+\`\`\`env
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyC4l2J9X8hKp5eQ2vN9mR7tY6uI8oP3qW1
-```
+\`\`\`
 
 ⚠️ **Sécurité importante** : Ne commitez jamais votre clé API dans le repository Git !
 
@@ -46,4 +46,4 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyC4l2J9X8hKp5eQ2vN9mR7tY6uI8oP3qW1
 - **Photos ne s'affichent pas** : Vérifiez que Places API est activée
 - **Carte ne charge pas** : Vérifiez que Maps JavaScript API est activée  
 - **Erreur de géocodage** : Vérifiez que Geocoding API est activée
-- **Quota dépassé** : Vérifiez vos quotas dans Google Cloud Console 
+- **Quota dépassé** : Vérifiez vos quotas dans Google Cloud Console

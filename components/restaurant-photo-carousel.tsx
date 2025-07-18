@@ -38,4 +38,4 @@ export function RestaurantPhotoCarousel({ restaurant }: RestaurantPhotoCarouselP
       )}
     </div>
   )
-} 
+}
