@@ -1,302 +1,333 @@
 export interface Restaurant {
-  address: string
+  id: string
   name: string
   city: string
+  address: string
   priceRange: string
-  query: string
   distinctions: string[]
-  phone?: string
-  website?: string
-  description?: string
-  chef?: string
-  photoUrl?: string
   lat?: number
   lng?: number
-  priceSymbol?: string
+  description?: string
+  cuisine?: string
+  phone?: string
+  website?: string
+  openingHours?: string
+  photos?: string[]
 }
 
 export const restaurants: Restaurant[] = [
   {
-    address: "5 Rue du Pont Louis-Philippe, 75004 Paris",
-    name: "Aldéhyde",
-    city: "4e arrondissement",
-    priceRange: "€€€€",
-    priceSymbol: "€€€€",
-    query: "Aldéhyde restaurant gastronomique Paris 4ème",
-    distinctions: ["michelin-1"],
-    phone: "+33 9 73 89 43 24",
-    website: "https://aldehyde.paris",
-    chef: "Youssef Marzouk",
-    description:
-      "Restaurant gastronomique en plein cœur de Paris. Cuisine élégante et affirmée qui porte haut les saveurs franco-tunisiennes.",
-    lat: 48.8541,
-    lng: 2.357,
-  },
-  {
-    address: "84 Rue de Varenne, 75007 Paris",
+    id: "l-arpege",
     name: "L'Arpège",
     city: "7e arrondissement",
+    address: "84 Rue de Varenne, 75007 Paris",
     priceRange: "€€€€",
-    priceSymbol: "€€€€",
-    query: "L'Arpège restaurant Alain Passard Paris 7ème",
     distinctions: ["michelin-3", "50best"],
+    lat: 48.8566,
+    lng: 2.3059,
+    description: "Restaurant gastronomique d'Alain Passard, spécialisé dans la cuisine végétale de haute volée.",
+    cuisine: "Française contemporaine",
     phone: "+33 1 47 05 09 06",
-    website: "https://alain-passard.com",
-    chef: "Alain Passard",
-    description:
-      "Restaurant emblématique d'Alain Passard, référence mondiale de la cuisine végétale de haute gastronomie.",
-    lat: 48.8568,
-    lng: 2.3183,
+    website: "https://www.alain-passard.com",
+    openingHours: "12h00-14h00, 19h30-22h00",
   },
   {
-    address: "8 Avenue Dutuit, 75008 Paris",
-    name: "Alléno Paris",
-    city: "8e arrondissement",
-    priceRange: "€€€€",
-    priceSymbol: "€€€€",
-    query: "Alléno Paris Pavillon Ledoyen 8 Avenue Dutuit",
-    distinctions: ["michelin-3", "gaultmillau-5"],
-    phone: "+33 1 53 05 10 00",
-    website: "https://yannick-alleno.com",
-    chef: "Yannick Alléno",
-    description: "Temple de la haute gastronomie française au sein du Pavillon Ledoyen.",
-    lat: 48.8656,
-    lng: 2.3125,
-  },
-  {
-    address: "41 Rue Saint-André-des-Arts, 75006 Paris",
-    name: "Allard",
-    city: "6e arrondissement",
-    priceRange: "€€€",
-    priceSymbol: "€€€",
-    query: "Restaurant Allard 41 Rue Saint-André-des-Arts Paris",
-    distinctions: ["gaultmillau-3"],
-    phone: "+33 1 43 26 48 23",
-    chef: "Alain Ducasse",
-    description: "Bistrot parisien traditionnel revisité par Alain Ducasse.",
-    lat: 48.8534,
-    lng: 2.3408,
-  },
-  {
-    address: "27 Rue Malar, 75007 Paris",
+    id: "l-ami-jean",
     name: "L'Ami Jean",
     city: "7e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "L'Ami Jean 27 Rue Malar Paris restaurant",
-    distinctions: ["michelin-bib", "gaultmillau-2"],
-    phone: "+33 1 47 05 86 89",
-    chef: "Stéphane Jégo",
-    description: "Bistrot convivial aux saveurs du Sud-Ouest et de Bretagne.",
-    lat: 48.8583,
-    lng: 2.3038,
-  },
-  {
-    address: "19 Place Dauphine, 75001 Paris",
-    name: "Au Bourguignon du Marais",
-    city: "1er arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Au Bourguignon du Marais 19 Place Dauphine Paris",
-    distinctions: ["michelin-assiette", "gaultmillau-1"],
-    phone: "+33 1 48 87 15 40",
-    description: "Authentique bistrot parisien spécialisé dans la cuisine bourguignonne.",
-    lat: 48.8566,
-    lng: 2.3421,
-  },
-  {
-    address: "87 rue Lamarck, 75018 Paris",
-    name: "Double",
-    city: "18e arrondissement",
+    address: "27 Rue Malar, 75007 Paris",
     priceRange: "€€€",
-    priceSymbol: "€€€",
-    query: "Double restaurant 87 rue Lamarck Paris Montmartre",
-    distinctions: [],
-    description:
-      "Restaurant gastronomique situé dans le quartier de Montmartre, offrant une cuisine moderne et créative.",
-    lat: 48.8897,
-    lng: 2.3387,
+    distinctions: ["michelin-bib"],
+    lat: 48.8588,
+    lng: 2.3047,
+    description: "Bistrot basque authentique avec une ambiance chaleureuse et une cuisine généreuse.",
+    cuisine: "Basque",
+    phone: "+33 1 47 05 86 89",
+    openingHours: "12h00-14h00, 19h00-23h00",
   },
   {
-    address: "11 rue Richard Lenoir, 75011 Paris",
+    id: "alleno-paris",
+    name: "Alleno Paris",
+    city: "8e arrondissement",
+    address: "8 Avenue Dutuit, 75008 Paris",
+    priceRange: "€€€€",
+    distinctions: ["michelin-3"],
+    lat: 48.8738,
+    lng: 2.302,
+    description: "Restaurant de Yannick Alléno au Pavillon Ledoyen, temple de la haute gastronomie française.",
+    cuisine: "Française moderne",
+    phone: "+33 1 53 05 10 00",
+    website: "https://www.yannick-alleno.com",
+    openingHours: "12h00-14h00, 19h30-22h00",
+  },
+  {
+    id: "adami",
+    name: "Adami",
+    city: "11e arrondissement",
+    address: "8 Rue du Grand Prieuré, 75011 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-1"],
+    lat: 48.8594,
+    lng: 2.3765,
+    description: "Restaurant italien raffiné proposant une cuisine moderne inspirée des traditions transalpines.",
+    cuisine: "Italienne moderne",
+    phone: "+33 1 43 57 52 88",
+    openingHours: "19h30-22h30",
+  },
+  {
+    id: "aldehyde",
+    name: "Aldehyde",
+    city: "11e arrondissement",
+    address: "8 Rue Léon Frot, 75011 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-1"],
+    lat: 48.8556,
+    lng: 2.3831,
+    description: "Restaurant de quartier étoilé proposant une cuisine créative et accessible.",
+    cuisine: "Française créative",
+    phone: "+33 1 43 72 22 50",
+    openingHours: "19h30-22h00",
+  },
+  {
+    id: "allard",
+    name: "Allard",
+    city: "6e arrondissement",
+    address: "41 Rue de Saint-André des Arts, 75006 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-bib"],
+    lat: 48.8496,
+    lng: 2.3316,
+    description: "Bistrot parisien historique servant une cuisine traditionnelle française depuis 1932.",
+    cuisine: "Française traditionnelle",
+    phone: "+33 1 43 26 40 23",
+    openingHours: "12h00-14h30, 19h00-23h00",
+  },
+  {
+    id: "au-bourguignon-du-marais",
+    name: "Au Bourguignon du Marais",
+    city: "4e arrondissement",
+    address: "52 Rue François Miron, 75004 Paris",
+    priceRange: "€€",
+    distinctions: ["michelin-bib"],
+    lat: 48.8566,
+    lng: 2.3522,
+    description: "Bistrot à vins authentique spécialisé dans la cuisine bourguignonne.",
+    cuisine: "Bourguignonne",
+    phone: "+33 1 48 87 15 40",
+    openingHours: "12h00-15h00, 19h00-23h00",
+  },
+  {
+    id: "automne",
     name: "Automne",
     city: "11e arrondissement",
+    address: "13 Rue Basfroi, 75011 Paris",
     priceRange: "€€€",
-    priceSymbol: "€€€",
-    query: "Automne restaurant 11 rue Richard Lenoir Paris",
-    distinctions: [],
-    description: "Restaurant de saison proposant une cuisine contemporaine inspirée par les produits de saison.",
-    lat: 48.8607,
-    lng: 2.3677,
+    distinctions: ["michelin-1"],
+    lat: 48.8525,
+    lng: 2.3722,
+    description: "Restaurant de quartier étoilé proposant une cuisine de saison inventive.",
+    cuisine: "Française saisonnière",
+    phone: "+33 1 43 67 38 87",
+    openingHours: "19h30-22h00",
   },
   {
-    address: "19 bis rue Pierre Fontaine, 75009 Paris",
-    name: "Adami",
-    city: "9e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Adami restaurant 19 bis rue Pierre Fontaine Paris",
-    distinctions: [],
-    description: "Restaurant convivial dans le 9e arrondissement proposant une cuisine méditerranéenne authentique.",
-    lat: 48.8817,
-    lng: 2.3355,
-  },
-  {
-    address: "62 rue Jean-Pierre Timbaud, 75011 Paris",
-    name: "La Datcha",
-    city: "11e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "La Datcha restaurant 62 rue Jean-Pierre Timbaud Paris",
-    distinctions: [],
-    description: "Restaurant chaleureux proposant une cuisine de l'Est européenne dans une ambiance décontractée.",
-    lat: 48.8672,
-    lng: 2.3703,
-  },
-  {
-    address: "22 rue La Bruyère, 75009 Paris",
-    name: "Via Emilia",
-    city: "9e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Via Emilia restaurant italien 22 rue La Bruyère Paris",
-    distinctions: [],
-    description: "Authentique restaurant italien spécialisé dans la cuisine de l'Émilie-Romagne.",
-    lat: 48.8779,
-    lng: 2.3337,
-  },
-  {
-    address: "54 Bd de la Tour-Maubourg, 75007 Paris",
+    id: "brasserie-vendemiaire",
     name: "Brasserie Vendémiaire",
-    city: "7e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Brasserie Vendémiaire 54 Boulevard Tour-Maubourg Paris",
-    distinctions: [],
-    description: "Brasserie traditionnelle parisienne proposant une cuisine française classique dans un cadre élégant.",
-    lat: 48.8572,
-    lng: 2.3067,
-  },
-  {
-    address: "22 rue du Champ de Mars, 75007 Paris",
-    name: "Via Del Campo",
-    city: "7e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Via Del Campo restaurant italien 22 rue Champ de Mars Paris",
-    distinctions: [],
-    description: "Restaurant italien authentique près de la Tour Eiffel, spécialisé dans la cuisine traditionnelle.",
-    lat: 48.8566,
-    lng: 2.302,
-  },
-  {
-    address: "13 rue Rambuteau, 75004 Paris",
-    name: "Janet by Homer Food Group",
-    city: "4e arrondissement",
-    priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Janet by Homer Food Group pastrami sandwich 13 rue Rambuteau Paris",
-    distinctions: [],
-    description: "Deli américain réputé pour ses sandwichs au pastrami et corned beef, par le groupe Homer Food.",
-    lat: 48.8608,
-    lng: 2.3525,
-  },
-  {
-    address: "27 rue Pierre Fontaine, 75009 Paris",
-    name: "Dizen",
-    city: "9e arrondissement",
-    priceRange: "€",
-    priceSymbol: "€",
-    query: "Dizen street food sabich pita 27 rue Pierre Fontaine Paris",
-    distinctions: [],
-    description: "Street food israélien spécialisé dans le sabich, sandwich pita traditionnel de Tel Aviv.",
-    lat: 48.8817,
-    lng: 2.3355,
-  },
-  {
-    address: "25 rue des Batignolles, 75017 Paris",
-    name: "Melt Slow Smoked Barbecue",
     city: "17e arrondissement",
+    address: "20 Rue Tocqueville, 75017 Paris",
     priceRange: "€€",
-    priceSymbol: "€€",
-    query: "Melt Slow Smoked Barbecue brisket pulled pork Paris Batignolles",
-    distinctions: [],
-    description:
-      "Authentique barbecue texan à Paris. Viandes fumées lentement, brisket fondant et pulled pork savoureux.",
+    distinctions: ["michelin-bib"],
     lat: 48.8848,
-    lng: 2.3198,
+    lng: 2.3143,
+    description: "Brasserie moderne proposant une cuisine française revisitée dans un cadre contemporain.",
+    cuisine: "Française moderne",
+    phone: "+33 1 45 22 53 09",
+    openingHours: "12h00-14h30, 19h00-22h30",
+  },
+  {
+    id: "dizen",
+    name: "Dizen",
+    city: "15e arrondissement",
+    address: "45 Rue Blomet, 75015 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-1"],
+    lat: 48.8422,
+    lng: 2.2966,
+    description: "Restaurant japonais étoilé proposant une cuisine fusion franco-nippone raffinée.",
+    cuisine: "Franco-japonaise",
+    phone: "+33 1 45 58 45 95",
+    openingHours: "19h30-22h00",
+  },
+  {
+    id: "double",
+    name: "Double",
+    city: "11e arrondissement",
+    address: "5 Rue de la Bastille, 75011 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-1"],
+    lat: 48.8533,
+    lng: 2.3697,
+    description: "Restaurant moderne proposant une cuisine créative dans un décor épuré.",
+    cuisine: "Française créative",
+    phone: "+33 1 43 67 40 54",
+    openingHours: "19h30-22h30",
+  },
+  {
+    id: "janet-by-homer-food-group",
+    name: "Janet by Homer Food Group",
+    city: "2e arrondissement",
+    address: "42 Rue Tiquetonne, 75002 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-1"],
+    lat: 48.8697,
+    lng: 2.3417,
+    description: "Restaurant contemporain proposant une cuisine inventive dans le quartier des Halles.",
+    cuisine: "Française contemporaine",
+    phone: "+33 1 42 33 93 60",
+    openingHours: "19h30-22h00",
+  },
+  {
+    id: "la-datcha",
+    name: "La Datcha",
+    city: "12e arrondissement",
+    address: "9 Rue de Prague, 75012 Paris",
+    priceRange: "€€€",
+    distinctions: ["michelin-1"],
+    lat: 48.8448,
+    lng: 2.3776,
+    description: "Restaurant slave proposant une cuisine d'Europe de l'Est revisitée avec finesse.",
+    cuisine: "Europe de l'Est",
+    phone: "+33 1 43 42 93 52",
+    openingHours: "19h30-22h00",
+  },
+  {
+    id: "melt-slow-smoked-barbecue",
+    name: "Melt Slow Smoked Barbecue",
+    city: "3e arrondissement",
+    address: "15 Rue de la Corderie, 75003 Paris",
+    priceRange: "€€",
+    distinctions: ["michelin-bib"],
+    lat: 48.863,
+    lng: 2.3608,
+    description: "Restaurant de barbecue américain authentique avec des viandes fumées lentement.",
+    cuisine: "Barbecue américain",
+    phone: "+33 1 42 74 81 19",
+    openingHours: "18h00-23h00",
+  },
+  {
+    id: "via-del-campo",
+    name: "Via del Campo",
+    city: "6e arrondissement",
+    address: "12 Rue Monsieur le Prince, 75006 Paris",
+    priceRange: "€€",
+    distinctions: ["michelin-bib"],
+    lat: 48.8478,
+    lng: 2.3389,
+    description: "Trattoria italienne authentique proposant des spécialités de Ligurie.",
+    cuisine: "Italienne traditionnelle",
+    phone: "+33 1 43 26 95 36",
+    openingHours: "12h00-14h30, 19h00-23h00",
+  },
+  {
+    id: "via-emilia",
+    name: "Via Emilia",
+    city: "14e arrondissement",
+    address: "47 Avenue du Maine, 75014 Paris",
+    priceRange: "€€",
+    distinctions: ["michelin-bib"],
+    lat: 48.8338,
+    lng: 2.324,
+    description: "Restaurant italien familial spécialisé dans la cuisine d'Émilie-Romagne.",
+    cuisine: "Italienne régionale",
+    phone: "+33 1 43 20 56 96",
+    openingHours: "12h00-14h30, 19h30-22h30",
   },
 ]
 
-// Fonction pour convertir le nom en slug
-export function createSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[àâä]/g, "a")
-    .replace(/[éèêë]/g, "e")
-    .replace(/[îï]/g, "i")
-    .replace(/[ôö]/g, "o")
-    .replace(/[ùûü]/g, "u")
-    .replace(/[ç]/g, "c")
-    .replace(/[^a-z0-9]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
+// Fonction utilitaire pour rechercher des restaurants
+export function searchRestaurants(query: string): Restaurant[] {
+  if (!query.trim()) return restaurants
+
+  const searchTerm = query.toLowerCase().trim()
+
+  return restaurants.filter(
+    (restaurant) =>
+      restaurant.name.toLowerCase().includes(searchTerm) ||
+      restaurant.city.toLowerCase().includes(searchTerm) ||
+      restaurant.cuisine?.toLowerCase().includes(searchTerm) ||
+      restaurant.address.toLowerCase().includes(searchTerm),
+  )
 }
 
-// Fonction pour obtenir les icônes des distinctions (pour InfoWindows HTML)
-export const getDistinctionIcon = (distinction: string) => {
-  const logoSize = 'width="20" height="20" style="object-fit: contain; vertical-align: middle;"'
+// Fonction pour obtenir les suggestions d'autocomplétion
+export function getAutocompleteSuggestions(
+  query: string,
+): Array<{ type: "restaurant" | "city" | "cuisine"; value: string; count?: number }> {
+  if (!query.trim()) return []
 
-  switch (distinction) {
-    case "michelin-1":
-      return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}>`
-    case "michelin-2":
-      return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 2 étoile" ${logoSize}>`
-    case "michelin-3":
-      return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 2 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 3 étoile" ${logoSize}>`
-    case "michelin-bib":
-      return `<img src="/bibgourmand.jpg" alt="Bib Gourmand" ${logoSize}>`
-    case "michelin-assiette":
-      return `<img src="/assiettemichelin.jpg" alt="Assiette Michelin" ${logoSize}>`
-    case "50best":
-      return `<img src="/50bestrestaurants.webp" alt="50 Best Restaurants" ${logoSize}>`
-    case "gaultmillau-1":
-      return `<img src="/1toque.png" alt="1 toque Gault&Millau" ${logoSize}>`
-    case "gaultmillau-2":
-      return `<img src="/2toques.jpg" alt="2 toques Gault&Millau" ${logoSize}>`
-    case "gaultmillau-3":
-      return `<img src="/3toques.jpg" alt="3 toques Gault&Millau" ${logoSize}>`
-    case "gaultmillau-4":
-      return `<img src="/4toques.png" alt="4 toques Gault&Millau" ${logoSize}>`
-    case "gaultmillau-5":
-      return `<img src="/5toques.png" alt="5 toques Gault&Millau" ${logoSize}>`
-    default:
-      return ""
-  }
+  const searchTerm = query.toLowerCase().trim()
+  const suggestions: Array<{ type: "restaurant" | "city" | "cuisine"; value: string; count?: number }> = []
+
+  // Suggestions de restaurants
+  restaurants.forEach((restaurant) => {
+    if (restaurant.name.toLowerCase().includes(searchTerm)) {
+      suggestions.push({
+        type: "restaurant",
+        value: restaurant.name,
+      })
+    }
+  })
+
+  // Suggestions de villes (arrondissements)
+  const cities = [...new Set(restaurants.map((r) => r.city))]
+  cities.forEach((city) => {
+    if (city.toLowerCase().includes(searchTerm)) {
+      const count = restaurants.filter((r) => r.city === city).length
+      suggestions.push({
+        type: "city",
+        value: city,
+        count,
+      })
+    }
+  })
+
+  // Suggestions de cuisines
+  const cuisines = [...new Set(restaurants.map((r) => r.cuisine).filter(Boolean))]
+  cuisines.forEach((cuisine) => {
+    if (cuisine!.toLowerCase().includes(searchTerm)) {
+      const count = restaurants.filter((r) => r.cuisine === cuisine).length
+      suggestions.push({
+        type: "cuisine",
+        value: cuisine!,
+        count,
+      })
+    }
+  })
+
+  return suggestions.slice(0, 8) // Limiter à 8 suggestions
 }
 
-// Fonction pour obtenir le texte des distinctions
-export const getDistinctionText = (distinction: string) => {
-  const texts = {
-    "michelin-1": "Une cuisine d'une grande finesse - Vaut l'étape",
-    "michelin-2": "Une cuisine d'exception - Vaut le détour",
-    "michelin-3": "Une cuisine unique - Vaut le voyage",
-    "michelin-bib": "Cuisine de qualité à prix raisonnable",
-    "michelin-assiette": "Une cuisine de qualité",
-    "50best": "Reconnaissance d'excellence culinaire mondiale",
-    "gaultmillau-1": "Une cuisine prometteuse",
-    "gaultmillau-2": "Une cuisine remarquable",
-    "gaultmillau-3": "Une cuisine de haute qualité",
-    "gaultmillau-4": "Une cuisine exceptionnelle",
-    "gaultmillau-5": "Une cuisine parfaite",
-  }
-  return texts[distinction as keyof typeof texts] || ""
+// Fonction pour obtenir un restaurant par son ID
+export function getRestaurantById(id: string): Restaurant | undefined {
+  return restaurants.find((restaurant) => restaurant.id === id)
 }
 
-// Fonction pour obtenir la couleur de badge
-export const getBadgeColor = (distinction: string) => {
-  if (distinction.startsWith("michelin-")) return "bg-red-100 text-red-800"
-  if (distinction.startsWith("gaultmillau-")) return "bg-yellow-100 text-yellow-800"
-  if (distinction === "50best") return "bg-purple-100 text-purple-800"
-  return "bg-gray-100 text-gray-800"
+// Fonction pour obtenir un restaurant par son nom (slug)
+export function getRestaurantBySlug(slug: string): Restaurant | undefined {
+  return restaurants.find((restaurant) => restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, "-") === slug)
+}
+
+// Fonction pour obtenir les restaurants par distinction
+export function getRestaurantsByDistinction(distinction: string): Restaurant[] {
+  return restaurants.filter((restaurant) => restaurant.distinctions.includes(distinction))
+}
+
+// Fonction pour obtenir les restaurants par arrondissement
+export function getRestaurantsByCity(city: string): Restaurant[] {
+  return restaurants.filter((restaurant) => restaurant.city.toLowerCase() === city.toLowerCase())
+}
+
+// Fonction pour obtenir les restaurants par gamme de prix
+export function getRestaurantsByPriceRange(priceRange: string): Restaurant[] {
+  return restaurants.filter((restaurant) => restaurant.priceRange === priceRange)
 }

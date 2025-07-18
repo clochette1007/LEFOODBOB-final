@@ -2,91 +2,74 @@
 
 import { useState, useEffect } from "react"
 
-declare global {
-  interface Window {
-    google: any
-  }
+interface PlacesPhoto {
+  photo_reference: string
+  height: number
+  width: number
+  html_attributions: string[]
 }
 
-export function useGooglePlacesPhotos(query: string) {
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+interface PlacesResult {
+  place_id: string
+  name: string
+  photos?: PlacesPhoto[]
+  rating?: number
+  user_ratings_total?: number
+}
+
+export function useGooglePlacesPhotos(restaurantName: string, address: string) {
+  const [photos, setPhotos] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!query || !window.google) return
+    if (!restaurantName || !address) return
 
-    const fetchPhoto = async () => {
-      setIsLoading(true)
+    const fetchPhotos = async () => {
+      setLoading(true)
       setError(null)
 
       try {
-        const service = new window.google.maps.places.PlacesService(document.createElement("div"))
-
-        const request = {
-          query: query,
-          fields: ["photos", "name", "place_id"],
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+        if (!apiKey) {
+          throw new Error("Clé API Google Maps manquante")
         }
 
-        service.textSearch(request, (results, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
-            const place = results[0]
+        // Recherche du lieu
+        const searchQuery = `${restaurantName} ${address}`
+        const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchQuery)}&key=${apiKey}`
 
-            if (place.photos && place.photos.length > 0) {
-              const photo = place.photos[0]
-              const photoUrl = photo.getUrl({
-                maxWidth: 400,
-                maxHeight: 300,
-              })
-              setPhotoUrl(photoUrl)
-            } else {
-              console.log(`Aucune photo trouvée pour: ${query}`)
-              setPhotoUrl(null)
-            }
-          } else {
-            console.log(`Recherche échouée pour: ${query}, status: ${status}`)
-            // Essayer une recherche simplifiée
-            const simplifiedQuery = query.split(" ").slice(0, 2).join(" ")
-            if (simplifiedQuery !== query) {
-              const fallbackRequest = {
-                query: simplifiedQuery,
-                fields: ["photos", "name"],
-              }
+        const searchResponse = await fetch(searchUrl)
+        const searchData = await searchResponse.json()
 
-              service.textSearch(fallbackRequest, (fallbackResults, fallbackStatus) => {
-                if (
-                  fallbackStatus === window.google.maps.places.PlacesServiceStatus.OK &&
-                  fallbackResults &&
-                  fallbackResults[0] &&
-                  fallbackResults[0].photos
-                ) {
-                  const photo = fallbackResults[0].photos[0]
-                  const photoUrl = photo.getUrl({
-                    maxWidth: 400,
-                    maxHeight: 300,
-                  })
-                  setPhotoUrl(photoUrl)
-                } else {
-                  setPhotoUrl(null)
-                }
-              })
-            } else {
-              setPhotoUrl(null)
-            }
-          }
-          setIsLoading(false)
+        if (searchData.status !== "OK" || !searchData.results.length) {
+          throw new Error("Restaurant non trouvé")
+        }
+
+        const place = searchData.results[0] as PlacesResult
+
+        if (!place.photos || place.photos.length === 0) {
+          setPhotos([])
+          return
+        }
+
+        // Récupération des URLs des photos
+        const photoUrls = place.photos.slice(0, 5).map((photo) => {
+          return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photo.photo_reference}&key=${apiKey}`
         })
+
+        setPhotos(photoUrls)
       } catch (err) {
-        console.error("Erreur lors de la récupération de la photo:", err)
+        console.error("Erreur lors de la récupération des photos:", err)
         setError(err instanceof Error ? err.message : "Erreur inconnue")
-        setPhotoUrl(null)
-        setIsLoading(false)
+        setPhotos([])
+      } finally {
+        setLoading(false)
       }
     }
 
-    const timer = setTimeout(fetchPhoto, 100)
-    return () => clearTimeout(timer)
-  }, [query])
+    fetchPhotos()
+  }, [restaurantName, address])
 
-  return { photoUrl, isLoading, error }
+  return { photos, loading, error }
 }

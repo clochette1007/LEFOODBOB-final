@@ -3,96 +3,75 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
-import { Search, X, MapPin, Utensils } from "lucide-react"
-import { restaurants, type Restaurant } from "@/lib/restaurants"
+import { Search, MapPin, Utensils, Star } from "lucide-react"
+import { getAutocompleteSuggestions, searchRestaurants, type Restaurant } from "@/lib/restaurants"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 interface SearchAutocompleteProps {
+  onSearch: (restaurants: Restaurant[]) => void
+  onQueryChange?: (query: string) => void
   placeholder?: string
-  onSearchChange?: (query: string) => void
-  onRestaurantSelect?: (restaurant: Restaurant) => void
   className?: string
 }
 
-interface SearchSuggestion {
-  type: "restaurant" | "city"
-  label: string
-  value: string
-  restaurant?: Restaurant
-  count?: number
-}
-
 export default function SearchAutocomplete({
+  onSearch,
+  onQueryChange,
   placeholder = "Rechercher un restaurant ou une ville...",
-  onSearchChange,
-  onRestaurantSelect,
   className = "",
 }: SearchAutocompleteProps) {
   const [query, setQuery] = useState("")
-  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
-  const [isOpen, setIsOpen] = useState(false)
+  const [suggestions, setSuggestions] = useState<
+    Array<{ type: "restaurant" | "city" | "cuisine"; value: string; count?: number }>
+  >([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
 
-  // Générer les suggestions basées sur la requête
+  // Mettre à jour les suggestions quand la query change
   useEffect(() => {
-    if (query.length < 2) {
+    if (query.trim().length > 0) {
+      const newSuggestions = getAutocompleteSuggestions(query)
+      setSuggestions(newSuggestions)
+      setShowSuggestions(newSuggestions.length > 0)
+      setSelectedIndex(-1)
+    } else {
       setSuggestions([])
-      setIsOpen(false)
-      return
+      setShowSuggestions(false)
+      setSelectedIndex(-1)
     }
-
-    const searchQuery = query.toLowerCase()
-    const citySuggestions: SearchSuggestion[] = []
-    const restaurantSuggestions: SearchSuggestion[] = []
-
-    // Recherche par ville/arrondissement
-    const cityCount: { [key: string]: number } = {}
-    restaurants.forEach((restaurant) => {
-      const city = restaurant.city
-      cityCount[city] = (cityCount[city] || 0) + 1
-    })
-
-    Object.entries(cityCount).forEach(([city, count]) => {
-      // Chercher dans le nom de la ville/arrondissement
-      if (
-        city.toLowerCase().includes(searchQuery) ||
-        searchQuery.includes("paris") ||
-        searchQuery.includes("pari") ||
-        searchQuery.startsWith("par")
-      ) {
-        citySuggestions.push({
-          type: "city",
-          label: city.replace("arrondissement", "arr."),
-          value: city,
-          count,
-        })
-      }
-    })
-
-    // Recherche par nom de restaurant
-    restaurants.forEach((restaurant) => {
-      if (restaurant.name.toLowerCase().includes(searchQuery)) {
-        restaurantSuggestions.push({
-          type: "restaurant",
-          label: restaurant.name,
-          value: restaurant.name,
-          restaurant,
-        })
-      }
-    })
-
-    // Combiner et limiter les suggestions (4 villes max + 6 restaurants max)
-    const newSuggestions = [...citySuggestions.slice(0, 4), ...restaurantSuggestions.slice(0, 6)]
-
-    setSuggestions(newSuggestions)
-    setIsOpen(newSuggestions.length > 0)
-    setSelectedIndex(-1)
   }, [query])
 
-  // Gérer la navigation au clavier
+  // Notifier le parent du changement de query
+  useEffect(() => {
+    onQueryChange?.(query)
+  }, [query, onQueryChange])
+
+  // Gérer la recherche
+  const handleSearch = (searchQuery: string = query) => {
+    const results = searchRestaurants(searchQuery)
+    onSearch(results)
+    setShowSuggestions(false)
+    setSelectedIndex(-1)
+  }
+
+  // Gérer la sélection d'une suggestion
+  const handleSuggestionSelect = (suggestion: { type: string; value: string }) => {
+    setQuery(suggestion.value)
+    handleSearch(suggestion.value)
+    inputRef.current?.blur()
+  }
+
+  // Gérer les touches du clavier
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen) return
+    if (!showSuggestions || suggestions.length === 0) {
+      if (e.key === "Enter") {
+        handleSearch()
+      }
+      return
+    }
 
     switch (e.key) {
       case "ArrowDown":
@@ -106,57 +85,28 @@ export default function SearchAutocomplete({
       case "Enter":
         e.preventDefault()
         if (selectedIndex >= 0) {
-          handleSuggestionClick(suggestions[selectedIndex])
+          handleSuggestionSelect(suggestions[selectedIndex])
         } else {
-          // Recherche directe si pas de suggestion sélectionnée
-          onSearchChange?.(query)
-          setIsOpen(false)
+          handleSearch()
         }
         break
       case "Escape":
-        setIsOpen(false)
+        setShowSuggestions(false)
         setSelectedIndex(-1)
         inputRef.current?.blur()
         break
     }
   }
 
-  // Gérer le clic sur une suggestion
-  const handleSuggestionClick = (suggestion: SearchSuggestion) => {
-    setQuery(suggestion.label)
-    setIsOpen(false)
-    setSelectedIndex(-1)
-
-    if (suggestion.type === "restaurant" && suggestion.restaurant) {
-      onRestaurantSelect?.(suggestion.restaurant)
-    } else {
-      // Recherche par ville
-      onSearchChange?.(suggestion.value)
-    }
-  }
-
-  // Effacer la recherche
-  const clearSearch = () => {
-    setQuery("")
-    setSuggestions([])
-    setIsOpen(false)
-    setSelectedIndex(-1)
-    onSearchChange?.("")
-    inputRef.current?.focus()
-  }
-
-  // Gérer les changements de texte
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = e.target.value
-    setQuery(newQuery)
-    onSearchChange?.(newQuery)
-  }
-
-  // Gérer les clics à l'extérieur
+  // Gérer le clic en dehors
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node) &&
+        !inputRef.current?.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false)
         setSelectedIndex(-1)
       }
     }
@@ -165,128 +115,89 @@ export default function SearchAutocomplete({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  // Icône selon le type de suggestion
+  const getSuggestionIcon = (type: string) => {
+    switch (type) {
+      case "restaurant":
+        return <Utensils className="w-4 h-4 text-gray-400" />
+      case "city":
+        return <MapPin className="w-4 h-4 text-gray-400" />
+      case "cuisine":
+        return <Star className="w-4 h-4 text-gray-400" />
+      default:
+        return <Search className="w-4 h-4 text-gray-400" />
+    }
+  }
+
+  // Label selon le type de suggestion
+  const getSuggestionLabel = (type: string) => {
+    switch (type) {
+      case "restaurant":
+        return "Restaurant"
+      case "city":
+        return "Arrondissement"
+      case "cuisine":
+        return "Cuisine"
+      default:
+        return ""
+    }
+  }
+
   return (
-    <div className={`relative w-full ${className}`} ref={suggestionsRef}>
+    <div className={`relative w-full ${className}`}>
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <Input
           ref={inputRef}
           type="text"
           placeholder={placeholder}
           value={query}
-          onChange={handleInputChange}
+          onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => query.length >= 2 && suggestions.length > 0 && setIsOpen(true)}
-          className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
+          onFocus={() => {
+            if (suggestions.length > 0) {
+              setShowSuggestions(true)
+            }
+          }}
+          className="pl-10 pr-20 h-12 text-base border-2 border-gray-200 focus:border-red-500 focus:ring-red-500 rounded-xl"
         />
-        {query && (
-          <button
-            onClick={clearSearch}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
+        <Button
+          onClick={() => handleSearch()}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+          size="sm"
+        >
+          Rechercher
+        </Button>
       </div>
 
-      {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-80 overflow-y-auto">
-          {(() => {
-            const citySuggestions = suggestions.filter((s) => s.type === "city")
-            const restaurantSuggestions = suggestions.filter((s) => s.type === "restaurant")
-            let currentIndex = 0
-
-            return (
-              <>
-                {citySuggestions.length > 0 && (
-                  <div>
-                    <div className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">
-                      QUARTIERS
-                    </div>
-                    {citySuggestions.map((suggestion, index) => {
-                      const globalIndex = currentIndex++
-                      return (
-                        <div
-                          key={`${suggestion.type}-${suggestion.value}`}
-                          className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-50 last:border-b-0 ${
-                            globalIndex === selectedIndex ? "bg-blue-50 text-blue-900" : "hover:bg-gray-50"
-                          }`}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full">
-                              <MapPin className="w-4 h-4 text-gray-600" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">{suggestion.label}</div>
-                              <div className="text-sm text-gray-500">
-                                Paris • {suggestion.count} restaurant{suggestion.count! > 1 ? "s" : ""}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-
-                {restaurantSuggestions.length > 0 && (
-                  <div>
-                    <div className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">
-                      RESTAURANTS
-                    </div>
-                    {restaurantSuggestions.map((suggestion, index) => {
-                      const globalIndex = currentIndex++
-                      return (
-                        <div
-                          key={`${suggestion.type}-${suggestion.value}`}
-                          className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-50 last:border-b-0 ${
-                            globalIndex === selectedIndex ? "bg-blue-50 text-blue-900" : "hover:bg-gray-50"
-                          }`}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full">
-                              <Utensils className="w-4 h-4 text-red-600" />
-                            </div>
-                            <div className="flex-1">
-                              <div className="font-medium text-gray-900">{suggestion.label}</div>
-                              <div className="text-sm text-gray-500">
-                                {suggestion.restaurant?.city.replace("arrondissement", "arr.")} •{" "}
-                                {suggestion.restaurant?.priceRange}
-                              </div>
-                            </div>
-                            {suggestion.restaurant?.distinctions && suggestion.restaurant.distinctions.length > 0 && (
-                              <div className="flex items-center gap-1">
-                                {suggestion.restaurant.distinctions.slice(0, 2).map((distinction, idx) => (
-                                  <div key={idx} className="w-5 h-5">
-                                    {distinction.includes("michelin") && (
-                                      <img
-                                        src="/etoile-michelin.webp"
-                                        alt="Michelin"
-                                        className="w-full h-full object-contain"
-                                      />
-                                    )}
-                                    {distinction.includes("gaultmillau") && (
-                                      <img
-                                        src="/1toque.png"
-                                        alt="Gault&Millau"
-                                        className="w-full h-full object-contain"
-                                      />
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-              </>
-            )
-          })()}
+      {/* Suggestions dropdown */}
+      {showSuggestions && suggestions.length > 0 && (
+        <div
+          ref={suggestionsRef}
+          className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-80 overflow-y-auto"
+        >
+          {suggestions.map((suggestion, index) => (
+            <button
+              key={`${suggestion.type}-${suggestion.value}`}
+              onClick={() => handleSuggestionSelect(suggestion)}
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0 transition-colors ${
+                index === selectedIndex ? "bg-red-50 border-red-100" : ""
+              }`}
+            >
+              {getSuggestionIcon(suggestion.type)}
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate">{suggestion.value}</div>
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <span>{getSuggestionLabel(suggestion.type)}</span>
+                  {suggestion.count && (
+                    <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full">
+                      {suggestion.count} restaurant{suggestion.count > 1 ? "s" : ""}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       )}
     </div>
