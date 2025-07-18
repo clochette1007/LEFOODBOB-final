@@ -1,19 +1,11 @@
 "use client"
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
-import { Search } from "lucide-react"
-import { useRouter } from 'next/navigation'
-import { 
-  restaurants, 
-  createSlug, 
-  getDistinctionIcon, 
-  getDistinctionText, 
-  getBadgeColor, 
-  type Restaurant 
-} from '@/lib/restaurants'
-import SearchAutocomplete from './search-autocomplete'
-import RestaurantThumbnail from './restaurant-thumbnail'
+import { useRouter } from "next/navigation"
+import { restaurants, createSlug, getDistinctionIcon, type Restaurant } from "@/lib/restaurants"
+import SearchAutocomplete from "./search-autocomplete"
+import RestaurantThumbnail from "./restaurant-thumbnail"
 
 declare global {
   interface Window {
@@ -61,12 +53,12 @@ export default function RestaurantMap() {
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredRestaurants, setFilteredRestaurants] = useState<RestaurantWithPhoto[]>([])
   const [hasSearched, setHasSearched] = useState(false)
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [locationTitle, setLocationTitle] = useState("Paris")
   const [photosLoaded, setPhotosLoaded] = useState(false)
   const [isMapInitialized, setIsMapInitialized] = useState(false)
 
-  // Fonction pour naviguer vers la page du restaurant  
+  // Fonction pour naviguer vers la page du restaurant
   const navigateToRestaurant = (restaurantName: string) => {
     const slug = createSlug(restaurantName)
     window.location.href = `/${slug}`
@@ -74,7 +66,7 @@ export default function RestaurantMap() {
 
   // Fonction pour afficher les distinctions d'un restaurant (pour React/JSX)
   const renderDistinctionIconJSX = (distinction: string) => {
-    switch(distinction) {
+    switch (distinction) {
       case "michelin-1":
         return <img src="/etoile-michelin.webp" alt="Michelin 1 étoile" className="w-5 h-5 object-contain" />
       case "michelin-2":
@@ -122,8 +114,6 @@ export default function RestaurantMap() {
     ))
   }
 
-
-
   // Charger les images Google Places au démarrage
   useEffect(() => {
     const loadGooglePlacesPhotos = async () => {
@@ -132,7 +122,7 @@ export default function RestaurantMap() {
       const restaurantsWithGooglePhotos = await Promise.all(
         restaurants.map(async (restaurant) => {
           return new Promise<RestaurantWithPhoto>((resolve) => {
-            const placesService = new window.google.maps.places.PlacesService(document.createElement('div'))
+            const placesService = new window.google.maps.places.PlacesService(document.createElement("div"))
             placesService.findPlaceFromQuery(
               {
                 query: restaurant.query,
@@ -140,22 +130,22 @@ export default function RestaurantMap() {
               },
               (results: any, status: any) => {
                 let photoUrl = restaurant.photoUrl || "https://placehold.co/200x150/cccccc/333333?text=Image"
-                
+
                 if (status === window.google.maps.places.PlacesServiceStatus.OK && results && results[0]?.photos) {
                   photoUrl = results[0].photos[0].getUrl({
                     maxWidth: 400,
                     maxHeight: 300,
                   })
                 }
-                
+
                 resolve({
                   ...restaurant,
-                  photoUrl
+                  photoUrl,
                 })
-              }
+              },
             )
           })
-        })
+        }),
       )
 
       setRestaurantsWithPhotos(restaurantsWithGooglePhotos)
@@ -172,22 +162,22 @@ export default function RestaurantMap() {
         (position) => {
           const location = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           }
           setUserLocation(location)
           setLocationTitle("Autour de moi")
-          
+
           // Si la carte est déjà initialisée, recentrer sur l'utilisateur
           if (map) {
             map.setCenter(location)
-            
+
             // Ajouter un marqueur personnalisé pour la position de l'utilisateur
             const { AdvancedMarkerElement } = window.google.maps.marker
-            const userMarkerElement = document.createElement('img')
-            userMarkerElement.src = '/bobrepere.png'
-            userMarkerElement.style.width = '35px'        // Légèrement plus petit pour l'utilisateur
-            userMarkerElement.style.height = '35px'
-            userMarkerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3)) hue-rotate(220deg)'  // Teinté bleu pour différencier
+            const userMarkerElement = document.createElement("img")
+            userMarkerElement.src = "/bobrepere.png"
+            userMarkerElement.style.width = "35px" // Légèrement plus petit pour l'utilisateur
+            userMarkerElement.style.height = "35px"
+            userMarkerElement.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3)) hue-rotate(220deg)" // Teinté bleu pour différencier
             userMarkerElement.alt = "Votre position"
 
             new AdvancedMarkerElement({
@@ -206,8 +196,8 @@ export default function RestaurantMap() {
         {
           enableHighAccuracy: true,
           timeout: 10000,
-          maximumAge: 300000 // Cache 5 minutes
-        }
+          maximumAge: 300000, // Cache 5 minutes
+        },
       )
     } else {
       // Navigateur ne supporte pas la géolocalisation - rester sur Paris
@@ -287,14 +277,14 @@ export default function RestaurantMap() {
             }
 
             // Créer un marqueur personnalisé avec votre image bob_repere
-            const markerElement = document.createElement('img')
-            markerElement.src = '/bobrepere.png'
-            markerElement.style.width = '40px'        // Taille du marqueur
-            markerElement.style.height = '40px'
-            markerElement.style.cursor = 'pointer'
-            markerElement.style.userSelect = 'none'
-            markerElement.style.pointerEvents = 'none'
-            markerElement.style.filter = 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))'  // Ombre portée
+            const markerElement = document.createElement("img")
+            markerElement.src = "/bobrepere.png"
+            markerElement.style.width = "40px" // Taille du marqueur
+            markerElement.style.height = "40px"
+            markerElement.style.cursor = "pointer"
+            markerElement.style.userSelect = "none"
+            markerElement.style.pointerEvents = "none"
+            markerElement.style.filter = "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))" // Ombre portée
             markerElement.alt = restaurant.name
 
             const marker = new AdvancedMarkerElement({
@@ -309,15 +299,17 @@ export default function RestaurantMap() {
               const content = createInfoWindowContent({ ...restaurant, photoUrl })
               infoWindowInstance.setContent(content)
               infoWindowInstance.open(mapInstance, marker)
-              
+
               // Ajouter l'écouteur de clic sur l'InfoWindow après un court délai
               setTimeout(() => {
-                const infoWindowElement = document.getElementById(`restaurant-info-${restaurant.name.replace(/[^a-zA-Z0-9]/g, '')}`)
+                const infoWindowElement = document.getElementById(
+                  `restaurant-info-${restaurant.name.replace(/[^a-zA-Z0-9]/g, "")}`,
+                )
                 if (infoWindowElement) {
-                  infoWindowElement.addEventListener('click', () => {
+                  infoWindowElement.addEventListener("click", () => {
                     navigateToRestaurant(restaurant.name)
                   })
-                  infoWindowElement.style.cursor = 'pointer'
+                  infoWindowElement.style.cursor = "pointer"
                 }
               }, 100)
             })
@@ -339,62 +331,75 @@ export default function RestaurantMap() {
   }, [])
 
   const createInfoWindowContent = (restaurant: RestaurantWithPhoto) => {
-    const distinctionsHtml = restaurant.distinctions.map(distinction => {
-      return `<span style="display: inline-flex; align-items: center; margin-right: 4px; margin-bottom: 2px;">
+    const distinctionsHtml = restaurant.distinctions
+      .map((distinction) => {
+        return `<span style="display: inline-flex; align-items: center; margin-right: 4px; margin-bottom: 2px;">
         ${getDistinctionIcon(distinction)}
       </span>`
-    }).join('')
+      })
+      .join("")
 
-    const restaurantId = restaurant.name.replace(/[^a-zA-Z0-9]/g, '')
-
-    // Responsive width based on screen size
+    const restaurantId = restaurant.name.replace(/[^a-zA-Z0-9]/g, "")
     const isMobile = window.innerWidth <= 768
-    const containerWidth = isMobile ? Math.min(280, window.innerWidth - 40) : 300
-    const imageSize = isMobile ? 60 : 70
-    
+    const containerWidth = isMobile ? Math.min(280, window.innerWidth - 40) : 320
+    const imageSize = isMobile ? 70 : 80
+
     return `
-    <div id="restaurant-info-${restaurantId}" style="
-      width: ${containerWidth}px; 
-      max-width: 95vw;
-      padding: 12px; 
-      background-color: white; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      cursor: pointer; 
-      transition: all 0.2s ease;
-      box-sizing: border-box;
-    " 
-         onmouseover="this.style.backgroundColor='#f9fafb'; this.style.transform='scale(1.02)'" 
-         onmouseout="this.style.backgroundColor='white'; this.style.transform='scale(1)'">
-      <div style="flex: 1; min-width: 0;">
-        <h3 style="font-size: ${isMobile ? '16px' : '18px'}; font-weight: bold; color: #1f2937; margin: 0 0 6px 0; line-height: 1.2;">${restaurant.name}</h3>
-        <p style="font-size: ${isMobile ? '12px' : '13px'}; color: #6b7280; margin: 0 0 8px 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
-        <div style="display: flex; flex-wrap: wrap; gap: 2px;">${distinctionsHtml}</div>
-      </div>
-      <div style="width: ${imageSize}px; height: ${imageSize}px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-        <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/${imageSize}x${imageSize}/cccccc/333333?text=Image';">
-      </div>
+  <div id="restaurant-info-${restaurantId}" style="
+    width: ${containerWidth}px; 
+    max-width: 95vw;
+    padding: 16px; 
+    background-color: white; 
+    border-radius: 16px; 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); 
+    display: flex; 
+    align-items: flex-start; 
+    gap: 12px; 
+    cursor: pointer; 
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    border: 1px solid #f3f4f6;
+  " 
+       onmouseover="this.style.backgroundColor='#f9fafb'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 35px rgba(0, 0, 0, 0.2)'" 
+       onmouseout="this.style.backgroundColor='white'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0, 0, 0, 0.15)'">
+    
+    <!-- Image carrée -->
+    <div style="width: ${imageSize}px; height: ${imageSize}px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background-color: #f3f4f6;">
+      <img src="${restaurant.photoUrl}" alt="${restaurant.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://placehold.co/${imageSize}x${imageSize}/f3f4f6/9ca3af?text=Photo';">
     </div>
-  `
+    
+    <!-- Contenu -->
+    <div style="flex: 1; min-width: 0;">
+      <!-- Distinctions en haut -->
+      <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; min-height: 20px;">${distinctionsHtml}</div>
+      
+      <!-- Nom du restaurant -->
+      <h3 style="font-size: ${isMobile ? "16px" : "18px"}; font-weight: 700; color: #111827; margin: 0 0 4px 0; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${restaurant.name}</h3>
+      
+      <!-- Localisation -->
+      <p style="font-size: ${isMobile ? "12px" : "13px"}; color: #6b7280; margin: 0 0 2px 0; line-height: 1.2;">Paris - ${restaurant.city.replace("arrondissement", "arr.")}</p>
+      
+      <!-- Prix -->
+      <p style="font-size: ${isMobile ? "12px" : "13px"}; color: #6b7280; margin: 0; line-height: 1.2;">${restaurant.priceRange} • Cuisine gastronomique</p>
+    </div>
+  </div>
+`
   }
 
   // Gérer les changements de recherche
   const handleSearchChange = (query: string) => {
     setSearchQuery(query)
     setHasSearched(query.length > 0)
-    
+
     if (query.length === 0) {
       setFilteredRestaurants([])
       return
     }
-    
+
     const searchQuery = query.toLowerCase()
-    const filtered = restaurantsWithPhotos.filter(restaurant => 
-      restaurant.name.toLowerCase().includes(searchQuery) || 
-      restaurant.city.toLowerCase().includes(searchQuery)
+    const filtered = restaurantsWithPhotos.filter(
+      (restaurant) =>
+        restaurant.name.toLowerCase().includes(searchQuery) || restaurant.city.toLowerCase().includes(searchQuery),
     )
     setFilteredRestaurants(filtered)
   }
@@ -410,51 +415,51 @@ export default function RestaurantMap() {
 
   return (
     <div className="bg-white min-h-screen">
-          {/* Barre de recherche */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="max-w-4xl mx-auto">
-          <SearchAutocomplete 
+      {/* Barre de recherche */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto">
+          <SearchAutocomplete
             placeholder="Rechercher un restaurant ou une ville sur Lefoodbob"
             onSearchChange={handleSearchChange}
             onRestaurantSelect={handleRestaurantSelect}
           />
-            </div>
-          </div>
+        </div>
+      </div>
 
-          <div className="max-w-4xl mx-auto p-6">
-            {/* Section Autour de moi */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-6">
+      <div className="max-w-4xl mx-auto p-6">
+        {/* Section Autour de moi */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">{locationTitle}</h2>
-              </div>
+          </div>
 
           {/* Carte simple */}
           <div className="relative w-full h-96 rounded-lg overflow-hidden border border-gray-200 mb-6">
-                <div ref={mapRef} className="w-full h-full" />
-              </div>
-            </div>
+            <div ref={mapRef} className="w-full h-full" />
+          </div>
+        </div>
 
         {/* Section Liste */}
         <div className="mb-8">
-              <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              {hasSearched ? `Résultats de recherche (${filteredRestaurants.length})` : 'Liste'}
+              {hasSearched ? `Résultats de recherche (${filteredRestaurants.length})` : "Restaurants recommandés"}
             </h2>
             {!hasSearched && (
-              <button 
-                onClick={() => router.push('/restaurants')}
+              <button
+                onClick={() => router.push("/restaurants")}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Tout voir
               </button>
             )}
-              </div>
+          </div>
 
           {hasSearched && filteredRestaurants.length === 0 && (
             <div className="text-center py-8">
               <p className="text-gray-500 text-lg">Aucun restaurant trouvé pour "{searchQuery}"</p>
-                          </div>
-                        )}
+            </div>
+          )}
 
           <div className="grid gap-4">
             {(hasSearched ? filteredRestaurants : restaurantsWithPhotos.slice(0, 2)).map((restaurant, index) => (
@@ -466,26 +471,24 @@ export default function RestaurantMap() {
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <h3 className="font-bold text-lg text-gray-900 mb-1">{restaurant.name}</h3>
-                        <p className="text-gray-600 text-sm mb-1">Paris - {restaurant.city.replace('arrondissement', 'arr.')}</p>
+                    <p className="text-gray-600 text-sm mb-1">
+                      Paris - {restaurant.city.replace("arrondissement", "arr.")}
+                    </p>
                     <p className="text-gray-600 text-sm mb-2">{restaurant.priceRange} • Cuisine gastronomique</p>
-                    <div className="flex flex-wrap gap-1">
-                      {renderDistinctions(restaurant.distinctions)}
-                    </div>
-                      </div>
-
-                      <RestaurantThumbnail 
-                        restaurant={restaurant} 
-                        onClick={() => navigateToRestaurant(restaurant.name)}
-                        size="medium"
-                      />
-                    </div>
+                    <div className="flex flex-wrap gap-1">{renderDistinctions(restaurant.distinctions)}</div>
                   </div>
-                ))}
+
+                  <RestaurantThumbnail
+                    restaurant={restaurant}
+                    onClick={() => navigateToRestaurant(restaurant.name)}
+                    size="medium"
+                  />
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-
-
+        </div>
+      </div>
     </div>
   )
 }
