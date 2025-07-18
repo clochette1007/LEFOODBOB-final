@@ -22,14 +22,15 @@ export const restaurants: Restaurant[] = [
     city: "4e arrondissement",
     priceRange: "€€€€",
     priceSymbol: "€€€€",
-    query: "Restaurant Aldéhyde 5 Rue du Pont Louis-Philippe Paris",
+    query: "Aldéhyde restaurant gastronomique Paris 4ème",
     distinctions: ["michelin-1"],
     phone: "+33 9 73 89 43 24",
     website: "https://aldehyde.paris",
     chef: "Youssef Marzouk",
-    description: "Restaurant gastronomique en plein cœur de Paris. Cuisine élégante et affirmée qui porte haut les saveurs franco-tunisiennes.",
+    description:
+      "Restaurant gastronomique en plein cœur de Paris. Cuisine élégante et affirmée qui porte haut les saveurs franco-tunisiennes.",
     lat: 48.8541,
-    lng: 2.3570
+    lng: 2.357,
   },
   {
     address: "84 Rue de Varenne, 75007 Paris",
@@ -37,14 +38,15 @@ export const restaurants: Restaurant[] = [
     city: "7e arrondissement",
     priceRange: "€€€€",
     priceSymbol: "€€€€",
-    query: "L'Arpège 84 Rue de Varenne Paris Alain Passard",
+    query: "L'Arpège restaurant Alain Passard Paris 7ème",
     distinctions: ["michelin-3", "50best"],
     phone: "+33 1 47 05 09 06",
     website: "https://alain-passard.com",
     chef: "Alain Passard",
-    description: "Restaurant emblématique d'Alain Passard, référence mondiale de la cuisine végétale de haute gastronomie.",
+    description:
+      "Restaurant emblématique d'Alain Passard, référence mondiale de la cuisine végétale de haute gastronomie.",
     lat: 48.8568,
-    lng: 2.3183
+    lng: 2.3183,
   },
   {
     address: "8 Avenue Dutuit, 75008 Paris",
@@ -59,7 +61,7 @@ export const restaurants: Restaurant[] = [
     chef: "Yannick Alléno",
     description: "Temple de la haute gastronomie française au sein du Pavillon Ledoyen.",
     lat: 48.8656,
-    lng: 2.3125
+    lng: 2.3125,
   },
   {
     address: "41 Rue Saint-André-des-Arts, 75006 Paris",
@@ -73,7 +75,7 @@ export const restaurants: Restaurant[] = [
     chef: "Alain Ducasse",
     description: "Bistrot parisien traditionnel revisité par Alain Ducasse.",
     lat: 48.8534,
-    lng: 2.3408
+    lng: 2.3408,
   },
   {
     address: "27 Rue Malar, 75007 Paris",
@@ -87,7 +89,7 @@ export const restaurants: Restaurant[] = [
     chef: "Stéphane Jégo",
     description: "Bistrot convivial aux saveurs du Sud-Ouest et de Bretagne.",
     lat: 48.8583,
-    lng: 2.3038
+    lng: 2.3038,
   },
   {
     address: "19 Place Dauphine, 75001 Paris",
@@ -100,7 +102,7 @@ export const restaurants: Restaurant[] = [
     phone: "+33 1 48 87 15 40",
     description: "Authentique bistrot parisien spécialisé dans la cuisine bourguignonne.",
     lat: 48.8566,
-    lng: 2.3421
+    lng: 2.3421,
   },
   {
     address: "87 rue Lamarck, 75018 Paris",
@@ -110,9 +112,10 @@ export const restaurants: Restaurant[] = [
     priceSymbol: "€€€",
     query: "Double restaurant 87 rue Lamarck Paris Montmartre",
     distinctions: [],
-    description: "Restaurant gastronomique situé dans le quartier de Montmartre, offrant une cuisine moderne et créative.",
+    description:
+      "Restaurant gastronomique situé dans le quartier de Montmartre, offrant une cuisine moderne et créative.",
     lat: 48.8897,
-    lng: 2.3387
+    lng: 2.3387,
   },
   {
     address: "11 rue Richard Lenoir, 75011 Paris",
@@ -124,7 +127,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Restaurant de saison proposant une cuisine contemporaine inspirée par les produits de saison.",
     lat: 48.8607,
-    lng: 2.3677
+    lng: 2.3677,
   },
   {
     address: "19 bis rue Pierre Fontaine, 75009 Paris",
@@ -136,7 +139,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Restaurant convivial dans le 9e arrondissement proposant une cuisine méditerranéenne authentique.",
     lat: 48.8817,
-    lng: 2.3355
+    lng: 2.3355,
   },
   {
     address: "62 rue Jean-Pierre Timbaud, 75011 Paris",
@@ -148,7 +151,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Restaurant chaleureux proposant une cuisine de l'Est européenne dans une ambiance décontractée.",
     lat: 48.8672,
-    lng: 2.3703
+    lng: 2.3703,
   },
   {
     address: "22 rue La Bruyère, 75009 Paris",
@@ -160,7 +163,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Authentique restaurant italien spécialisé dans la cuisine de l'Émilie-Romagne.",
     lat: 48.8779,
-    lng: 2.3337
+    lng: 2.3337,
   },
   {
     address: "54 Bd de la Tour-Maubourg, 75007 Paris",
@@ -172,7 +175,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Brasserie traditionnelle parisienne proposant une cuisine française classique dans un cadre élégant.",
     lat: 48.8572,
-    lng: 2.3067
+    lng: 2.3067,
   },
   {
     address: "22 rue du Champ de Mars, 75007 Paris",
@@ -184,7 +187,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Restaurant italien authentique près de la Tour Eiffel, spécialisé dans la cuisine traditionnelle.",
     lat: 48.8566,
-    lng: 2.3020
+    lng: 2.302,
   },
   {
     address: "13 rue Rambuteau, 75004 Paris",
@@ -196,7 +199,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Deli américain réputé pour ses sandwichs au pastrami et corned beef, par le groupe Homer Food.",
     lat: 48.8608,
-    lng: 2.3525
+    lng: 2.3525,
   },
   {
     address: "27 rue Pierre Fontaine, 75009 Paris",
@@ -208,7 +211,7 @@ export const restaurants: Restaurant[] = [
     distinctions: [],
     description: "Street food israélien spécialisé dans le sabich, sandwich pita traditionnel de Tel Aviv.",
     lat: 48.8817,
-    lng: 2.3355
+    lng: 2.3355,
   },
   {
     address: "25 rue des Batignolles, 75017 Paris",
@@ -218,57 +221,57 @@ export const restaurants: Restaurant[] = [
     priceSymbol: "€€",
     query: "Melt Slow Smoked Barbecue brisket pulled pork Paris Batignolles",
     distinctions: [],
-    description: "Authentique barbecue texan à Paris. Viandes fumées lentement, brisket fondant et pulled pork savoureux.",
+    description:
+      "Authentique barbecue texan à Paris. Viandes fumées lentement, brisket fondant et pulled pork savoureux.",
     lat: 48.8848,
-    lng: 2.3198
-  }
+    lng: 2.3198,
+  },
 ]
 
 // Fonction pour convertir le nom en slug
 export function createSlug(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[àâä]/g, 'a')
-    .replace(/[éèêë]/g, 'e')
-    .replace(/[îï]/g, 'i')
-    .replace(/[ôö]/g, 'o')
-    .replace(/[ùûü]/g, 'u')
-    .replace(/[ç]/g, 'c')
-    .replace(/[^a-z0-9]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replace(/[àâä]/g, "a")
+    .replace(/[éèêë]/g, "e")
+    .replace(/[îï]/g, "i")
+    .replace(/[ôö]/g, "o")
+    .replace(/[ùûü]/g, "u")
+    .replace(/[ç]/g, "c")
+    .replace(/[^a-z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
-
-
 
 // Fonction pour obtenir les icônes des distinctions (pour InfoWindows HTML)
 export const getDistinctionIcon = (distinction: string) => {
   const logoSize = 'width="20" height="20" style="object-fit: contain; vertical-align: middle;"'
-  
-  switch(distinction) {
-    case "michelin-1": 
+
+  switch (distinction) {
+    case "michelin-1":
       return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}>`
-    case "michelin-2": 
+    case "michelin-2":
       return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 2 étoile" ${logoSize}>`
-    case "michelin-3": 
+    case "michelin-3":
       return `<img src="/etoile-michelin.webp" alt="Michelin 1 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 2 étoile" ${logoSize}><img src="/etoile-michelin.webp" alt="Michelin 3 étoile" ${logoSize}>`
-    case "michelin-bib": 
+    case "michelin-bib":
       return `<img src="/bibgourmand.jpg" alt="Bib Gourmand" ${logoSize}>`
-    case "michelin-assiette": 
+    case "michelin-assiette":
       return `<img src="/assiettemichelin.jpg" alt="Assiette Michelin" ${logoSize}>`
-    case "50best": 
+    case "50best":
       return `<img src="/50bestrestaurants.webp" alt="50 Best Restaurants" ${logoSize}>`
-    case "gaultmillau-1": 
+    case "gaultmillau-1":
       return `<img src="/1toque.png" alt="1 toque Gault&Millau" ${logoSize}>`
-    case "gaultmillau-2": 
+    case "gaultmillau-2":
       return `<img src="/2toques.jpg" alt="2 toques Gault&Millau" ${logoSize}>`
-    case "gaultmillau-3": 
+    case "gaultmillau-3":
       return `<img src="/3toques.jpg" alt="3 toques Gault&Millau" ${logoSize}>`
-    case "gaultmillau-4": 
+    case "gaultmillau-4":
       return `<img src="/4toques.png" alt="4 toques Gault&Millau" ${logoSize}>`
-    case "gaultmillau-5": 
+    case "gaultmillau-5":
       return `<img src="/5toques.png" alt="5 toques Gault&Millau" ${logoSize}>`
-    default: return ""
+    default:
+      return ""
   }
 }
 
@@ -292,8 +295,8 @@ export const getDistinctionText = (distinction: string) => {
 
 // Fonction pour obtenir la couleur de badge
 export const getBadgeColor = (distinction: string) => {
-  if (distinction.startsWith('michelin-')) return "bg-red-100 text-red-800"
-  if (distinction.startsWith('gaultmillau-')) return "bg-yellow-100 text-yellow-800"
-  if (distinction === '50best') return "bg-purple-100 text-purple-800"
+  if (distinction.startsWith("michelin-")) return "bg-red-100 text-red-800"
+  if (distinction.startsWith("gaultmillau-")) return "bg-yellow-100 text-yellow-800"
+  if (distinction === "50best") return "bg-purple-100 text-purple-800"
   return "bg-gray-100 text-gray-800"
 }

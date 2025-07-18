@@ -1,64 +1,49 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import Image from "next/image"
+import { usePathname, useRouter } from "next/navigation"
+import { Home, User, Heart } from "lucide-react"
 
 export default function MobileNav() {
   const pathname = usePathname()
+  const router = useRouter()
 
   const navItems = [
     {
-      href: "/",
-      icon: <Image src="/bob_logo.png" alt="Accueil" width={24} height={24} className="object-contain" />,
-      label: "Accueil",
+      name: "Accueil",
+      icon: Home,
+      path: "/",
+      active: pathname === "/",
     },
     {
-      href: "/profile",
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
-        </svg>
-      ),
-      label: "Espace personnel",
+      name: "Espace personnel",
+      icon: User,
+      path: "/profile",
+      active: pathname === "/profile",
     },
     {
-      href: "/favorites",
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          />
-        </svg>
-      ),
-      label: "Favoris",
+      name: "Favoris",
+      icon: Heart,
+      path: "/favorites",
+      active: pathname === "/favorites",
     },
   ]
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 md:hidden z-50 safe-area-pb">
-      <div className="flex justify-around items-center py-2">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-50">
+      <div className="flex justify-around items-center">
         {navItems.map((item) => {
-          const isActive = pathname === item.href
+          const Icon = item.icon
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex flex-col items-center gap-1 px-6 py-3 rounded-xl transition-all duration-200 ${
-                isActive ? "text-blue-600 bg-blue-50 scale-105" : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+            <button
+              key={item.name}
+              onClick={() => router.push(item.path)}
+              className={`flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-colors ${
+                item.active ? "text-red-600 bg-red-50" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              <div className={`transition-transform duration-200 ${isActive ? "scale-110" : ""}`}>{item.icon}</div>
-              <span className="text-xs font-medium text-center leading-tight">{item.label}</span>
-            </Link>
+              <Icon className="w-6 h-6" />
+              <span className="text-xs font-medium">{item.name}</span>
+            </button>
           )
         })}
       </div>
