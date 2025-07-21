@@ -16,7 +16,15 @@ interface CustomMarker {
   title: string
   description: string
   color: string
+  // Store the actual Google Maps Marker instance
+  googleMapsMarker?: google.maps.Marker
 }
+
+// Define types for Google Maps objects to avoid 'any' for better type safety
+type GoogleMap = google.maps.Map | null
+type GoogleMarker = typeof google.maps.Marker | null
+type GoogleInfoWindow = typeof google.maps.InfoWindow | null
+type GoogleMapsEvent = typeof google.maps.event | null
 
 const mapStyles = {
   standard: [],
@@ -214,7 +222,7 @@ const mapStyles = {
 
 export default function MapsInterface() {
   const mapRef = useRef<HTMLDivElement>(null)
-  const [map, setMap] = useState<any>(null)
+  const [map, setMap] = useState<GoogleMap>(null)
   const [markers, setMarkers] = useState<CustomMarker[]>([])
   const [selectedStyle, setSelectedStyle] = useState<keyof typeof mapStyles>("standard")
   const [newMarker, setNewMarker] = useState({
@@ -223,45 +231,113 @@ export default function MapsInterface() {
     color: "#FF0000",
   })
   const [isAddingMarker, setIsAddingMarker] = useState(false)
-  const [clickListener, setClickListener] = useState<any>(null)
+  const [clickListener, setClickListener] = useState<google.maps.MapsEventListener | null>(null)
+
+  // State to hold references to loaded Google Maps classes
+  const [googleMaps, setGoogleMaps] = useState<{
+    Map: typeof google.maps.Map | null
+    Marker: typeof google.maps.Marker | null
+    InfoWindow: typeof google.maps.InfoWindow | null
+    SymbolPath: typeof google.maps.SymbolPath | null
+    event: typeof google.maps.event | null
+  }>({
+    Map: null,
+    Marker: null,
+    InfoWindow: null,
+    SymbolPath: null,
+    event: null,
+  })
 
   useEffect(() => {
     const initMap = async () => {
-      const loader = new Loader({
-        apiKey: "AIzaSyCcfMwhQwKmsAnRYfQCtYKsWpB4EI3NIq4",
-        version: "weekly",
-      })
-
-      const { Map } = await loader.importLibrary("maps")
-
-      const mapOptions = {
-        center: { lat: 48.8566, lng: 2.3522 }, // Paris coordinates
-        zoom: 12,
-        styles: mapStyles[selectedStyle],
+      // Ensure the mapRef is available before trying to create a map
+      if (!mapRef.current) {
+        console.error("Map ref is null, cannot initialize map.")
+        return
       }
 
-      const mapInstance = new Map(mapRef.current as HTMLDivElement, mapOptions)
-      setMap(mapInstance)
+      try {
+        const loader = new Loader({
+          apiKey: "AIzaSyCcfMwhQwKmsAnRYfQCtYKsWpB4EI3NIq4", // Your confirmed API key
+          version: "weekly",
+          libraries: ["marker"], // Explicitly load the marker library for SymbolPath
+        })
+
+        // Import all necessary libraries and store them
+        const { Map } = await loader.importLibrary("maps")
+        const { Marker } = await loader.importLibrary("marker") // Marker library often includes SymbolPath
+        const { InfoWindow } = await loader.importLibrary("places") // InfoWindow is often part of places or maps itself
+
+        // Directly assign event from the global google.maps object after loading
+        const event = window.google?.maps?.event || null;
+        const SymbolPath = window.google?.maps?.SymbolPath || null;
+
+
+        if (!Map || !Marker || !InfoWindow || !event || !SymbolPath) {
+          console.error("Failed to load one or more Google Maps libraries.", { Map, Marker, InfoWindow, event, SymbolPath })
+          return
+        }
+
+        setGoogleMaps({ Map, Marker, InfoWindow, SymbolPath, event })
+
+        const mapOptions: google.maps.MapOptions = {
+          center: { lat: 48.8566, lng: 2.3522 }, // Paris coordinates
+          zoom: 12,
+          styles: mapStyles[selectedStyle],
+          // IMPORTANT: If you are using Cloud-based map styling, you need a Map ID.
+                                // If not using Cloud styling, remove this line or replace with a valid ID.
+                                // If you don't have one and this is causing issues, remove it.
+        }
+
+        const mapInstance = new Map(mapRef.current, mapOptions)
+        setMap(mapInstance)
+
+        // Re-add existing markers to the new map instance if they exist
+        // This is important if initMap runs again for any reason
+        markers.forEach(addMarkerToMap);
+
+      } catch (error) {
+        console.error("Error loading Google Maps API:", error)
+      }
     }
 
     initMap()
-  }, [])
+
+    // Cleanup function: remove map and listeners if component unmounts
+    return () => {
+        if (map) {
+            // Dispose of map instance if possible (depends on Maps API implementation)
+            // For simple cleanup, just nullify the state
+            setMap(null);
+        }
+        if (clickListener) {
+            googleMaps.event?.removeListener(clickListener);
+            setClickListener(null);
+        }
+    };
+  }, [selectedStyle]) // Re-run initMap if selectedStyle changes
 
   useEffect(() => {
-    if (map) {
+    // Only update styles if the map object exists and style has changed
+    if (map && googleMaps.Map) { // Ensure Map class is loaded
       map.setOptions({ styles: mapStyles[selectedStyle] })
     }
-  }, [map, selectedStyle])
+  }, [map, selectedStyle, googleMaps.Map])
+
 
   const addMarkerToMap = (marker: CustomMarker) => {
-    if (!map) return
+    // Ensure all necessary Google Maps objects are loaded
+    if (!map || !googleMaps.Marker || !googleMaps.InfoWindow || !googleMaps.SymbolPath) {
+      console.warn("Google Maps objects not fully loaded yet for adding marker.")
+      return
+    }
 
-    const mapMarker = new window.google.maps.Marker({
+    const mapMarker = new googleMaps.Marker({
       position: marker.position,
       map: map,
       title: marker.title,
       icon: {
-        path: window.google.maps.SymbolPath.CIRCLE,
+        path: googleMaps.SymbolPath.CIRCLE,
         scale: 8,
         fillColor: marker.color,
         fillOpacity: 1,
@@ -270,7 +346,7 @@ export default function MapsInterface() {
       },
     })
 
-    const infoWindow = new window.google.maps.InfoWindow({
+    const infoWindow = new googleMaps.InfoWindow({
       content: `
         <div>
           <h3 style="margin: 0 0 8px 0; font-weight: bold;">${marker.title}</h3>
@@ -282,14 +358,27 @@ export default function MapsInterface() {
     mapMarker.addListener("click", () => {
       infoWindow.open(map, mapMarker)
     })
+
+    // Update the marker in the state with its Google Maps instance
+    setMarkers((prev) =>
+      prev.map((m) => (m.id === marker.id ? { ...m, googleMapsMarker: mapMarker } : m))
+    )
   }
 
   const handleAddMarker = () => {
-    if (!map || !newMarker.title) return
+    if (!map || !newMarker.title || !googleMaps.event) { // Ensure event object is loaded
+      console.warn("Map or new marker title or Google Maps event object not ready.")
+      return
+    }
 
     setIsAddingMarker(true)
 
-    const listener = map.addListener("click", (event: any) => {
+    // Remove any existing click listener before adding a new one
+    if (clickListener) {
+      googleMaps.event.removeListener(clickListener)
+    }
+
+    const listener = map.addListener("click", (event: google.maps.MapMouseEvent) => {
       if (event.latLng) {
         const marker: CustomMarker = {
           id: Date.now().toString(),
@@ -302,14 +391,16 @@ export default function MapsInterface() {
           color: newMarker.color,
         }
 
-        setMarkers((prev) => [...prev, marker])
-        addMarkerToMap(marker)
+        setMarkers((prev) => [...prev, marker]) // Add the new marker to the state first
+        addMarkerToMap(marker) // Then add it to the map
 
         setNewMarker({ title: "", description: "", color: "#FF0000" })
         setIsAddingMarker(false)
 
-        if (clickListener) {
-          window.google.maps.event.removeListener(clickListener)
+        // Remove the listener once a marker is placed
+        if (googleMaps.event) {
+            googleMaps.event.removeListener(listener)
+            setClickListener(null) // Clear the listener from state
         }
       }
     })
@@ -318,18 +409,40 @@ export default function MapsInterface() {
   }
 
   const removeMarker = (id: string) => {
-    setMarkers((prev) => prev.filter((marker) => marker.id !== id))
-    // Note: In a real implementation, you'd also need to remove the marker from the map
-    // This would require storing references to the Google Maps marker objects
+    setMarkers((prev) => {
+      const markerToRemove = prev.find((marker) => marker.id === id)
+      if (markerToRemove && markerToRemove.googleMapsMarker) {
+        // Set map to null to remove the marker from the map
+        markerToRemove.googleMapsMarker.setMap(null)
+      }
+      return prev.filter((marker) => marker.id !== id)
+    })
   }
 
   const cancelAddMarker = () => {
     setIsAddingMarker(false)
-    if (clickListener) {
-      window.google.maps.event.removeListener(clickListener)
+    if (clickListener && googleMaps.event) {
+      googleMaps.event.removeListener(clickListener)
       setClickListener(null)
     }
   }
+
+  // Effect to re-render markers when the `markers` state changes
+  // This is crucial for adding previously existing markers after map initialization
+  useEffect(() => {
+    // Only run this effect if the map and Google Maps objects are loaded
+    if (map && googleMaps.Marker && googleMaps.InfoWindow && googleMaps.SymbolPath) {
+      // Clear all existing markers from the map before re-adding
+      markers.forEach(m => {
+          if (m.googleMapsMarker) {
+              m.googleMapsMarker.setMap(null);
+          }
+      });
+      // Add all current markers from state to the map
+      markers.forEach(addMarkerToMap);
+    }
+  }, [markers, map, googleMaps.Marker, googleMaps.InfoWindow, googleMaps.SymbolPath]);
+
 
   return (
     <div className="flex h-screen bg-gray-50">

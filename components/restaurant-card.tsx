@@ -2,29 +2,30 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Phone, Clock, ExternalLink } from "lucide-react"
-import type { Restaurant } from "@/lib/restaurants"
+import { MapPin, Phone, Globe, Star } from "lucide-react"
+import { type Restaurant, getBadgeColor, getDistinctionText } from "@/lib/restaurants"
 import Link from "next/link"
 
 interface RestaurantCardProps {
   restaurant: Restaurant
-  className?: string
 }
 
-export default function RestaurantCard({ restaurant, className = "" }: RestaurantCardProps) {
+export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const slug = restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, "-")
+
   // Fonction pour obtenir l'icône de distinction
   const getDistinctionIcon = (distinction: string) => {
     switch (distinction) {
       case "michelin-1":
-        return "/etoile-michelin.webp"
       case "michelin-2":
-        return "/etoile-michelin.webp"
       case "michelin-3":
         return "/etoile-michelin.webp"
       case "michelin-bib":
         return "/bibgourmand.jpg"
       case "michelin-assiette":
         return "/assiettemichelin.jpg"
+      case "50best":
+        return "/50bestrestaurants.webp"
       case "gaultmillau-1":
         return "/1toque.png"
       case "gaultmillau-2":
@@ -35,15 +36,13 @@ export default function RestaurantCard({ restaurant, className = "" }: Restauran
         return "/4toques.png"
       case "gaultmillau-5":
         return "/5toques.png"
-      case "50best":
-        return "/50bestrestaurants.webp"
       default:
         return null
     }
   }
 
-  // Fonction pour obtenir le nombre d'étoiles Michelin
-  const getMichelinStars = (distinction: string) => {
+  // Fonction pour obtenir le nombre d'étoiles
+  const getStarCount = (distinction: string) => {
     switch (distinction) {
       case "michelin-1":
         return 1
@@ -56,121 +55,94 @@ export default function RestaurantCard({ restaurant, className = "" }: Restauran
     }
   }
 
-  // Générer le slug pour l'URL
-  const slug = restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, "-")
-
   return (
-    <Card className={`group hover:shadow-lg transition-all duration-300 border-2 hover:border-red-200 ${className}`}>
-      <CardContent className="p-0">
-        <Link href={`/${slug}`} className="block">
+    <Link href={`/${slug}`}>
+      <Card className="h-full hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+        <CardContent className="p-6">
           {/* Image du restaurant */}
-          <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg overflow-hidden">
+          <div className="relative mb-4 h-48 bg-gray-100 rounded-lg overflow-hidden">
             <img
-              src={`/placeholder.svg?height=192&width=384&text=${encodeURIComponent(restaurant.name.slice(0, 15))}`}
+              src={`/placeholder.svg?height=200&width=300&text=${encodeURIComponent(restaurant.name.slice(0, 10))}`}
               alt={restaurant.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover"
             />
-
             {/* Badge de prix */}
             <div className="absolute top-3 right-3">
-              <Badge variant="secondary" className="bg-white/90 text-gray-800 font-semibold">
+              <Badge variant="secondary" className="bg-white/90 text-gray-900">
                 {restaurant.priceRange}
               </Badge>
             </div>
-
-            {/* Distinctions */}
-            {restaurant.distinctions.length > 0 && (
-              <div className="absolute top-3 left-3 flex gap-1">
-                {restaurant.distinctions.map((distinction, index) => {
-                  const icon = getDistinctionIcon(distinction)
-                  const stars = getMichelinStars(distinction)
-
-                  if (!icon) return null
-
-                  return (
-                    <div key={index} className="flex items-center bg-white/90 rounded-full p-1">
-                      {stars > 0 ? (
-                        // Afficher plusieurs étoiles pour Michelin
-                        Array.from({ length: stars }).map((_, starIndex) => (
-                          <img
-                            key={starIndex}
-                            src={icon || "/placeholder.svg"}
-                            alt={`${stars} étoile${stars > 1 ? "s" : ""} Michelin`}
-                            className="w-4 h-4 object-contain"
-                          />
-                        ))
-                      ) : (
-                        <img src={icon || "/placeholder.svg"} alt={distinction} className="w-4 h-4 object-contain" />
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
           </div>
 
-          {/* Contenu de la carte */}
-          <div className="p-6">
-            {/* Nom du restaurant */}
-            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
-              {restaurant.name}
-            </h3>
+          {/* Distinctions */}
+          {restaurant.distinctions.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {restaurant.distinctions.map((distinction, index) => {
+                const icon = getDistinctionIcon(distinction)
+                const starCount = getStarCount(distinction)
 
-            {/* Type de cuisine */}
-            {restaurant.cuisine && <p className="text-sm text-red-600 font-medium mb-3">{restaurant.cuisine}</p>}
+                return (
+                  <div key={index} className="flex items-center gap-1">
+                    {icon && (
+                      <img src={icon || "/placeholder.svg"} alt={distinction} className="w-5 h-5 object-contain" />
+                    )}
+                    {starCount > 0 && (
+                      <div className="flex">
+                        {Array.from({ length: starCount }).map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    )}
+                    <Badge variant="outline" className={`text-xs ${getBadgeColor(distinction)}`}>
+                      {distinction.replace("-", " ").toUpperCase()}
+                    </Badge>
+                  </div>
+                )
+              })}
+            </div>
+          )}
 
-            {/* Description */}
-            {restaurant.description && (
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">{restaurant.description}</p>
-            )}
+          {/* Nom du restaurant */}
+          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{restaurant.name}</h3>
 
-            {/* Informations pratiques */}
-            <div className="space-y-2">
-              {/* Adresse */}
+          {/* Chef */}
+          {restaurant.chef && <p className="text-sm text-gray-600 mb-2">Chef : {restaurant.chef}</p>}
+
+          {/* Description */}
+          {restaurant.description && (
+            <p className="text-gray-600 text-sm mb-4 line-clamp-3">{restaurant.description}</p>
+          )}
+
+          {/* Informations pratiques */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <MapPin className="h-4 w-4" />
+              <span className="truncate">{restaurant.address}</span>
+            </div>
+
+            {restaurant.phone && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">Paris - {restaurant.city.replace("arrondissement", "arr.")}</span>
+                <Phone className="h-4 w-4" />
+                <span>{restaurant.phone}</span>
               </div>
+            )}
 
-              {/* Téléphone */}
-              {restaurant.phone && (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span>{restaurant.phone}</span>
-                </div>
-              )}
-
-              {/* Horaires */}
-              {restaurant.openingHours && (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Clock className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">{restaurant.openingHours}</span>
-                </div>
-              )}
-
-              {/* Site web */}
-              {restaurant.website && (
-                <div className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                  <ExternalLink className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">Site officiel</span>
-                </div>
-              )}
-            </div>
-
-            {/* Call to action */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Voir les détails</span>
-                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                  <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
+            {restaurant.website && (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Globe className="h-4 w-4" />
+                <span className="truncate">Site web</span>
               </div>
-            </div>
+            )}
           </div>
-        </Link>
-      </CardContent>
-    </Card>
+
+          {/* Première distinction avec description */}
+          {restaurant.distinctions.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-500 italic">{getDistinctionText(restaurant.distinctions[0])}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
   )
 }

@@ -1,42 +1,67 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
+import { Loader } from "@googlemaps/js-api-loader"
 import { restaurants as defaultRestaurants, type Restaurant } from "@/lib/restaurants"
+
+// IMPORTANT : Ajoutez ces lignes si votre type Restaurant ne les a pas déjà.
+// Ces propriétés sont utilisées dans le code pour afficher les marqueurs et distinctions.
+declare module '@/lib/restaurants' {
+  interface Restaurant {
+    distinctions?: string[];
+    lat?: number;
+    lng?: number;
+  }
+}
+
 
 interface RestaurantMapProps {
   restaurants?: Restaurant[]
 }
 
-declare global {
-  interface Window {
-    google: any
-    initGoogleMaps?: () => void
-  }
-}
-
 export default function RestaurantMap({ restaurants = defaultRestaurants }: RestaurantMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
-  const [map, setMap] = useState<any>(null)
-  const [markers, setMarkers] = useState<any[]>([])
-  const [infoWindow, setInfoWindow] = useState<any>(null)
+  const [map, setMap] = useState<google.maps.Map | null>(null)
+  const [markers, setMarkers] = useState<google.maps.Marker[]>([])
+  const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow | null>(null)
   const [hasValidApiKey, setHasValidApiKey] = useState(false)
   const [error, setError] = useState<string>("")
   const [isLoading, setIsLoading] = useState(true)
-  const scriptLoadTimeoutRef = useRef<NodeJS.Timeout>()
   const retryCountRef = useRef(0)
   const maxRetries = 3
 
-  // Fonction pour nettoyer les ressources
-  const cleanup = useCallback(() => {
-    if (scriptLoadTimeoutRef.current) {
-      clearTimeout(scriptLoadTimeoutRef.current)
-    }
-    markers.forEach((marker) => marker?.setMap?.(null))
-    setMarkers([])
-  }, [markers])
+  const googleMapsClasses = useRef<{
+    Map: typeof google.maps.Map | null
+    Marker: typeof google.maps.Marker | null
+    InfoWindow: typeof google.maps.InfoWindow | null
+    SymbolPath: typeof google.maps.SymbolPath | null
+    event: typeof google.maps.event | null
+  }>({
+    Map: null,
+    Marker: null,
+    InfoWindow: null,
+    SymbolPath: null,
+    event: null,
+  })
 
-  // Fonction pour diagnostiquer les erreurs spécifiques
-  const diagnoseError = useCallback((error: any) => {
+
+  const cleanup = useCallback(() => {
+    if (markers.length > 0) {
+      markers.forEach((marker) => marker.setMap(null))
+      setMarkers([])
+    }
+    if (infoWindow) {
+      infoWindow.close()
+      setInfoWindow(null);
+    }
+    if (map) {
+      setMap(null);
+    }
+    googleMapsClasses.current = { Map: null, Marker: null, InfoWindow: null, SymbolPath: null, event: null };
+
+  }, [markers, infoWindow, map])
+
+  const diagnoseError = useCallback((err: any) => {
     const currentDomain = typeof window !== "undefined" ? window.location.hostname : "unknown"
     const isDevelopment = currentDomain === "localhost" || currentDomain === "127.0.0.1"
     const isVercel = currentDomain.includes("vercel.app")
@@ -44,41 +69,56 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
     console.group("🗺️ Diagnostic Google Maps")
     console.log("Domaine actuel:", currentDomain)
     console.log("Environnement:", isDevelopment ? "Développement" : isVercel ? "Production Vercel" : "Production")
-    console.log("Erreur:", error)
-    console.log("User Agent:", navigator.userAgent)
+    console.log("Erreur brute:", err)
     console.groupEnd()
 
-    if (error?.message?.includes("RefererNotAllowedMapError") || error?.message?.includes("InvalidKeyMapError")) {
-      return `Erreur de restriction de domaine. Le domaine ${currentDomain} n'est pas autorisé pour cette clé API.`
+    const errorMessage = err?.message || err?.error?.message || "Erreur inconnue"
+
+    if (errorMessage.includes("RefererNotAllowedMapError") || errorMessage.includes("InvalidKeyMapError")) {
+      return `Erreur de restriction de domaine ou clé invalide. Le domaine ${currentDomain} n'est pas autorisé pour cette clé API ou la clé est incorrecte.`
     }
 
-    if (error?.message?.includes("ApiNotActivatedMapError")) {
-      return "L'API Maps JavaScript n'est pas activée pour cette clé."
+    if (errorMessage.includes("ApiNotActivatedMapError")) {
+      return "L'API Maps JavaScript n'est pas activée pour cette clé dans Google Cloud Console."
     }
 
-    if (error?.message?.includes("RequestDenied")) {
-      return "Requête refusée. Vérifiez les restrictions de la clé API."
+    if (errorMessage.includes("RequestDenied")) {
+      return "Requête refusée. Vérifiez les restrictions de la clé API ou les paramètres de facturation."
     }
 
-    return `Erreur de chargement: ${error?.message || "Erreur inconnue"}`
+    if (err instanceof Error && err.message.includes("is not a constructor")) {
+      return "Les bibliothèques Google Maps n'ont pas été chargées correctement. Vérifiez votre clé API et les bibliothèques activées."
+    }
+
+    return `Erreur de chargement: ${errorMessage}`
   }, [])
 
-  // Fonction d'initialisation de la carte avec gestion d'erreur améliorée
-  const initMap = useCallback(() => {
-    if (!mapRef.current) return
+  const initMap = useCallback(async () => {
+    if (!mapRef.current) {
+      console.error("Map ref is null, cannot initialize map.")
+      setError("Erreur: Impossible de trouver l'élément HTML de la carte.");
+      setIsLoading(false);
+      return
+    }
+
+    const { Map, InfoWindow, event } = googleMapsClasses.current;
+    if (!Map || !InfoWindow || !event) {
+        console.warn("Google Maps core classes not yet loaded for map initialization. Retrying load.");
+        return;
+    }
 
     try {
-      console.log("🗺️ Initialisation de Google Maps...")
-      setIsLoading(true)
+      console.log("🗺️ Initialisation de la carte Google Maps...");
+      setIsLoading(true);
 
-      const mapInstance = new window.google.maps.Map(mapRef.current, {
-        center: { lat: 48.8566, lng: 2.3522 }, // Paris center
+      const mapOptions: google.maps.MapOptions = {
+        center: { lat: 48.8566, lng: 2.3522 },
         zoom: 12,
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: false,
+        // mapId: "VOTRE_ID_DE_CARTE_REEL_ICI", // <-- CETTE LIGNE EST MAINTENANT COMMENTÉE OU SUPPRIMÉE
         styles: [
-          // Style minimaliste inspiré du Guide Michelin
           { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
           { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
           { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
@@ -94,20 +134,19 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
           { featureType: "road", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
           { featureType: "transit", stylers: [{ visibility: "off" }] },
         ],
-      })
+      };
 
-      const infoWindowInstance = new window.google.maps.InfoWindow()
+      const mapInstance = new Map(mapRef.current, mapOptions);
+      const infoWindowInstance = new InfoWindow();
 
-      // Écouter les erreurs de la carte
-      mapInstance.addListener("error", (error: any) => {
-        console.error("❌ Erreur de la carte Google Maps:", error)
-        const errorMessage = diagnoseError(error)
+      mapInstance.addListener("error", (err: any) => {
+        console.error("❌ Erreur de la carte Google Maps (via listener):", err)
+        const errorMessage = diagnoseError(err)
         setError(errorMessage)
         setHasValidApiKey(false)
         setIsLoading(false)
       })
 
-      // Écouter le succès du chargement
       mapInstance.addListener("idle", () => {
         console.log("✅ Google Maps chargé avec succès")
         setHasValidApiKey(true)
@@ -118,143 +157,131 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
 
       setMap(mapInstance)
       setInfoWindow(infoWindowInstance)
-    } catch (error) {
-      console.error("❌ Erreur lors de l'initialisation de Google Maps:", error)
-      const errorMessage = diagnoseError(error)
+
+    } catch (err) {
+      console.error("❌ Erreur lors de l'initialisation de Google Maps:", err)
+      const errorMessage = diagnoseError(err)
       setError(errorMessage)
       setHasValidApiKey(false)
       setIsLoading(false)
     }
   }, [diagnoseError])
 
-  // Fonction de chargement du script avec retry et timeout
-  const loadGoogleMapsScript = useCallback((apiKey: string) => {
-    return new Promise<void>((resolve, reject) => {
-      // Timeout de 15 secondes pour le chargement du script
-      scriptLoadTimeoutRef.current = setTimeout(() => {
-        reject(new Error("Timeout: Le script Google Maps n'a pas pu se charger dans les temps"))
-      }, 15000)
 
-      const script = document.createElement("script")
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps`
-      script.async = true
-      script.defer = true
+  const loadGoogleMaps = useCallback(
+    async (apiKey: string) => {
+      try {
+        console.log("📥 Chargement de Google Maps via Loader...")
+        const loader = new Loader({
+          apiKey: apiKey,
+          version: "weekly",
+          libraries: ["places", "marker"],
+        })
 
-      // Callback global pour Google Maps
-      window.initGoogleMaps = () => {
-        if (scriptLoadTimeoutRef.current) {
-          clearTimeout(scriptLoadTimeoutRef.current)
+        const { Map } = await loader.importLibrary("maps")
+        const { Marker } = await loader.importLibrary("marker")
+        const { InfoWindow } = await loader.importLibrary("places")
+
+        const SymbolPath = window.google?.maps?.SymbolPath || null
+        const event = window.google?.maps?.event || null;
+
+        if (!Map || !Marker || !InfoWindow || !SymbolPath || !event) {
+            throw new Error("One or more Google Maps core libraries failed to load.");
         }
-        console.log("✅ Script Google Maps chargé via callback")
-        resolve()
+
+        googleMapsClasses.current = {
+          Map,
+          Marker,
+          InfoWindow,
+          SymbolPath,
+          event,
+        };
+
+        console.log("✅ Google Maps API chargée via Loader et classes stockées")
+        await initMap()
+      } catch (err) {
+        console.error("❌ Erreur lors du chargement via Loader:", err)
+        setError(diagnoseError(err));
+        setHasValidApiKey(false);
+        setIsLoading(false);
+        throw err
       }
+    },
+    [initMap, diagnoseError],
+  )
 
-      script.onload = () => {
-        if (scriptLoadTimeoutRef.current) {
-          clearTimeout(scriptLoadTimeoutRef.current)
-        }
-        console.log("✅ Script Google Maps chargé via onload")
-        resolve()
-      }
-
-      script.onerror = (e) => {
-        if (scriptLoadTimeoutRef.current) {
-          clearTimeout(scriptLoadTimeoutRef.current)
-        }
-        console.error("❌ Erreur lors du chargement du script Google Maps:", e)
-        reject(new Error("Erreur de chargement du script Google Maps"))
-      }
-
-      document.head.appendChild(script)
-    })
-  }, [])
-
-  // Fonction de retry avec backoff exponentiel
   const retryLoadMap = useCallback(
     async (apiKey: string) => {
       if (retryCountRef.current >= maxRetries) {
-        setError(`Échec après ${maxRetries} tentatives. Vérifiez la configuration de votre clé API.`)
-        setIsLoading(false)
-        return
+        setError(`Échec après ${maxRetries} tentatives. Veuillez vérifier votre connexion internet et la configuration de votre clé API.`);
+        setIsLoading(false);
+        return;
       }
 
-      retryCountRef.current++
-      const delay = Math.pow(2, retryCountRef.current) * 1000 // 2s, 4s, 8s
+      retryCountRef.current++;
+      const delay = Math.pow(2, retryCountRef.current) * 1000;
 
-      console.log(`🔄 Tentative ${retryCountRef.current}/${maxRetries} dans ${delay}ms...`)
+      console.log(`🔄 Tentative ${retryCountRef.current}/${maxRetries} dans ${delay}ms...`);
 
       setTimeout(async () => {
         try {
-          await loadGoogleMapsScript(apiKey)
-          initMap()
-        } catch (error) {
-          console.error(`❌ Tentative ${retryCountRef.current} échouée:`, error)
-          retryLoadMap(apiKey)
+          await loadGoogleMaps(apiKey);
+        } catch (err) {
+          console.error(`❌ Tentative ${retryCountRef.current} échouée:`, err);
+          retryLoadMap(apiKey);
         }
-      }, delay)
+      }, delay);
     },
-    [loadGoogleMapsScript, initMap],
+    [loadGoogleMaps],
   )
 
-  // Effect principal pour initialiser la carte
   useEffect(() => {
     if (!mapRef.current) return
 
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    // CORRIGÉ : Le nom de la variable d'environnement doit être Maps_API_KEY
+    const apiKey = process.env.NEXT_PUBLIC_Maps_API_KEY as string;
 
     console.log("🔑 Vérification de la clé API:", apiKey ? "✅ Présente" : "❌ Manquante")
 
-    // Vérifier si la clé API est configurée
     if (!apiKey) {
-      setError("Clé API Google Maps manquante dans les variables d'environnement")
-      setHasValidApiKey(false)
-      setIsLoading(false)
-      return
+      setError("Clé API Google Maps manquante dans les variables d'environnement (NEXT_PUBLIC_Maps_API_KEY).");
+      setHasValidApiKey(false);
+      setIsLoading(false);
+      return;
     }
 
-    const initializeMap = async () => {
-      if (window.google) {
-        console.log("🗺️ Google Maps déjà chargé, initialisation directe")
-        initMap()
-      } else {
-        console.log("📥 Chargement du script Google Maps...")
-        try {
-          await loadGoogleMapsScript(apiKey)
-          initMap()
-        } catch (error) {
-          console.error("❌ Échec du chargement initial:", error)
-          retryLoadMap(apiKey)
-        }
+    const initializeMapFlow = async () => {
+      try {
+        await loadGoogleMaps(apiKey);
+      } catch (err) {
+        console.error("❌ Échec du chargement initial via loadGoogleMaps:", err);
+        retryLoadMap(apiKey);
       }
-    }
+    };
 
-    initializeMap()
+    initializeMapFlow();
 
-    // Cleanup function
     return () => {
-      cleanup()
-      if (window.initGoogleMaps) {
-        delete window.initGoogleMaps
-      }
-    }
-  }, [initMap, loadGoogleMapsScript, retryLoadMap, cleanup])
+      cleanup();
+    };
+  }, [cleanup, loadGoogleMaps, retryLoadMap]);
 
-  // Effect pour gérer les marqueurs
+
   useEffect(() => {
-    if (!map || !infoWindow || !hasValidApiKey) return
+    const { Marker, InfoWindow, event, Map: MapClass } = googleMapsClasses.current;
+    if (!map || !infoWindow || !hasValidApiKey || !Marker || !InfoWindow || !event || !MapClass) {
+      console.warn("Cannot set markers: Map or Google Maps classes not fully loaded.");
+      return;
+    }
 
-    // Clear existing markers
-    markers.forEach((marker) => marker?.setMap?.(null))
-
-    const newMarkers: any[] = []
+    markers.forEach((marker) => marker.setMap(null));
+    const newMarkers: google.maps.Marker[] = [];
 
     restaurants.forEach((restaurant) => {
-      // Utiliser les coordonnées si disponibles, sinon approximation basée sur l'arrondissement
       let lat = restaurant.lat
       let lng = restaurant.lng
 
       if (!lat || !lng) {
-        // Coordonnées approximatives par arrondissement parisien
         const arrondissementCoords: { [key: string]: { lat: number; lng: number } } = {
           "1er arrondissement": { lat: 48.8606, lng: 2.3376 },
           "2e arrondissement": { lat: 48.8697, lng: 2.3417 },
@@ -280,7 +307,7 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
 
         const coords = arrondissementCoords[restaurant.city]
         if (coords) {
-          lat = coords.lat + (Math.random() - 0.5) * 0.01 // Petite variation aléatoire
+          lat = coords.lat + (Math.random() - 0.5) * 0.01
           lng = coords.lng + (Math.random() - 0.5) * 0.01
         } else {
           lat = 48.8566 + (Math.random() - 0.5) * 0.1
@@ -289,7 +316,7 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
       }
 
       try {
-        const marker = new window.google.maps.Marker({
+        const marker = new Marker({
           position: { lat, lng },
           map: map,
           title: restaurant.name,
@@ -301,7 +328,7 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
         })
 
         marker.addListener("click", () => {
-          const distinctionIcons = restaurant.distinctions
+          const distinctionIcons = (restaurant.distinctions || [])
             .map((distinction) => {
               switch (distinction) {
                 case "michelin-1":
@@ -335,8 +362,8 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
           const content = `
             <div style="padding: 16px; max-width: 320px; cursor: pointer;" onclick="window.location.href='/${restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}'">
               <div style="display: flex; gap: 12px; align-items: flex-start;">
-                <img src="/placeholder.svg?height=80&width=80&text=${encodeURIComponent(restaurant.name.slice(0, 10))}" 
-                     alt="${restaurant.name}" 
+                <img src="/placeholder.svg?height=80&width=80&text=${encodeURIComponent(restaurant.name.slice(0, 10))}"
+                     alt="${restaurant.name}"
                      style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px; flex-shrink: 0; background-color: #f3f4f6;" />
                 <div style="flex: 1; min-width: 0;">
                   <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 8px; min-height: 20px;">
@@ -355,35 +382,33 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
         })
 
         newMarkers.push(marker)
-      } catch (error) {
-        console.error("❌ Erreur lors de la création du marqueur:", error)
+      } catch (err) {
+        console.error("❌ Erreur lors de la création du marqueur:", err)
       }
     })
 
     setMarkers(newMarkers)
 
-    // Adjust map bounds to fit all markers
-    if (newMarkers.length > 0) {
+    if (newMarkers.length > 0 && event && MapClass) {
       try {
-        const bounds = new window.google.maps.LatLngBounds()
+        const bounds = new MapClass.LatLngBounds()
         newMarkers.forEach((marker) => {
           const position = marker.getPosition()
           if (position) bounds.extend(position)
         })
         map.fitBounds(bounds)
 
-        // Set minimum zoom level
-        const listener = window.google.maps.event.addListener(map, "idle", () => {
+        const listener = event.addListener(map, "idle", () => {
           if (map.getZoom()! > 15) map.setZoom(15)
-          window.google.maps.event.removeListener(listener)
+          event.removeListener(listener)
         })
-      } catch (error) {
-        console.error("❌ Erreur lors de l'ajustement des bounds:", error)
+      } catch (err) {
+        console.error("❌ Erreur lors de l'ajustement des bounds:", err)
       }
     }
   }, [map, infoWindow, restaurants, hasValidApiKey])
 
-  // Interface de chargement
+
   if (isLoading) {
     return (
       <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
@@ -402,14 +427,12 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
     )
   }
 
-  // Affichage de fallback si pas de clé API valide
   if (!hasValidApiKey) {
     const currentDomain = typeof window !== "undefined" ? window.location.hostname : "unknown"
     const isVercel = currentDomain.includes("vercel.app")
 
     return (
       <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
-        {/* Fond décoratif */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-20 h-20 bg-red-500 rounded-full"></div>
           <div className="absolute top-32 right-16 w-16 h-16 bg-blue-500 rounded-full"></div>
@@ -453,7 +476,7 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
                 <>
                   <li>1. Allez dans Google Cloud Console</li>
                   <li>2. Credentials → Votre clé API</li>
-                  <li>3. Ajoutez {currentDomain}/* aux domaines autorisés</li>
+                  <li>3. Ajoutez <code className="bg-blue-100 px-1 rounded">{currentDomain}/*</code> aux domaines autorisés</li>
                   <li>4. Redéployez votre application</li>
                 </>
               ) : (
@@ -461,7 +484,7 @@ export default function RestaurantMap({ restaurants = defaultRestaurants }: Rest
                   <li>1. Créez une clé API Google Maps</li>
                   <li>2. Activez Maps JavaScript API</li>
                   <li>3. Configurez les restrictions de domaine</li>
-                  <li>4. Ajoutez NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</li>
+                  <li>4. Ajoutez <code className="bg-blue-100 px-1 rounded">NEXT_PUBLIC_Maps_API_KEY</code> dans votre fichier <code className="bg-blue-100 px-1 rounded">.env.local</code></li>
                 </>
               )}
             </ol>
