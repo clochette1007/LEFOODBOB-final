@@ -1,175 +1,159 @@
 "use client"
+
 import { useState } from "react"
-import RestaurantMap from "@/components/restaurant-map"
-import MobileNav from "@/components/mobile-nav"
-import SearchAutocomplete from "@/components/search-autocomplete"
-import { restaurants, type Restaurant } from "@/lib/restaurants"
-import { useMobile } from "@/hooks/use-mobile"
+import { ChevronRight } from "lucide-react"
+import { restaurants, type Restaurant, searchRestaurants } from "@/lib/restaurants"
 import RestaurantCard from "@/components/restaurant-card"
-import { useRouter } from "next/navigation"
+import RestaurantModal from "@/components/restaurant-modal"
+import SearchAutocomplete from "@/components/search-autocomplete"
+import MobileNav from "@/components/mobile-nav"
 
-export default function Page() {
-  const isMobile = useMobile()
-  const router = useRouter()
-  const [filteredRestaurants, setFilteredRestaurants] = useState(restaurants)
+export default function HomePage() {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const featuredRestaurants = filteredRestaurants.slice(0, 4)
+  const filteredRestaurants = searchQuery ? searchRestaurants(searchQuery) : restaurants
 
-  const handleSearchChange = (query: string) => {
-    if (!query) {
-      setFilteredRestaurants(restaurants)
-      return
-    }
+  // Catégorisation des restaurants
+  const streetFood = restaurants.filter(
+    (r) =>
+      r.cuisine?.toLowerCase().includes("barbecue") ||
+      r.cuisine?.toLowerCase().includes("street") ||
+      r.priceRange === "€" ||
+      r.priceRange === "€€",
+  )
 
-    const searchQuery = query.toLowerCase()
-    const filtered = restaurants.filter(
-      (restaurant) =>
-        restaurant.name.toLowerCase().includes(searchQuery) ||
-        restaurant.city.toLowerCase().includes(searchQuery) ||
-        restaurant.address.toLowerCase().includes(searchQuery),
-    )
-    setFilteredRestaurants(filtered)
+  const gastronomique = restaurants.filter(
+    (r) => r.distinction === "michelin_3" || r.distinction === "michelin_2" || r.priceRange === "€€€€",
+  )
+
+  const bistrots = restaurants.filter(
+    (r) =>
+      r.cuisine?.toLowerCase().includes("bistrot") ||
+      r.distinction === "bib_gourmand" ||
+      (r.priceRange === "€€" && !streetFood.includes(r)),
+  )
+
+  const nouveautes = restaurants.filter(
+    (r) =>
+      r.distinction === "assiette_michelin" ||
+      (!gastronomique.includes(r) && !bistrots.includes(r) && !streetFood.includes(r)),
+  )
+
+  const handleRestaurantClick = (restaurant: Restaurant) => {
+    setSelectedRestaurant(restaurant)
+    setIsModalOpen(true)
   }
 
-  const handleRestaurantSelect = (restaurant: Restaurant) => {
-    router.push(`/restaurant/${restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}`)
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedRestaurant(null)
   }
 
-  if (isMobile) {
-    return (
-      <div className="min-h-screen bg-[#faf9f6] pb-24">
-        {/* Header */}
-        <header className="pt-6 px-4 bg-white">
-          <h1 className="text-3xl font-bold mb-4 text-gray-900">Restaurants</h1>
-        </header>
+  const CategorySection = ({
+    title,
+    restaurants: categoryRestaurants,
+    showAll = false,
+  }: {
+    title: string
+    restaurants: Restaurant[]
+    showAll?: boolean
+  }) => (
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-4 px-4 lg:px-0">
+        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+        {!showAll && (
+          <button className="flex items-center gap-1 text-blue-600 text-sm font-medium hover:underline">
+            Tout voir
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        )}
+      </div>
 
-        {/* Barre de recherche avec autocomplétion */}
-        <div className="px-4 pb-4 bg-white border-b border-gray-100">
-          <SearchAutocomplete
-            placeholder="Rechercher sur Le Foodbob"
-            onSearchChange={handleSearchChange}
-            onRestaurantSelect={handleRestaurantSelect}
-          />
-        </div>
-
-        {/* Section Paris avec carte */}
-        <section className="mt-6 px-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-gray-900">Paris</h2>
-            <button
-              onClick={() => router.push("/restaurants")}
-              className="text-sm text-blue-700 font-medium hover:underline"
-            >
-              Tout Voir
-            </button>
+      <div
+        className={
+          showAll
+            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 lg:px-0"
+            : "flex gap-4 overflow-x-auto pb-2 px-4 lg:px-0"
+        }
+      >
+        {(showAll ? categoryRestaurants : categoryRestaurants.slice(0, 5)).map((restaurant) => (
+          <div key={restaurant.id} className={showAll ? "" : "flex-shrink-0 w-64"}>
+            <RestaurantCard restaurant={restaurant} onClick={() => handleRestaurantClick(restaurant)} />
           </div>
+        ))}
 
-          {/* Carte */}
-          <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-200 mb-6">
-            <div className="h-64">
-              <RestaurantMap restaurants={filteredRestaurants} />
+        {!showAll && categoryRestaurants.length > 5 && (
+          <div className="flex-shrink-0 w-64">
+            <div className="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 h-full flex items-center justify-center min-h-[200px]">
+              <div className="text-center p-4">
+                <p className="text-gray-600 font-medium mb-2">+{categoryRestaurants.length - 5} restaurants</p>
+                <button className="text-blue-600 text-sm font-medium hover:underline">Tout voir</button>
+              </div>
             </div>
           </div>
-        </section>
-
-        {/* Section Restaurants recommandés */}
-        <section className="px-4">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              {filteredRestaurants.length === restaurants.length
-                ? "Restaurants recommandés"
-                : `Résultats (${filteredRestaurants.length})`}
-            </h2>
-            <button
-              onClick={() => router.push("/restaurants")}
-              className="text-sm text-blue-700 font-medium hover:underline"
-            >
-              Tout voir
-            </button>
-          </div>
-
-          {/* Liste des restaurants */}
-          <div className="space-y-4">
-            {featuredRestaurants.length > 0 ? (
-              featuredRestaurants.map((restaurant, index) => <RestaurantCard key={index} restaurant={restaurant} />)
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <p>Aucun restaurant trouvé pour cette recherche</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Navigation mobile */}
-        <MobileNav />
+        )}
       </div>
-    )
-  }
+    </div>
+  )
 
-  // Version Desktop
   return (
-    <div className="min-h-screen bg-[#faf9f6]">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Desktop */}
-        <header className="pt-8 px-8">
-          <h1 className="text-4xl font-bold mb-6 text-gray-900">Restaurants</h1>
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
+      {/* Header */}
+      <div className="bg-white shadow-sm sticky top-0 z-30">
+        <div className="w-full max-w-7xl mx-auto px-4 py-4 lg:py-6">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">Restaurants</h1>
 
-          {/* Barre de recherche desktop avec autocomplétion */}
-          <div className="max-w-2xl mb-8">
+          {/* Barre de recherche */}
+          <div className="max-w-md lg:max-w-lg">
             <SearchAutocomplete
-              placeholder="Rechercher sur Le Foodbob"
-              onSearchChange={handleSearchChange}
-              onRestaurantSelect={handleRestaurantSelect}
-              className="text-lg"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Rechercher dans le Guide MICHELIN"
+              onRestaurantSelect={handleRestaurantClick}
             />
           </div>
-        </header>
+        </div>
+      </div>
 
-        {/* Section Paris avec carte */}
-        <section className="px-8 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-semibold text-gray-900">Paris</h2>
-            <button
-              onClick={() => router.push("/restaurants")}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              Tout Voir
-            </button>
-          </div>
-
-          <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-200 h-[500px] mb-8">
-            <RestaurantMap restaurants={filteredRestaurants} />
-          </div>
-        </section>
-
-        {/* Section Restaurants recommandés */}
-        <section className="px-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-semibold text-gray-900">
-              {filteredRestaurants.length === restaurants.length
-                ? "Restaurants recommandés"
-                : `Résultats de recherche (${filteredRestaurants.length})`}
+      {/* Contenu principal */}
+      <div className="w-full max-w-7xl mx-auto py-6 lg:py-8">
+        {searchQuery ? (
+          <div className="px-4 lg:px-0">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Résultats pour "{searchQuery}" ({filteredRestaurants.length})
             </h2>
-            <button
-              onClick={() => router.push("/restaurants")}
-              className="text-sm text-blue-700 font-medium hover:underline"
-            >
-              Tout voir
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {featuredRestaurants.length > 0 ? (
-              featuredRestaurants.map((restaurant, index) => <RestaurantCard key={index} restaurant={restaurant} />)
-            ) : (
-              <div className="col-span-full text-center py-12 text-gray-500">
-                <p className="text-xl">Aucun restaurant trouvé pour cette recherche</p>
-                <p className="mt-2">Essayez avec d'autres mots-clés</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredRestaurants.map((restaurant) => (
+                <RestaurantCard
+                  key={restaurant.id}
+                  restaurant={restaurant}
+                  onClick={() => handleRestaurantClick(restaurant)}
+                />
+              ))}
+            </div>
+            {filteredRestaurants.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500">Aucun restaurant trouvé</p>
               </div>
             )}
           </div>
-        </section>
+        ) : (
+          <>
+            <CategorySection title="Street Food" restaurants={streetFood} />
+            <CategorySection title="Gastronomique" restaurants={gastronomique} />
+            <CategorySection title="Bistrots" restaurants={bistrots} />
+            <CategorySection title="Nouveautés" restaurants={nouveautes} />
+          </>
+        )}
       </div>
+
+      {/* Modal */}
+      <RestaurantModal restaurant={selectedRestaurant} isOpen={isModalOpen} onClose={handleCloseModal} />
+
+      {/* Navigation mobile */}
+      <MobileNav />
     </div>
   )
 }
