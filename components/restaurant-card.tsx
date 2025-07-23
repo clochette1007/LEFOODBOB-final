@@ -1,8 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { MapPin } from "lucide-react"
 import { type Restaurant, getDistinctionIcons } from "@/lib/restaurants"
+import { MapPin } from "lucide-react"
 
 interface RestaurantCardProps {
   restaurant: Restaurant
@@ -15,10 +15,10 @@ export default function RestaurantCard({ restaurant, onClick }: RestaurantCardPr
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow h-full cursor-pointer"
     >
       {/* Photo du restaurant */}
-      <div className="h-32 sm:h-40 bg-gray-100 relative">
+      <div className="h-40 bg-gray-100 relative overflow-hidden">
         <Image
           src={`/placeholder.svg?height=160&width=256&text=${encodeURIComponent(restaurant.name)}`}
           alt={restaurant.name}
@@ -27,13 +27,10 @@ export default function RestaurantCard({ restaurant, onClick }: RestaurantCardPr
         />
       </div>
 
-      {/* Contenu */}
-      <div className="p-3 sm:p-4">
-        {/* Titre avec distinctions */}
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-bold text-gray-900 text-sm sm:text-base leading-tight flex-1 min-w-0">
-            {restaurant.name}
-          </h3>
+      <div className="p-4">
+        {/* Titre avec logos des distinctions */}
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 flex-1">{restaurant.name}</h3>
           {distinctionIcons.length > 0 && (
             <div className="flex items-center gap-1 flex-shrink-0">
               {distinctionIcons.map((icon, index) => (
@@ -50,15 +47,13 @@ export default function RestaurantCard({ restaurant, onClick }: RestaurantCardPr
           )}
         </div>
 
-        {/* Type de cuisine */}
-        {restaurant.cuisine && (
-          <p className="text-blue-600 font-medium text-xs sm:text-sm mb-2">{restaurant.cuisine}</p>
-        )}
+        {/* Type en bleu */}
+        {restaurant.cuisine && <p className="text-sm text-blue-600 font-medium mb-2">{restaurant.cuisine}</p>}
 
         {/* Adresse */}
-        <div className="flex items-start gap-2">
-          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-          <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{restaurant.address}</p>
+        <div className="flex items-start gap-2 text-sm text-gray-600">
+          <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span className="line-clamp-2">{restaurant.address}</span>
         </div>
       </div>
     </div>

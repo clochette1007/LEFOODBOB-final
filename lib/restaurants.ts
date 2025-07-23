@@ -3,95 +3,155 @@ export interface Restaurant {
   name: string
   address: string
   city: string
-  coordinates?: {
+  coordinates: {
     lat: number
     lng: number
   }
-  cuisine?: string
-  priceRange: "€" | "€€" | "€€€" | "€€€€"
   distinction:
     | "michelin_1"
     | "michelin_2"
     | "michelin_3"
     | "bib_gourmand"
     | "assiette_michelin"
+    | "gault_millau"
     | "bob_repere"
     | "bob_flop"
+  cuisine?: string
+  description: string
   phone?: string
   website?: string
+  priceRange: "€" | "€€" | "€€€" | "€€€€"
   openingHours?: string
-  description?: string
+  photos?: string[]
 }
 
 export const restaurants: Restaurant[] = [
   {
-    id: "1",
+    id: "l-arpege",
     name: "L'Arpège",
     address: "84 Rue de Varenne, 75007 Paris",
     city: "Paris",
     coordinates: { lat: 48.8566, lng: 2.3208 },
-    cuisine: "Française contemporaine",
-    priceRange: "€€€€",
     distinction: "michelin_3",
+    cuisine: "Française contemporaine",
+    description:
+      "Restaurant 3 étoiles Michelin d'Alain Passard, spécialisé dans la cuisine végétale de haute gastronomie.",
     phone: "01 47 05 09 06",
     website: "https://www.alain-passard.com",
+    priceRange: "€€€€",
     openingHours: "12h00-14h00, 19h30-22h00",
-    description: "Restaurant gastronomique d'Alain Passard, spécialisé dans les légumes du potager.",
   },
   {
-    id: "2",
-    name: "L'Ami Jean",
-    address: "27 Rue Malar, 75007 Paris",
-    city: "Paris",
-    coordinates: { lat: 48.8584, lng: 2.3001 },
-    cuisine: "Bistrot moderne",
-    priceRange: "€€€",
-    distinction: "bib_gourmand",
-    phone: "01 47 05 86 89",
-    openingHours: "12h00-14h00, 19h00-23h00",
-    description: "Bistrot convivial aux saveurs du Sud-Ouest revisitées.",
-  },
-  {
-    id: "3",
-    name: "Melt - Slow Smoked Barbecue",
-    address: "15 Rue de la Fontaine au Roi, 75011 Paris",
-    city: "Paris",
-    coordinates: { lat: 48.8675, lng: 2.3708 },
-    cuisine: "Barbecue américain",
-    priceRange: "€€",
-    distinction: "bob_repere",
-    phone: "01 43 55 74 22",
-    openingHours: "18h00-23h00",
-    description: "Authentique barbecue américain avec viandes fumées 12h.",
-  },
-  {
-    id: "4",
+    id: "alleno-paris",
     name: "Alleno Paris",
     address: "8 Avenue Dutuit, 75008 Paris",
     city: "Paris",
-    coordinates: { lat: 48.8656, lng: 2.3147 },
+    coordinates: { lat: 48.8656, lng: 2.3087 },
+    distinction: "michelin_3",
     cuisine: "Française moderne",
-    priceRange: "€€€€",
-    distinction: "michelin_2",
+    description: "Restaurant 3 étoiles Michelin de Yannick Alléno au Pavillon Ledoyen.",
     phone: "01 53 05 10 00",
     website: "https://www.yannick-alleno.com",
-    openingHours: "19h30-22h00",
-    description: "Cuisine moderne de Yannick Alléno au Pavillon Ledoyen.",
+    priceRange: "€€€€",
+    openingHours: "12h00-14h00, 19h30-22h00",
   },
   {
-    id: "5",
-    name: "Au Bourguignon du Marais",
-    address: "52 Rue François Miron, 75004 Paris",
+    id: "aldehyde",
+    name: "Aldehyde",
+    address: "8 Rue Saint-Augustin, 75002 Paris",
     city: "Paris",
-    coordinates: { lat: 48.8534, lng: 2.3626 },
-    cuisine: "Bistrot traditionnel",
+    coordinates: { lat: 48.8692, lng: 2.3348 },
+    distinction: "michelin_1",
+    cuisine: "Française créative",
+    description: "Restaurant créatif proposant une cuisine française moderne dans un cadre intimiste.",
+    phone: "01 42 61 44 09",
+    priceRange: "€€€",
+    openingHours: "19h00-23h00",
+  },
+  {
+    id: "l-ami-jean",
+    name: "L'Ami Jean",
+    address: "27 Rue Malar, 75007 Paris",
+    city: "Paris",
+    coordinates: { lat: 48.858, lng: 2.3065 },
+    distinction: "bib_gourmand",
+    cuisine: "Bistrot moderne",
+    description: "Bistrot convivial proposant une cuisine du Sud-Ouest revisitée.",
+    phone: "01 47 05 86 89",
     priceRange: "€€",
+    openingHours: "12h00-14h00, 19h00-23h00",
+  },
+  {
+    id: "automne",
+    name: "Automne",
+    address: "8 Rue Bachaumont, 75002 Paris",
+    city: "Paris",
+    coordinates: { lat: 48.8665, lng: 2.3456 },
     distinction: "assiette_michelin",
-    phone: "01 48 87 15 40",
-    openingHours: "12h00-15h00, 19h00-23h00",
-    description: "Bistrot authentique spécialisé dans les vins de Bourgogne.",
+    cuisine: "Française saisonnière",
+    description: "Restaurant mettant à l'honneur les produits de saison dans une cuisine française raffinée.",
+    phone: "01 42 33 44 55",
+    priceRange: "€€€",
+    openingHours: "12h00-14h30, 19h00-22h30",
+  },
+  {
+    id: "double",
+    name: "Double",
+    address: "5 Rue de la Bastille, 75004 Paris",
+    city: "Paris",
+    coordinates: { lat: 48.8532, lng: 2.3681 },
+    distinction: "bob_repere",
+    cuisine: "Fusion",
+    description: "Concept original proposant une cuisine fusion créative.",
+    phone: "01 43 21 98 76",
+    priceRange: "€€",
+    openingHours: "18h00-01h00",
+  },
+  {
+    id: "via-del-campo",
+    name: "Via del Campo",
+    address: "12 Rue Monsieur le Prince, 75006 Paris",
+    city: "Paris",
+    coordinates: { lat: 48.8478, lng: 2.3389 },
+    distinction: "bib_gourmand",
+    cuisine: "Italienne",
+    description: "Trattoria italienne authentique proposant des spécialités de Ligurie.",
+    phone: "01 43 26 95 36",
+    priceRange: "€€",
+    openingHours: "12h00-14h30, 19h00-23h00",
+  },
+  {
+    id: "melt-barbecue",
+    name: "Melt Slow Smoked Barbecue",
+    address: "15 Rue de la Corderie, 75003 Paris",
+    city: "Paris",
+    coordinates: { lat: 48.863, lng: 2.3608 },
+    distinction: "bob_flop",
+    cuisine: "Barbecue américain",
+    description: "Restaurant de barbecue américain authentique avec des viandes fumées lentement.",
+    phone: "01 42 74 81 19",
+    priceRange: "€€",
+    openingHours: "18h00-23h00",
   },
 ]
+
+export function createSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[àáâãäå]/g, "a")
+    .replace(/[èéêë]/g, "e")
+    .replace(/[ìíîï]/g, "i")
+    .replace(/[òóôõö]/g, "o")
+    .replace(/[ùúûü]/g, "u")
+    .replace(/[ç]/g, "c")
+    .replace(/[^a-z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+}
+
+export function getRestaurantBySlug(slug: string): Restaurant | undefined {
+  return restaurants.find((restaurant) => createSlug(restaurant.name) === slug)
+}
 
 export function searchRestaurants(query: string): Restaurant[] {
   if (!query.trim()) return restaurants
@@ -101,16 +161,15 @@ export function searchRestaurants(query: string): Restaurant[] {
     (restaurant) =>
       restaurant.name.toLowerCase().includes(searchTerm) ||
       restaurant.cuisine?.toLowerCase().includes(searchTerm) ||
-      restaurant.address.toLowerCase().includes(searchTerm) ||
-      restaurant.city.toLowerCase().includes(searchTerm),
+      restaurant.address.toLowerCase().includes(searchTerm),
   )
 }
 
 export function getAutocompleteSuggestions(query: string): string[] {
   if (!query.trim()) return []
 
-  const searchTerm = query.toLowerCase()
   const suggestions = new Set<string>()
+  const searchTerm = query.toLowerCase()
 
   restaurants.forEach((restaurant) => {
     if (restaurant.name.toLowerCase().includes(searchTerm)) {
@@ -118,9 +177,6 @@ export function getAutocompleteSuggestions(query: string): string[] {
     }
     if (restaurant.cuisine?.toLowerCase().includes(searchTerm)) {
       suggestions.add(restaurant.cuisine)
-    }
-    if (restaurant.city.toLowerCase().includes(searchTerm)) {
-      suggestions.add(restaurant.city)
     }
   })
 
@@ -139,6 +195,8 @@ export function getDistinctionIcons(distinction: Restaurant["distinction"]): str
       return ["/bibgourmand.jpg"]
     case "assiette_michelin":
       return ["/assiettemichelin.jpg"]
+    case "gault_millau":
+      return ["/Gault_Millau.png"]
     case "bob_repere":
     case "bob_flop":
       return []
@@ -148,49 +206,29 @@ export function getDistinctionIcons(distinction: Restaurant["distinction"]): str
 }
 
 export function getDistinctionText(distinction: Restaurant["distinction"]): string {
-  switch (distinction) {
-    case "michelin_1":
-      return "1 étoile Michelin"
-    case "michelin_2":
-      return "2 étoiles Michelin"
-    case "michelin_3":
-      return "3 étoiles Michelin"
-    case "bib_gourmand":
-      return "Bib Gourmand"
-    case "assiette_michelin":
-      return "Assiette Michelin"
-    case "bob_repere":
-      return "Bob Repère"
-    case "bob_flop":
-      return "Bob Flop"
-    default:
-      return ""
+  const texts = {
+    michelin_1: "1 étoile Michelin",
+    michelin_2: "2 étoiles Michelin",
+    michelin_3: "3 étoiles Michelin",
+    bib_gourmand: "Bib Gourmand",
+    assiette_michelin: "Assiette Michelin",
+    gault_millau: "Gault & Millau",
+    bob_repere: "Bob Repère",
+    bob_flop: "Bob Flop",
   }
-}
-
-export function createSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
+  return texts[distinction]
 }
 
 export function getBadgeColor(distinction: Restaurant["distinction"]): string {
-  switch (distinction) {
-    case "michelin_1":
-    case "michelin_2":
-    case "michelin_3":
-      return "bg-yellow-100 text-yellow-800"
-    case "bib_gourmand":
-      return "bg-red-100 text-red-800"
-    case "assiette_michelin":
-      return "bg-gray-100 text-gray-800"
-    case "bob_repere":
-      return "bg-blue-100 text-blue-800"
-    case "bob_flop":
-      return "bg-orange-100 text-orange-800"
-    default:
-      return "bg-gray-100 text-gray-800"
+  const colors = {
+    michelin_1: "bg-yellow-500",
+    michelin_2: "bg-yellow-600",
+    michelin_3: "bg-yellow-700",
+    bib_gourmand: "bg-red-500",
+    assiette_michelin: "bg-gray-500",
+    gault_millau: "bg-blue-500",
+    bob_repere: "bg-green-500",
+    bob_flop: "bg-purple-500",
   }
+  return colors[distinction]
 }

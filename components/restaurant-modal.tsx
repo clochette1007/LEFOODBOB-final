@@ -27,23 +27,19 @@ export default function RestaurantModal({ restaurant, isOpen, onClose }: Restaur
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-md mx-auto max-h-[90vh] overflow-y-auto p-0 gap-0">
-        {/* Header avec bouton fermer */}
-        <DialogHeader className="relative p-4 pb-2">
-          <button
-            onClick={onClose}
-            className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
-          >
+      <DialogContent className="max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="relative">
+          <button onClick={onClose} className="absolute right-0 top-0 p-2 hover:bg-gray-100 rounded-full">
             <X className="h-4 w-4" />
           </button>
-          <DialogTitle className="text-left pr-12 text-lg font-bold">{restaurant.name}</DialogTitle>
+          <DialogTitle className="text-left pr-8">{restaurant.name}</DialogTitle>
         </DialogHeader>
 
-        <div className="px-4 pb-4 space-y-4">
+        <div className="space-y-4">
           {/* Photo du restaurant */}
-          <div className="h-48 sm:h-56 bg-gray-100 rounded-lg overflow-hidden relative">
+          <div className="h-48 bg-gray-100 rounded-lg overflow-hidden relative">
             <Image
-              src={`/placeholder.svg?height=224&width=400&text=${encodeURIComponent(restaurant.name)}`}
+              src={`/placeholder.svg?height=192&width=400&text=${encodeURIComponent(restaurant.name)}`}
               alt={restaurant.name}
               fill
               className="object-cover"
@@ -51,13 +47,13 @@ export default function RestaurantModal({ restaurant, isOpen, onClose }: Restaur
           </div>
 
           {/* Titre avec distinctions */}
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold text-gray-900 leading-tight">{restaurant.name}</h2>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">{restaurant.name}</h2>
               {restaurant.cuisine && <p className="text-sm text-blue-600 font-medium mt-1">{restaurant.cuisine}</p>}
             </div>
             {distinctionIcons.length > 0 && (
-              <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="flex items-center gap-1">
                 {distinctionIcons.map((icon, index) => (
                   <Image
                     key={index}
@@ -76,56 +72,49 @@ export default function RestaurantModal({ restaurant, isOpen, onClose }: Restaur
           {restaurant.description && <p className="text-gray-700 text-sm leading-relaxed">{restaurant.description}</p>}
 
           {/* Informations pratiques */}
-          <div className="space-y-4">
-            {/* Adresse */}
+          <div className="space-y-3">
             <div className="flex items-start gap-3">
-              <MapPin className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 text-sm mb-1">Adresse</p>
-                <button
-                  onClick={handleAddressClick}
-                  className="text-blue-600 hover:underline text-sm text-left leading-relaxed"
-                >
+              <MapPin className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-gray-900">Adresse</p>
+                <button onClick={handleAddressClick} className="text-blue-600 hover:underline text-left">
                   {restaurant.address}
                 </button>
               </div>
             </div>
 
-            {/* Téléphone */}
             {restaurant.phone && (
-              <div className="flex items-start gap-3">
-                <Phone className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm mb-1">Téléphone</p>
-                  <a href={`tel:${restaurant.phone}`} className="text-blue-600 hover:underline text-sm">
+              <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-gray-900">Téléphone</p>
+                  <a href={`tel:${restaurant.phone}`} className="text-blue-600 hover:underline">
                     {restaurant.phone}
                   </a>
                 </div>
               </div>
             )}
 
-            {/* Horaires */}
             {restaurant.openingHours && (
-              <div className="flex items-start gap-3">
-                <Clock className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm mb-1">Horaires</p>
-                  <p className="text-gray-600 text-sm leading-relaxed">{restaurant.openingHours}</p>
+              <div className="flex items-center gap-3">
+                <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-gray-900">Horaires</p>
+                  <p className="text-gray-600">{restaurant.openingHours}</p>
                 </div>
               </div>
             )}
 
-            {/* Site web */}
             {restaurant.website && (
-              <div className="flex items-start gap-3">
-                <Globe className="h-4 w-4 text-gray-500 mt-1 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm mb-1">Site web</p>
+              <div className="flex items-center gap-3">
+                <Globe className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-gray-900">Site web</p>
                   <a
                     href={restaurant.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
+                    className="text-blue-600 hover:underline"
                   >
                     Visiter le site
                   </a>
@@ -133,20 +122,21 @@ export default function RestaurantModal({ restaurant, isOpen, onClose }: Restaur
               </div>
             )}
 
-            {/* Prix */}
             <div className="flex items-start gap-3">
-              <div className="h-4 w-4 mt-1 flex-shrink-0"></div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 text-sm mb-2">Prix</p>
-                <div className="text-green-600 font-bold text-xl">{restaurant.priceRange}</div>
+              <div className="h-4 w-4 mt-0.5"></div>
+              <div className="text-sm">
+                <p className="font-medium text-gray-900">Prix</p>
+                <div className="text-green-600 font-bold text-lg mt-1">{restaurant.priceRange}</div>
               </div>
             </div>
           </div>
 
           {/* Boutons d'action */}
-          <div className="flex gap-3 pt-4">
-            <Button className="flex-1 h-11 text-sm font-medium">Réserver</Button>
-            <Button variant="outline" className="flex-1 h-11 text-sm font-medium bg-transparent">
+          <div className="flex gap-2 pt-4">
+            <Button className="flex-1" size="sm">
+              Réserver
+            </Button>
+            <Button variant="outline" className="flex-1 bg-transparent" size="sm">
               Favoris
             </Button>
           </div>
