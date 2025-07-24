@@ -2,101 +2,126 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Search, X } from "lucide-react"
 import { getAutocompleteSuggestions } from "@/lib/restaurants"
 
 interface SearchAutocompleteProps {
-  value: string
-  onChange: (value: string) => void
+  onSearch: (query: string) => void
   placeholder?: string
+  className?: string
 }
 
 export default function SearchAutocomplete({
-  value,
-  onChange,
-  placeholder = "Rechercher...",
+  onSearch,
+  placeholder = "Rechercher un restaurant, cuisine...",
+  className = "",
 }: SearchAutocompleteProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [query, setQuery] = useState("")
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const suggestionsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (value.trim()) {
-      const newSuggestions = getAutocompleteSuggestions(value)
+    if (query.trim()) {
+      const newSuggestions = getAutocompleteSuggestions(query)
       setSuggestions(newSuggestions)
-      setIsOpen(newSuggestions.length > 0)
+      setShowSuggestions(newSuggestions.length > 0)
     } else {
       setSuggestions([])
-      setIsOpen(false)
+      setShowSuggestions(false)
     }
-  }, [value])
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    setSelectedIndex(-1)
+  }, [query])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value)
+    const value = e.target.value
+    setQuery(value)
+    onSearch(value)
   }
 
   const handleSuggestionClick = (suggestion: string) => {
-    onChange(suggestion)
-    setIsOpen(false)
-    inputRef.current?.blur()
+    setQuery(suggestion)
+    onSearch(suggestion)
+    setShowSuggestions(false)
+    setSelectedIndex(-1)
   }
 
-  const handleClear = () => {
-    onChange("")
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions) return
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault()
+        setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev))
+        break
+      case "ArrowUp":
+        e.preventDefault()
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1))
+        break
+      case "Enter":
+        e.preventDefault()
+        if (selectedIndex >= 0) {
+          handleSuggestionClick(suggestions[selectedIndex])
+        }
+        break
+      case "Escape":
+        setShowSuggestions(false)
+        setSelectedIndex(-1)
+        break
+    }
+  }
+
+  const clearSearch = () => {
+    setQuery("")
+    onSearch("")
+    setShowSuggestions(false)
+    setSelectedIndex(-1)
     inputRef.current?.focus()
   }
 
   return (
-    <div ref={containerRef} className="relative">
+    <div className={`relative ${className}`}>
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
         <input
           ref={inputRef}
           type="text"
-          value={value}
+          value={query}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder={placeholder}
           className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          onFocus={() => {
-            if (suggestions.length > 0) {
-              setIsOpen(true)
-            }
-          }}
         />
-        {value && (
+        {query && (
           <button
-            onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full"
+            onClick={clearSearch}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
-            <X className="h-4 w-4 text-gray-400" />
+            <X className="h-5 w-5" />
           </button>
         )}
       </div>
 
-      {isOpen && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+      {showSuggestions && (
+        <div
+          ref={suggestionsRef}
+          className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
+        >
           {suggestions.map((suggestion, index) => (
             <button
-              key={index}
+              key={suggestion}
               onClick={() => handleSuggestionClick(suggestion)}
-              className="w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none first:rounded-t-lg last:rounded-b-lg"
+              className={`w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 ${
+                index === selectedIndex ? "bg-blue-50 text-blue-600" : "text-gray-900"
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <Search className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-900">{suggestion}</span>
+              <div className="flex items-center">
+                <Search className="h-4 w-4 text-gray-400 mr-3" />
+                <span>{suggestion}</span>
               </div>
             </button>
           ))}

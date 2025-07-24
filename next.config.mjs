@@ -9,6 +9,7 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   images: {
     unoptimized: true,
+    domains: ['localhost'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -25,7 +26,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'places.googleapis.com',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ]
   },
   env: {

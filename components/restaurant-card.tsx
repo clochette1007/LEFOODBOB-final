@@ -1,38 +1,44 @@
 "use client"
 
 import Image from "next/image"
-import { type Restaurant, getDistinctionIcons } from "@/lib/restaurants"
-import { MapPin } from "lucide-react"
+import { MapPin, Phone } from "lucide-react"
+import { getDistinctionIcons } from "@/lib/restaurants"
+import type { Restaurant } from "@/lib/restaurants"
 
 interface RestaurantCardProps {
   restaurant: Restaurant
-  onClick?: () => void
+  onClick: () => void
 }
 
 export default function RestaurantCard({ restaurant, onClick }: RestaurantCardProps) {
-  const distinctionIcons = getDistinctionIcons(restaurant.distinction)
+  const distinctionIcons = getDistinctionIcons(restaurant.distinctions || [])
 
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow h-full cursor-pointer"
+      className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer overflow-hidden"
     >
-      {/* Photo du restaurant */}
-      <div className="h-40 bg-gray-100 relative overflow-hidden">
+      {/* Image */}
+      <div className="relative h-48 bg-gray-200">
         <Image
-          src={`/placeholder.svg?height=160&width=256&text=${encodeURIComponent(restaurant.name)}`}
+          src="/placeholder.jpg"
           alt={restaurant.name}
           fill
           className="object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            target.src = "/placeholder.svg?height=200&width=300&text=" + encodeURIComponent(restaurant.name)
+          }}
         />
       </div>
 
+      {/* Content */}
       <div className="p-4">
-        {/* Titre avec logos des distinctions */}
-        <div className="flex items-center gap-2 mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 flex-1">{restaurant.name}</h3>
+        {/* Title and Icons */}
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-semibold text-gray-900 text-lg">{restaurant.name}</h3>
           {distinctionIcons.length > 0 && (
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex gap-1 ml-2">
               {distinctionIcons.map((icon, index) => (
                 <Image
                   key={index}
@@ -47,13 +53,24 @@ export default function RestaurantCard({ restaurant, onClick }: RestaurantCardPr
           )}
         </div>
 
-        {/* Type en bleu */}
-        {restaurant.cuisine && <p className="text-sm text-blue-600 font-medium mb-2">{restaurant.cuisine}</p>}
+        {/* Cuisine */}
+        <p className="text-blue-600 text-sm font-medium mb-2">{restaurant.cuisine}</p>
 
-        {/* Adresse */}
-        <div className="flex items-start gap-2 text-sm text-gray-600">
-          <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-          <span className="line-clamp-2">{restaurant.address}</span>
+        {/* Address */}
+        <div className="flex items-start gap-2 text-gray-600 text-sm mb-3">
+          <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <span>{restaurant.address}</span>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between">
+          <span className="text-green-600 font-semibold">{restaurant.priceRange}</span>
+          {restaurant.phone && (
+            <div className="flex items-center gap-1 text-gray-500 text-sm">
+              <Phone className="h-3 w-3" />
+              <span>{restaurant.phone}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
